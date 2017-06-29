@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+/**
+ * Register the autoloader.
+ */
+require __DIR__ . '/bootstrap/autoload.php';
+
+$app = require __DIR__ . '/bootstrap/app.php';
+
+/**
+ * Run the Artisan application.
+ */
+/** @var Kernel|HttpKernel $kernel */
+/** @var \Symfony\Component\HttpFoundation\Request $input */
+$kernel = $app->make(Kernel::class);
+$input  = new ArgvInput;
+$status = $kernel->handle($input, new ConsoleOutput);
+
+/**
+ * Shutdown the application.
+ */
+$kernel->terminate($input, $status);
+
+exit($status);
