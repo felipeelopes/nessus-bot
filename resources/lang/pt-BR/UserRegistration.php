@@ -9,11 +9,13 @@ return [
     'welcomeGroupTitle' => ' para o grupo *:group*',
     'welcomeToGroup'    => "*Vamos celebrar!*\n" .
                            'Nosso novo guardião, *:fullname* (vulgo *:gamertag*), estará conosco nas próximas missões.',
+    'welcomeAgain'      => "*Vamos celebrar, de novo!*\n" .
+                           'Nosso guardião, *:fullname* (vulgo *:gamertag*), está conosco novamente.',
 
     // Need to talk in private.
     'toPrivate'         => "Seja bem-vindo, *:fullname*!\n\n" .
-                           "Antes de enviar novas mensagens aqui no grupo precisamos falar com você em privado primeiro.\n\n" .
-                           '*Fale comigo por aqui:* @:botname',
+                           "Antes de enviar novas mensagens aqui no grupo, precisamos falar com você em privado primeiro.\n\n" .
+                           '*Fale comigo por aqui:* [@:botname](https://t.me/:botname?start)',
 
     // Gamertag request.
     'whichGamertag'     => "*\xE2\xAE\x9E Qual a sua Gamertag na Xbox Live?*",

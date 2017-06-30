@@ -19,6 +19,36 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
     {
         $botService = BotService::getInstance();
 
+        if ($update->message->new_chat_member) {
+            /** @var UserService $userService */
+            $userService = app(UserService::class);
+            $user        = $userService->get($update->message->new_chat_member->id);
+
+            if ($user === null) {
+                $botService->sendMessage(
+                    $update->message->chat->id,
+                    trans('UserRegistration.toPrivate', [
+                        'fullname' => $update->message->new_chat_member->getFullname(),
+                        'botname'  => $botService->getMe()->username,
+                    ])
+                );
+            }
+            else {
+                /** @var UserGamertag $userGamertags */
+                $userGamertags = $user->gamertags->first();
+
+                if ($userGamertags) {
+                    $botService->sendMessage(
+                        $update->message->chat->id,
+                        trans('UserRegistration.welcomeAgain', [
+                            'fullname' => $update->message->new_chat_member->getFullname(),
+                            'gamertag' => $userGamertags->gamertag_value,
+                        ])
+                    );
+                }
+            }
+        }
+
         if ($update->message->left_chat_member) {
             /** @var UserService $userService */
             $userService = app(UserService::class);

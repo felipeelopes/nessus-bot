@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
  * @property-read string|null                     $text               Message text.
  * @property-read Collection|MessageEntity[]|null $entities           Message entities.
  * @property-read User|null                       $left_chat_member   User left.
+ * @property-read User|null                       $new_chat_member    User new.
  */
 class Message extends BaseFluent
 {
@@ -30,6 +31,7 @@ class Message extends BaseFluent
         $this->instantiate('chat', Chat::class);
         $this->instantiateCollection('entities', MessageEntity::class);
         $this->instantiate('left_chat_member', User::class);
+        $this->instantiate('new_chat_member', User::class);
 
         $this->date = Carbon::createFromTimestamp((int) $this->date);
     }

@@ -98,10 +98,11 @@ class BotService implements ServiceContract
     {
         /** @var Message $response */
         $response = $this->requester->request(Message::class, 'sendMessage', array_filter([
-            'chat_id'      => $chatId,
-            'text'         => $text,
-            'parse_mode'   => 'Markdown',
-            'reply_markup' => $replyMarkup !== null
+            'chat_id'                  => $chatId,
+            'text'                     => $text,
+            'parse_mode'               => 'Markdown',
+            'disable_web_page_preview' => true,
+            'reply_markup'             => $replyMarkup !== null
                 ? json_encode($replyMarkup)
                 : null,
         ]));
