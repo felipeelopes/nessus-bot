@@ -36,7 +36,6 @@ class RoutesProvider extends ServiceProvider
     public function map(): void
     {
         $routeRegistrar = new RouteRegistrar(app('router'));
-        $routeRegistrar->attribute('middleware', 'web');
         $routeRegistrar->attribute('namespace', $this->namespace);
         $routeRegistrar->group(Closure::fromCallable([ $this, 'routes' ]));
     }

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Services\Telegram;
 
 use Application\Adapters\Telegram\Chat;
+use Application\Adapters\Telegram\InlineKeyboardButton;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\User;
 use Application\Services\Contracts\ServiceContract;
@@ -12,6 +13,8 @@ use Application\Services\Requester\RequesterService;
 
 class BotService implements ServiceContract
 {
+    public const QUERY_CANCEL = 'QueryCancel';
+
     /**
      * Requester Service instance.
      * @var RequesterService
@@ -44,6 +47,18 @@ class BotService implements ServiceContract
         $this->requester->request(null, 'deleteMessage', [
             'chat_id'    => $chatID,
             'message_id' => $messageId,
+        ]);
+    }
+
+    /**
+     * Delete the reply markup from message.
+     * @param Message $message Message instance.
+     */
+    public function deleteReplyMarkup(Message $message): void
+    {
+        $this->requester->request(null, 'editMessageReplyMarkup', [
+            'chat_id'    => $message->chat->id,
+            'message_id' => $message->message_id,
         ]);
     }
 
@@ -86,10 +101,29 @@ class BotService implements ServiceContract
             'chat_id'      => $chatId,
             'text'         => $text,
             'parse_mode'   => 'Markdown',
-            'reply_markup' => $replyMarkup,
+            'reply_markup' => $replyMarkup !== null
+                ? json_encode($replyMarkup)
+                : null,
         ]));
 
         return $response;
+    }
+
+    /**
+     * Send a message to an User with the cancel option.
+     * @param string|int $chatId Chat id (eg. user identifier).
+     * @param string     $text   Message text.
+     * @return Message|null
+     */
+    public function sendMessageCancelable($chatId, string $text): ?Message
+    {
+        $inlineKeyboardButton                = new InlineKeyboardButton;
+        $inlineKeyboardButton->text          = 'Cancelar';
+        $inlineKeyboardButton->callback_data = self::QUERY_CANCEL;
+
+        return $this->sendMessage($chatId, $text, [
+            'inline_keyboard' => [ [ $inlineKeyboardButton->toArray() ] ],
+        ]);
     }
 
     /**

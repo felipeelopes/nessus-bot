@@ -59,7 +59,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $gamertag        = trim($update->message->text);
 
         if (!$gamertagService->isValid($gamertag)) {
-            $botService->sendMessage($update->message->from->id, trans('UserRegistration.checkingInvalid', [
+            $botService->sendMessageCancelable($update->message->from->id, trans('UserRegistration.checkingInvalid', [
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
             ]));
 
@@ -71,7 +71,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $gamertagExists = $liveService->gamertagExists($gamertag);
 
         if (!$gamertagExists) {
-            $botService->sendMessage($update->message->from->id, trans('UserRegistration.checkingFail', [
+            $botService->sendMessageCancelable($update->message->from->id, trans('UserRegistration.checkingFail', [
                 'gamertag'      => $gamertag,
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
             ]));
@@ -125,7 +125,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $botService->deleteMessage($update->message->chat->id, $update->message->message_id);
 
         try {
-            $botService->sendMessage(
+            $botService->sendMessageCancelable(
                 $update->message->from->id,
                 trans('UserRegistration.welcome', [
                     'groupTitle'    => self::getGroupTitle($update->message->chat->title),

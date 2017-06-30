@@ -25,8 +25,8 @@ return [
                            "Vamos tentar mais uma vez?\n\n" .
                            "Digite sua Gamertag do jeitinho que aparece no *Xbox Live*.\n\n" .
                            ':whichGamertag',
-    'checkingFail'      => "*Guardião, tente lembrar...*\n\n" .
-                           "A Gamertag *:gamertag* não foi encontrada. Bem, pelo menos eu não consegui achar aqui nos meus arquivos.\n\n" .
+    'checkingFail'      => "*Guardião, tente se lembrar melhor...*\n\n" .
+                           "A Gamertag *:gamertag* não foi encontrada. Bem, pelo menos eu não consegui achar aqui nos arquivos da Vanguarda.\n\n" .
                            "Podemos tentar de novo?\n\n" .
                            "Digite sua Gamertag do jeitinho que aparece no *Xbox Live*.\n\n" .
                            ':whichGamertag',

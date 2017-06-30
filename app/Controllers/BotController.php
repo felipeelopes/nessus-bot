@@ -7,6 +7,7 @@ namespace Application\Controllers;
 use Application\Adapters\Telegram\Update;
 use Application\Controllers\Contracts\RouterRegisterContract;
 use Application\Services\SessionService;
+use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Illuminate\Http\Request;
 use Route;
@@ -19,7 +20,8 @@ class BotController extends Controller implements RouterRegisterContract
     public static function routerRegister(): void
     {
         Route::get('/', 'BotController@hello');
-        Route::post('/' . env('NBOT_WEBHOOK_ID'), 'BotController@process');
+        Route::post('/' . env('NBOT_WEBHOOK_ID'), 'BotController@process')
+            ->middleware('web');
     }
 
     /**
@@ -28,7 +30,7 @@ class BotController extends Controller implements RouterRegisterContract
      */
     public function hello(): string
     {
-        return 'Hello. I\'m NessusBot!';
+        return 'Hello. I\'m the NessusBot!';
     }
 
     /**
@@ -45,12 +47,19 @@ class BotController extends Controller implements RouterRegisterContract
             return $sessionService;
         });
 
-        if (!$requestUpdate->message) {
+        if (!$requestUpdate->message &&
+            !$requestUpdate->callback_query) {
             return;
         }
 
-        /** @var UserRegistrationStrategy $userRegistrationStrategy */
-        $userRegistrationStrategy = app(UserRegistrationStrategy::class);
-        $userRegistrationStrategy->process($requestUpdate);
+        /** @var CancelCommandStrategy $cancelCommand */
+        $cancelCommand = app(CancelCommandStrategy::class);
+        if ($cancelCommand->process($requestUpdate)) {
+            return;
+        }
+
+        /** @var UserRegistrationStrategy $userRegistration */
+        $userRegistration = app(UserRegistrationStrategy::class);
+        $userRegistration->process($requestUpdate);
     }
 }

@@ -15,7 +15,7 @@ class UserRegistrationStrategy implements UpdateStrategyContract
     /**
      * @inheritdoc
      */
-    public function process(Update $update): void
+    public function process(Update $update): ?bool
     {
         /** @var UserService $userService */
         $userService = app(UserService::class);
@@ -24,5 +24,7 @@ class UserRegistrationStrategy implements UpdateStrategyContract
         if ($user === null) {
             SessionService::getInstance()->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
         }
+
+        return null;
     }
 }
