@@ -6,6 +6,7 @@ namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Update;
+use Application\Services\CommandService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
@@ -21,7 +22,7 @@ class EdgeCommandStrategy implements UpdateStrategyContract
     {
         $botService = BotService::getInstance();
 
-        if ($update->message->text === '/start') {
+        if ($update->message->text === CommandService::COMMAND_START) {
             $botService->sendMessage(
                 $update->message->chat->id,
                 trans('UserHome.homeWelcomeBack', [

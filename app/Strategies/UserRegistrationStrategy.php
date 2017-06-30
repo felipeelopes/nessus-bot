@@ -5,7 +5,9 @@ declare(strict_types = 1);
 namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
+use Application\Services\CommandService;
 use Application\Services\SessionService;
+use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\UserRegistrationSessionProcessor;
 use Application\Strategies\Contracts\UpdateStrategyContract;
@@ -36,6 +38,15 @@ class UserRegistrationStrategy implements UpdateStrategyContract
             }
 
             return $serviceResponse !== null;
+        }
+
+        if (strtolower($update->message->text) === CommandService::COMMAND_REGISTER) {
+            BotService::getInstance()->sendMessage(
+                $update->message->from->id,
+                trans('UserRegistration.alreadyRegistered')
+            );
+
+            return true;
         }
 
         return null;

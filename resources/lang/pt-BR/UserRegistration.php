@@ -32,4 +32,9 @@ return [
                            ':whichGamertag',
     'checkingSuccess'   => "Está anotado, guardião *:gamertag*!\n" .
                            'Agora você já pode enviar novas mensagens para o grupo.',
+
+    // Already registered.
+    'alreadyRegistered' => "*Calma lá, guardião!*\n\n" .
+                           "Você já faz parte do clã.\n" .
+                           'E nem pense em sair!',
 ];

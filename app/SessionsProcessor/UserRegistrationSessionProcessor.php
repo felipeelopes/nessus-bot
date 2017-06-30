@@ -7,6 +7,7 @@ namespace Application\SessionsProcessor;
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\Telegram\RequestException;
+use Application\Services\CommandService;
 use Application\Services\GamertagService;
 use Application\Services\Live\LiveService;
 use Application\Services\Telegram\BotService;
@@ -116,7 +117,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         // Ignore registration check if message was sent directly to Bot.
         // Except if is the "/start" command.
         if ($update->message->chat->type === Chat::TYPE_PRIVATE &&
-            $update->message->text !== '/start') {
+            $update->message->text !== CommandService::COMMAND_START &&
+            $update->message->text !== CommandService::COMMAND_REGISTER) {
             return null;
         }
 
