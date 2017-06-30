@@ -10,6 +10,7 @@ use Application\Services\SessionService;
 use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\EdgeCommandStrategy;
 use Application\Strategies\UserRegistrationStrategy;
+use Application\Strategies\UserSubscriptionStrategy;
 use Illuminate\Http\Request;
 use Route;
 
@@ -56,6 +57,16 @@ class BotController extends Controller implements RouterRegisterContract
         /** @var CancelCommandStrategy $cancelCommand */
         $cancelCommand = app(CancelCommandStrategy::class);
         if ($cancelCommand->process($requestUpdate)) {
+            return;
+        }
+
+        /** @var UserSubscriptionStrategy $userRegistration */
+        $userSubscription = app(UserSubscriptionStrategy::class);
+        if ($userSubscription->process($requestUpdate)) {
+            return;
+        }
+
+        if (!$requestUpdate->message->text) {
             return;
         }
 

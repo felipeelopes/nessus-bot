@@ -19,10 +19,6 @@ class UserRegistrationStrategy implements UpdateStrategyContract
      */
     public function process(Update $update): ?bool
     {
-        if (!$update->message) {
-            return null;
-        }
-
         /** @var UserService $userService */
         $userService = app(UserService::class);
         $user        = $userService->get($update->message->from->id);

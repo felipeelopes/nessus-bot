@@ -25,6 +25,6 @@ class User extends Model
      */
     public function gamertags(): HasMany
     {
-        return $this->hasMany('users_gamertags');
+        return $this->hasMany(UserGamertag::class);
     }
 }
