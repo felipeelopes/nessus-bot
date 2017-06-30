@@ -14,7 +14,7 @@ return [
 
     // Cancel header.
     'cancelHeader'        => "*Operação cancelada!*\n\n" .
-                             "Então que tal tentar algo diferente?\n\n" .
+                             "Então, que tal tentar algo diferente?\n\n" .
                              ':homeCommands',
 
     // Command not supported.

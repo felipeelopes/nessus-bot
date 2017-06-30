@@ -19,9 +19,9 @@ class UserRegistrationSessionProcessor extends SessionProcessor
 {
     private const GROUP_ID_KEY = __CLASS__ . '@' . __FUNCTION__ . ':groupId';
 
-    private const MOMENT_CHECK      = 'check';
-    public const  MOMENT_REGISTERED = 'registered';
-    private const MOMENT_WELCOME    = 'welcome';
+    public const  MOMENT_ACCEPTED = 'accepted';
+    private const MOMENT_CHECK    = 'check';
+    private const MOMENT_WELCOME  = 'welcome';
 
     /**
      * Returns the group title if this information is available.
@@ -88,7 +88,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
             ])
         );
 
-        $groupId = Session::get(self::GROUP_ID_KEY);
+        $groupId = Session::get(self::GROUP_ID_KEY) ?? env('NBOT_GROUP_ID');
 
         if ($groupId) {
             $botService->sendSticker($groupId, 'CAADAQADAgADwvySEW6F5o6Z1x05Ag');
@@ -104,7 +104,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $user = UserService::getInstance()->register($update->message->from);
         GamertagService::getInstance()->register($user, $gamertag);
 
-        return self::MOMENT_REGISTERED;
+        return self::MOMENT_ACCEPTED;
     }
 
     /**
@@ -122,7 +122,9 @@ class UserRegistrationSessionProcessor extends SessionProcessor
             return null;
         }
 
-        Session::put(self::GROUP_ID_KEY, $update->message->chat->id);
+        if ($update->message->chat->type !== Chat::TYPE_PRIVATE) {
+            Session::put(self::GROUP_ID_KEY, $update->message->chat->id);
+        }
 
         $botService = BotService::getInstance();
         $botService->deleteMessage($update->message->chat->id, $update->message->message_id);
@@ -145,7 +147,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
                 ])
             );
 
-            return null;
+            return self::MOMENT_ACCEPTED;
         }
 
         return self::MOMENT_CHECK;
