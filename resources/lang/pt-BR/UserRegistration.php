@@ -8,9 +8,9 @@ return [
                            ':whichGamertag',
     'welcomeGroupTitle' => ' para o grupo *:group*',
     'welcomeToGroup'    => "*Vamos celebrar!*\n" .
-                           'Nosso novo guardião, *:fullname* (vulgo *:gamertag*), estará conosco nas próximas missões.',
+                           'Nosso novo guardião, *:fullname* (Gamertag *:gamertag*), estará conosco nas próximas missões.',
     'welcomeAgain'      => "*Vamos celebrar, de novo!*\n" .
-                           'Nosso guardião, *:fullname* (vulgo *:gamertag*), está conosco novamente.',
+                           'Nosso guardião, *:fullname* (Gamertag *:gamertag*), está conosco novamente.',
 
     // Need to talk in private.
     'toPrivate'         => "Seja bem-vindo, *:fullname*!\n\n" .

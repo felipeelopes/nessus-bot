@@ -35,4 +35,31 @@ class Message extends BaseFluent
 
         $this->date = Carbon::createFromTimestamp((int) $this->date);
     }
+
+    /**
+     * Returns a command if available.
+     * @return null|string
+     */
+    public function getCommand(): ?string
+    {
+        $text = $this->text;
+
+        if (strpos($text, '/') === 0) {
+            $posAt = strpos($text, '@');
+
+            if ($posAt !== false) {
+                return strtolower(substr($text, 0, $posAt));
+            }
+
+            $posSpace = strpos($text, ' ');
+
+            if ($posSpace !== false) {
+                return strtolower(substr($text, 0, $posSpace));
+            }
+
+            return strtolower($text);
+        }
+
+        return null;
+    }
 }

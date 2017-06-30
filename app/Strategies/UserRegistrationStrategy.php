@@ -36,7 +36,7 @@ class UserRegistrationStrategy implements UpdateStrategyContract
             return $serviceResponse !== null;
         }
 
-        if (strtolower($update->message->text) === CommandService::COMMAND_REGISTER) {
+        if ($update->message->getCommand() === CommandService::COMMAND_REGISTER) {
             BotService::getInstance()->sendMessage(
                 $update->message->from->id,
                 trans('UserRegistration.alreadyRegistered')

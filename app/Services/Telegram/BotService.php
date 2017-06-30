@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Services\Telegram;
 
+use Application\Adapters\BaseFluent;
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\InlineKeyboardButton;
 use Application\Adapters\Telegram\Message;
@@ -77,14 +78,11 @@ class BotService implements ServiceContract
 
     /**
      * Returns the Bot reference User.
-     * @return User
+     * @return User|BaseFluent
      */
     public function getMe(): ?User
     {
-        /** @var User $response */
-        $response = $this->requester->request(User::class, 'getMe', null, RequesterService::CACHE_HOUR);
-
-        return $response;
+        return $this->requester->request(User::class, 'getMe', null, RequesterService::CACHE_HOUR);
     }
 
     /**
