@@ -1,6 +1,7 @@
 {
     "require": {
         "php": ">=7.1",
+        "guzzlehttp/guzzle": "~6.0",
         "laravel/framework": "5.4.*"
     },
     "require-dev": {

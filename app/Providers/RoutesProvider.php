@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Application\Providers;
 
+use Application\Controllers\BotController;
 use Closure;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Routing\RouteRegistrar;
@@ -24,6 +27,7 @@ class RoutesProvider extends ServiceProvider
      */
     private static function routes(): void
     {
+        BotController::routerRegister();
     }
 
     /**

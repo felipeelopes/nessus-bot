@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Application\Controllers;
 
 use Illuminate\Routing\Controller as BaseController;

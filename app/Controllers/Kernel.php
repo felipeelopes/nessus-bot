@@ -1,9 +1,8 @@
 <?php
+declare(strict_types = 1);
 
 namespace Application\Controllers;
 
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -34,10 +33,6 @@ class Kernel extends HttpKernel
      * @var string[][]
      */
     protected $middlewareGroups = [
-        'web' => [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-        ],
+        'web' => [ StartSession::class ],
     ];
 }
