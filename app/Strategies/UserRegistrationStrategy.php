@@ -17,12 +17,25 @@ class UserRegistrationStrategy implements UpdateStrategyContract
      */
     public function process(Update $update): ?bool
     {
+        if (!$update->message) {
+            return null;
+        }
+
         /** @var UserService $userService */
         $userService = app(UserService::class);
         $user        = $userService->get($update->message->from->id);
 
         if ($user === null) {
-            SessionService::getInstance()->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
+            $sessionService  = SessionService::getInstance();
+            $serviceResponse = $sessionService->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
+
+            if ($serviceResponse === UserRegistrationSessionProcessor::MOMENT_REGISTERED) {
+                $sessionService->setMoment(null);
+
+                return true;
+            }
+
+            return $serviceResponse !== null;
         }
 
         return null;

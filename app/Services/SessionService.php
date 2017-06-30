@@ -49,8 +49,9 @@ class SessionService implements ServiceContract
      * Initialize a new SessionProcess class.
      * @param string $class  Session Process class.
      * @param Update $update Update instance.
+     * @return string|null
      */
-    public function initializeProcessor(string $class, Update $update): void
+    public function initializeProcessor(string $class, Update $update): ?string
     {
         assert(is_subclass_of($class, SessionProcessor::class));
 
@@ -60,6 +61,8 @@ class SessionService implements ServiceContract
         $nextMoment = $classInstance->run($update);
 
         SessionService::getInstance()->setMoment($nextMoment);
+
+        return $nextMoment;
     }
 
     /**

@@ -18,8 +18,9 @@ class UserRegistrationSessionProcessor extends SessionProcessor
 {
     private const GROUP_ID_KEY = __CLASS__ . '@' . __FUNCTION__ . ':groupId';
 
-    private const MOMENT_CHECK   = 'check';
-    private const MOMENT_WELCOME = 'welcome';
+    private const MOMENT_CHECK      = 'check';
+    public const  MOMENT_REGISTERED = 'registered';
+    private const MOMENT_WELCOME    = 'welcome';
 
     /**
      * Returns the group title if this information is available.
@@ -102,7 +103,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $user = UserService::getInstance()->register($update->message->from);
         GamertagService::getInstance()->register($user, $gamertag);
 
-        return null;
+        return self::MOMENT_REGISTERED;
     }
 
     /**

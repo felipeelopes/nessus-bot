@@ -8,6 +8,7 @@ use Application\Adapters\Telegram\Update;
 use Application\Controllers\Contracts\RouterRegisterContract;
 use Application\Services\SessionService;
 use Application\Strategies\CancelCommandStrategy;
+use Application\Strategies\EdgeCommandStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Illuminate\Http\Request;
 use Route;
@@ -60,6 +61,12 @@ class BotController extends Controller implements RouterRegisterContract
 
         /** @var UserRegistrationStrategy $userRegistration */
         $userRegistration = app(UserRegistrationStrategy::class);
-        $userRegistration->process($requestUpdate);
+        if ($userRegistration->process($requestUpdate)) {
+            return;
+        }
+
+        /** @var EdgeCommandStrategy $userRegistration */
+        $edgeCommand = app(EdgeCommandStrategy::class);
+        $edgeCommand->process($requestUpdate);
     }
 }

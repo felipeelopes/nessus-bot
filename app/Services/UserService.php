@@ -51,6 +51,8 @@ class UserService implements ServiceContract
         $user->user_language  = $telegramUser->language_code;
         $user->save();
 
+        Cache::forget(__CLASS__ . '@get:' . $telegramUser->id);
+
         return $user;
     }
 }
