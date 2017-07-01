@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use Application\Controllers\Kernel;
 use Application\Exceptions\Handler as ApplicationExceptionHandler;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
