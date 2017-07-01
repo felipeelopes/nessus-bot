@@ -41,7 +41,12 @@ class BotController extends Controller implements RouterRegisterContract
      */
     public function process(Request $request): void
     {
-        $requestData    = json_decode($request->getContent(), true);
+        $requestData = json_decode($request->getContent(), true);
+
+        if (env('APP_ENV') === 'local') {
+            file_put_contents('debug/' . microtime(true) . '.json', json_encode($requestData, JSON_PRETTY_PRINT));
+        }
+
         $requestUpdate  = new Update($requestData);
         $sessionService = new SessionService($requestUpdate);
 
