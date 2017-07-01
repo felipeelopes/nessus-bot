@@ -2,7 +2,8 @@
     "require": {
         "php": ">=7.1",
         "guzzlehttp/guzzle": "~6.0",
-        "laravel/framework": "5.4.*"
+        "laravel/framework": "5.4.*",
+        "predis/predis": "^1.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "2.*",
@@ -23,19 +24,19 @@
     },
     "scripts": {
         "post-root-package-install": [
-            "php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "php71 -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "php artisan key:generate"
+            "php71 artisan key:generate"
         ],
         "post-install-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "php artisan optimize"
+            "php71 artisan optimize"
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "php artisan ide-helper:generate",
-            "php artisan optimize"
+            "php71 artisan ide-helper:generate",
+            "php71 artisan optimize"
         ]
     },
     "config": {
