@@ -55,6 +55,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             $user        = $userService->get($update->message->left_chat_member->id);
 
             if ($update->message->left_chat_member->id !== $update->message->from->id) {
+                $botService->sendSticker($update->message->chat->id, 'CAADAQADBwADwvySEXi2rT98M7GIAg');
                 $botService->sendMessage(
                     $update->message->chat->id,
                     trans('UserSubscription.userLeftAdmin', [
@@ -65,6 +66,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 );
             }
             else if ($user === null) {
+                $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');
                 $botService->sendMessage(
                     $update->message->chat->id,
                     trans('UserSubscription.userLeftUnknown')
@@ -75,6 +77,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 $userGamertags = $user->gamertags->first();
 
                 if ($userGamertags) {
+                    $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');
                     $botService->sendMessage(
                         $update->message->chat->id,
                         trans('UserSubscription.userLeftKnown', [
