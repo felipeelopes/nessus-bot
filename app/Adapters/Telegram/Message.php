@@ -42,22 +42,20 @@ class Message extends BaseFluent
      */
     public function getCommand(): ?string
     {
-        $text = $this->text;
+        if (!$this->entities) {
+            return null;
+        }
 
-        if (strpos($text, '/') === 0) {
-            $posAt = strpos($text, '@');
+        foreach ($this->entities as $entity) {
+            $botCommand = $entity->bot_command;
 
-            if ($posAt !== false) {
-                return strtolower(substr($text, 0, $posAt));
+            if ($botCommand) {
+                if ($entity->offset === 0) {
+                    return $botCommand->command;
+                }
+
+                break;
             }
-
-            $posSpace = strpos($text, ' ');
-
-            if ($posSpace !== false) {
-                return strtolower(substr($text, 0, $posSpace));
-            }
-
-            return strtolower($text);
         }
 
         return null;

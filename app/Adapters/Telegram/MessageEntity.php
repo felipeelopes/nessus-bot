@@ -53,7 +53,7 @@ class MessageEntity extends BaseFluent
 
             $this->bot_command = new MessageEntityBotCommand([
                 'bot'      => '@' . $botName,
-                'command'  => $botCommand,
+                'command'  => strtolower($botCommand),
                 'argument' => substr($parentMessage->text, $this->length + 1),
             ]);
         }
