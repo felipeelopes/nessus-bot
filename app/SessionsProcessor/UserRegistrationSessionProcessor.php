@@ -98,7 +98,9 @@ class UserRegistrationSessionProcessor extends SessionProcessor
 
         $botService->sendMessage(
             $update->message->from->id,
-            trans('UserRegistration.checkingSuccess')
+            trans('UserRegistration.checkingSuccess', [
+                'rules' => trans('UserRules.followIt'),
+            ])
         );
 
         $groupId = Session::get(self::GROUP_ID_KEY) ?? env('NBOT_GROUP_ID');

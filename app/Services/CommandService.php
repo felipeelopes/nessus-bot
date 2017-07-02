@@ -8,5 +8,6 @@ class CommandService
 {
     public const COMMAND_COMMANDS = '/Comandos';
     public const COMMAND_REGISTER = '/Registrar';
+    public const COMMAND_RULES    = '/Regras';
     public const COMMAND_START    = '/start';
 }

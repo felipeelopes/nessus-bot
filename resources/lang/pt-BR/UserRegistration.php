@@ -29,7 +29,8 @@ return [
                            "Digite sua Gamertag do jeitinho que aparece no *Xbox Live*.\n\n" .
                            ':whichGamertag',
     'checkingSuccess'   => "*Está anotado, guardião*!\n" .
-                           'Agora você já pode enviar mensagens no grupo.',
+                           "Agora você já pode enviar mensagens no grupo.\n\n" .
+                           ':rules',
 
     // Already registered.
     'alreadyRegistered' => "*Calma lá, guardião!*\n\n" .

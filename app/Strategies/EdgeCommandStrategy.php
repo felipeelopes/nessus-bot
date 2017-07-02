@@ -43,6 +43,15 @@ class EdgeCommandStrategy implements UpdateStrategyContract
             return true;
         }
 
+        if ($update->message->isCommand(CommandService::COMMAND_RULES)) {
+            $botService->sendMessage(
+                $update->message->chat->id,
+                trans('UserRules.followIt')
+            );
+
+            return true;
+        }
+
         if ($update->message &&
             $update->message->chat->type === Chat::TYPE_PRIVATE) {
             $botService->sendMessage(
