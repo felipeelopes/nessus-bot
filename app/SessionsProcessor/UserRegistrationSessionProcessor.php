@@ -7,6 +7,7 @@ namespace Application\SessionsProcessor;
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\Telegram\RequestException;
+use Application\Services\Assertions\EventService;
 use Application\Services\CommandService;
 use Application\Services\GamertagService;
 use Application\Services\Live\LiveService;
@@ -18,6 +19,13 @@ use Session;
 
 class UserRegistrationSessionProcessor extends SessionProcessor
 {
+    public const EVENT_CHECK_GAMERTAG_INVALID   = 'CheckGamertagInvalid';
+    public const EVENT_CHECK_GAMERTAG_NOT_FOUND = 'CheckGamertagNotFound';
+    public const EVENT_CHECK_GAMERTAG_SUCCESS   = 'CheckGamertagSuccess';
+    public const EVENT_DELETE_MESSAGE           = 'DeleteMessage';
+    public const EVENT_PRIVATE_WELCOME          = 'PrivateWelcome';
+    public const EVENT_PUBLIC_MESSAGE           = 'PublicWelcome';
+
     private const GROUP_ID_KEY = __CLASS__ . '@' . __FUNCTION__ . ':groupId';
 
     public const  MOMENT_ACCEPTED = 'accepted';
@@ -66,6 +74,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
             ]));
 
+            assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_INVALID));
+
             return self::MOMENT_CHECK;
         }
 
@@ -79,6 +89,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
             ]));
 
+            assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_NOT_FOUND));
+
             return self::MOMENT_CHECK;
         }
 
@@ -91,19 +103,19 @@ class UserRegistrationSessionProcessor extends SessionProcessor
 
         $groupId = Session::get(self::GROUP_ID_KEY) ?? env('NBOT_GROUP_ID');
 
-        if ($groupId) {
-            $botService->sendSticker($groupId, 'CAADAQADAgADwvySEW6F5o6Z1x05Ag');
-            $botService->sendMessage(
-                $groupId,
-                trans('UserRegistration.welcomeToGroup', [
-                    'fullname' => $update->message->from->getFullname(),
-                    'gamertag' => $gamertag,
-                ])
-            );
-        }
+        $botService->sendSticker($groupId, 'CAADAQADAgADwvySEW6F5o6Z1x05Ag');
+        $botService->sendMessage(
+            $groupId,
+            trans('UserRegistration.welcomeToGroup', [
+                'fullname' => $update->message->from->getFullname(),
+                'gamertag' => $gamertag,
+            ])
+        );
 
         $user = UserService::getInstance()->register($update->message->from);
         GamertagService::getInstance()->register($user, $gamertag);
+
+        assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_SUCCESS));
 
         return self::MOMENT_ACCEPTED;
     }
@@ -127,6 +139,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
             Session::put(self::GROUP_ID_KEY, $update->message->chat->id);
         }
 
+        assert(EventService::getInstance()->register(self::EVENT_DELETE_MESSAGE));
+
         $botService = BotService::getInstance();
         $botService->deleteMessage($update->message->chat->id, $update->message->message_id);
 
@@ -138,6 +152,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
                     'whichGamertag' => trans('UserRegistration.whichGamertag'),
                 ])
             );
+
+            assert(EventService::getInstance()->register(self::EVENT_PRIVATE_WELCOME));
         }
         catch (RequestException $requestException) {
             $botService->sendMessage(
@@ -147,6 +163,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
                     'botname'  => $botService->getMe()->username,
                 ])
             );
+
+            assert(EventService::getInstance()->register(self::EVENT_PUBLIC_MESSAGE));
 
             return self::MOMENT_ACCEPTED;
         }

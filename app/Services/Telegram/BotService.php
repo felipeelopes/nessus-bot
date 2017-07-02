@@ -11,7 +11,7 @@ use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\User;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
-use Application\Services\Requester\RequesterService;
+use Application\Services\Requester\Telegram\RequesterService;
 
 class BotService implements ServiceContract
 {
@@ -28,7 +28,8 @@ class BotService implements ServiceContract
      */
     public function __construct()
     {
-        $this->requester = new RequesterService(__CLASS__, sprintf('https://api.telegram.org/bot%s/', env('NBOT_TOKEN')));
+        $mockupService   = MockupService::getInstance();
+        $this->requester = $mockupService->newInstance(RequesterService::class, [ __CLASS__, sprintf('https://api.telegram.org/bot%s/', env('NBOT_TOKEN')) ]);
     }
 
     /**

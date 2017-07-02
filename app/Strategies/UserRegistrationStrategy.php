@@ -28,7 +28,7 @@ class UserRegistrationStrategy implements UpdateStrategyContract
             $sessionService  = SessionService::getInstance();
             $serviceResponse = $sessionService->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
 
-            if ($serviceResponse === UserRegistrationSessionProcessor::MOMENT_ACCEPTED) {
+            if ($serviceResponse === UserRegistrationSessionProcessor::class . '@' . UserRegistrationSessionProcessor::MOMENT_ACCEPTED) {
                 $sessionService->setMoment(null);
 
                 return true;

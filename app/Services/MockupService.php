@@ -21,6 +21,12 @@ class MockupService
     private $mockupClasses = [];
 
     /**
+     * Store the mockup providers.
+     * @var callable[]
+     */
+    private $mockupProviders = [];
+
+    /**
      * Store the singleton instances.
      * @var object[]
      */
@@ -40,6 +46,21 @@ class MockupService
     }
 
     /**
+     * Call a mockup provider.
+     * @param string     $reference Provider reference (eg. class and function name).
+     * @param array|null $arguments Provider arguments.
+     * @return mixed|null
+     */
+    public function callProvider(string $reference, ?array $arguments = null)
+    {
+        if (array_key_exists($reference, $this->mockupProviders)) {
+            return call_user_func_array($this->mockupProviders[$reference], $arguments);
+        }
+
+        return null;
+    }
+
+    /**
      * Return a singleton instance of a class.
      * If singleton is not defined here, it is created without arguments.
      * @param string $class Class name.
@@ -52,6 +73,22 @@ class MockupService
         }
 
         return $this->singletons[$class];
+    }
+
+    /**
+     * Mockup an original class to another.
+     * @param string      $originalClass Original class name.
+     * @param null|string $targetClass   Target class name.
+     */
+    public function mockup(string $originalClass, ?string $targetClass = null): void
+    {
+        if ($targetClass === null) {
+            unset($this->mockupClasses[$originalClass]);
+
+            return;
+        }
+
+        $this->mockupClasses[$originalClass] = $targetClass;
     }
 
     /**
@@ -69,6 +106,16 @@ class MockupService
         $reflectionClass = new ReflectionClass($class);
 
         return $reflectionClass->newInstanceArgs($constructorArguments ?? []);
+    }
+
+    /**
+     * Register a mockup provider.
+     * @param string   $reference
+     * @param callable $callable
+     */
+    public function registerProvider(string $reference, callable $callable): void
+    {
+        $this->mockupProviders[$reference] = $callable;
     }
 
     /**
