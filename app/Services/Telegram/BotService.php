@@ -6,17 +6,15 @@ namespace Application\Services\Telegram;
 
 use Application\Adapters\BaseFluent;
 use Application\Adapters\Telegram\Chat;
-use Application\Adapters\Telegram\InlineKeyboardButton;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\User;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Telegram\RequesterService;
+use Application\Strategies\CancelCommandStrategy;
 
 class BotService implements ServiceContract
 {
-    public const QUERY_CANCEL = 'QueryCancel';
-
     /**
      * Requester Service instance.
      * @var RequesterService
@@ -118,13 +116,10 @@ class BotService implements ServiceContract
      */
     public function sendMessageCancelable($chatId, string $text): ?Message
     {
-        $inlineKeyboardButton                = new InlineKeyboardButton;
-        $inlineKeyboardButton->text          = 'Cancelar';
-        $inlineKeyboardButton->callback_data = self::QUERY_CANCEL;
-
-        return $this->sendMessage($chatId, $text, [
-            'inline_keyboard' => [ [ $inlineKeyboardButton->toArray() ] ],
-        ]);
+        return $this->sendMessage($chatId, trans('CancelCommand.textPlaceholder', [
+            'text'    => $text,
+            'command' => CancelCommandStrategy::CANCEL_COMMAND,
+        ]));
     }
 
     /**

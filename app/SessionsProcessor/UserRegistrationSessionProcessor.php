@@ -129,10 +129,11 @@ class UserRegistrationSessionProcessor extends SessionProcessor
     {
         // Ignore registration check if message was sent directly to Bot.
         // Except if is the "/start" command.
-        if ($update->message->chat->type === Chat::TYPE_PRIVATE &&
-            $update->message->text !== CommandService::COMMAND_START &&
-            $update->message->text !== CommandService::COMMAND_REGISTER) {
-            return null;
+        if ($update->message->chat->type === Chat::TYPE_PRIVATE) {
+            if (!$update->message->isCommand(CommandService::COMMAND_START) &&
+                !$update->message->isCommand(CommandService::COMMAND_REGISTER)) {
+                return null;
+            }
         }
 
         if ($update->message->chat->type !== Chat::TYPE_PRIVATE) {

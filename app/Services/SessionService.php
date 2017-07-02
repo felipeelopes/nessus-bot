@@ -19,6 +19,10 @@ class SessionService implements ServiceContract
     {
         $messageContainer = $update->message ?? $update->callback_query;
 
+        if (!$messageContainer) {
+            return;
+        }
+
         /** @var Session $session */
         $session = app(Session::class);
         $session->setId(sha1((string) $messageContainer->from->id));

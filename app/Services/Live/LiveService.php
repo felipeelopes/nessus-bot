@@ -25,6 +25,7 @@ class LiveService implements ServiceContract
      */
     public function gamertagExists(string $gamertag): bool
     {
+        // @TODO Return Live\Gamertag as result.
         $mockupService = MockupService::getInstance();
         $requester     = $mockupService->newInstance(RequesterService::class, [ __CLASS__, 'https://xboxapi.com/v2/' ]);
         $requesterAuth = [ 'headers' => [ 'X-Auth' => env('LIVE_API_ID') ] ];

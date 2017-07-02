@@ -60,8 +60,7 @@ class BotController extends Controller implements RouterRegisterContract
         $mockupService = MockupService::getInstance();
         $mockupService->singleton(SessionService::class, [ $update ]);
 
-        if (!$update->message &&
-            !$update->callback_query) {
+        if (!$update->message) {
             return;
         }
 

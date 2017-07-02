@@ -37,10 +37,24 @@ class Message extends BaseFluent
     }
 
     /**
+     * Check if the called command.
+     * @param string|null $command Command name.
+     * @return bool
+     */
+    public function isCommand(?string $command = null): bool
+    {
+        if ($command === null) {
+            return $this->getCommand() !== null;
+        }
+
+        return $this->getCommand() === strtolower($command);
+    }
+
+    /**
      * Returns a command if available.
      * @return null|string
      */
-    public function getCommand(): ?string
+    protected function getCommand(): ?string
     {
         if (!$this->entities) {
             return null;

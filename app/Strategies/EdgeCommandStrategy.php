@@ -34,7 +34,7 @@ class EdgeCommandStrategy implements UpdateStrategyContract
             return true;
         }
 
-        if ($update->message->getCommand() === CommandService::COMMAND_COMMANDS) {
+        if ($update->message->isCommand(CommandService::COMMAND_COMMANDS)) {
             $botService->sendMessage(
                 $update->message->from->id,
                 trans('UserHome.homeCommands')

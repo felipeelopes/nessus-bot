@@ -11,22 +11,24 @@ use Application\Strategies\Contracts\UpdateStrategyContract;
 
 class CancelCommandStrategy implements UpdateStrategyContract
 {
+    public const CANCEL_COMMAND = '/Cancelar';
+
     /**
      * @inheritdoc
      */
     public function process(Update $update): ?bool
     {
-        if ($update->callback_query !== null &&
-            $update->callback_query->data === BotService::QUERY_CANCEL) {
+        if ($update->message->isCommand()) {
             SessionService::getInstance()->setMoment(null);
 
-            BotService::getInstance()->deleteReplyMarkup($update->callback_query->message);
-            BotService::getInstance()->sendMessage(
-                $update->callback_query->message->chat->id,
-                trans('UserHome.cancelHeader', [ 'homeCommands' => trans('UserHome.homeCommands'), ])
-            );
+            if ($update->message->isCommand(self::CANCEL_COMMAND)) {
+                BotService::getInstance()->sendMessage(
+                    $update->message->chat->id,
+                    trans('UserHome.cancelHeader', [ 'homeCommands' => trans('UserHome.homeCommands'), ])
+                );
 
-            return true;
+                return true;
+            }
         }
 
         return null;
