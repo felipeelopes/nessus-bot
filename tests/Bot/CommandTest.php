@@ -8,8 +8,6 @@ use Application\Adapters\Telegram\RequestResponse;
 use Application\Exceptions\Telegram\RequestException;
 use Application\Services\Assertions\EventService;
 use Application\Services\MockupService;
-use Application\Services\Requester\Live\RequesterService as LiveRequesterService;
-use Application\Services\Requester\Telegram\RequesterService as TelegramRequesterService;
 use Application\SessionsProcessor\UserRegistrationSessionProcessor;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use PHPUnit\Framework\TestCase;
@@ -28,12 +26,16 @@ class CommandTest extends CommandBase
     {
         $mockupService = MockupService::getInstance();
 
-        $mockupService->mockup(TelegramRequesterService::class, TelegramRequesterServiceMockup::class);
-        $mockupService->registerProvider(TelegramRequesterServiceMockup::class, function (string $method, string $action, array $params) {
-            if ($action === 'sendMessage' && array_get($params, 'query.reply_markup')) {
-                throw new RequestException(new RequestResponse([ 'description' => '403 Forbidden' ]));
+        $mockupServiceThrowFirstOnly = true;
+        $mockupService->registerProvider(
+            TelegramRequesterServiceMockup::class,
+            function (string $method, string $action, array $params) use (&$mockupServiceThrowFirstOnly) {
+                if ($action === 'sendMessage' && $mockupServiceThrowFirstOnly === true) {
+                    $mockupServiceThrowFirstOnly = false;
+                    throw new RequestException(new RequestResponse([ 'description' => '403 Forbidden' ]));
+                }
             }
-        });
+        );
 
         $this->assertPublicMessage('First Message with Bot still not Started', function (EventService $eventService) {
             $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_DELETE_MESSAGE));
@@ -49,7 +51,6 @@ class CommandTest extends CommandBase
             $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_PRIVATE_WELCOME));
         });
 
-        $mockupService->mockup(LiveRequesterService::class, LiveRequesterServiceMockup::class);
         $mockupService->registerProvider(LiveRequesterServiceMockup::class, function () {
             return null;
         });
@@ -64,7 +65,7 @@ class CommandTest extends CommandBase
         });
 
         $mockupService->registerProvider(LiveRequesterServiceMockup::class, function () {
-            return json_encode([ 'id' => 123 ]);
+            return json_encode([ 'id' => 123, 'Gamertag' => 'ValidGamertag' ]);
         });
 
         // Now we mock to be found.
@@ -81,8 +82,5 @@ class CommandTest extends CommandBase
         $this->assertPublicMessage('First Public Message', function (EventService $eventService) {
             $this->assertFalse($eventService->has(UserRegistrationSessionProcessor::EVENT_DELETE_MESSAGE));
         });
-
-        $mockupService->mockup(TelegramRequesterService::class);
-        $mockupService->mockup(LiveRequesterService::class);
     }
 }

@@ -10,9 +10,13 @@ use Application\Controllers\BotController;
 use Application\Controllers\Kernel;
 use Application\Services\Assertions\EventService;
 use Application\Services\MockupService;
+use Application\Services\Requester\Live\RequesterService as LiveRequesterService;
+use Application\Services\Requester\Telegram\RequesterService as TelegramRequesterService;
 use Artisan;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
+use Tests\Mockups\Requester\Live\RequesterServiceMockup as LiveRequesterServiceMockup;
+use Tests\Mockups\Requester\Telegram\RequesterServiceMockup as TelegramRequesterServiceMockup;
 
 /**
  * @mixin TestCase
@@ -33,6 +37,10 @@ abstract class CommandBase extends TestCase
         Artisan::call('migrate');
 
         MockupService::getInstance()->singleton(EventService::class);
+
+        $mockupService = MockupService::getInstance();
+        $mockupService->mockup(TelegramRequesterService::class, TelegramRequesterServiceMockup::class);
+        $mockupService->mockup(LiveRequesterService::class, LiveRequesterServiceMockup::class);
     }
 
     /**
@@ -41,6 +49,10 @@ abstract class CommandBase extends TestCase
     public static function tearDownAfterClass(): void
     {
         Artisan::call('migrate:rollback');
+
+        $mockupService = MockupService::getInstance();
+        $mockupService->mockup(TelegramRequesterService::class);
+        $mockupService->mockup(LiveRequesterService::class);
     }
 
     /**
