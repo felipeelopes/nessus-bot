@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Services\Live;
 
+use Application\Adapters\Live\Gamertag;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Live\RequesterService;
@@ -21,22 +22,29 @@ class LiveService implements ServiceContract
     /**
      * Check if the Gamertag does exists.
      * @param string $gamertag Gamertag name.
-     * @return bool
+     * @return Gamertag|null
      */
-    public function gamertagExists(string $gamertag): bool
+    public function getGamertag(string $gamertag): ?Gamertag
     {
-        // @TODO Return Live\Gamertag as result.
         $mockupService = MockupService::getInstance();
         $requester     = $mockupService->newInstance(RequesterService::class, [ __CLASS__, 'https://xboxapi.com/v2/' ]);
         $requesterAuth = [ 'headers' => [ 'X-Auth' => env('LIVE_API_ID') ] ];
         $response      = $requester->requestRaw('GET', sprintf('%s/profile', $gamertag), $requesterAuth, RequesterService::CACHE_HOUR);
 
         if (!$response) {
-            return false;
+            return null;
         }
 
         $responseJson = json_decode($response, true);
+        $gamertagId   = array_get($responseJson, 'id');
 
-        return array_get($responseJson, 'id') !== null;
+        if ($gamertagId === null) {
+            return null;
+        }
+
+        return new Gamertag([
+            'id'    => $gamertagId,
+            'value' => array_get($responseJson, 'Gamertag'),
+        ]);
     }
 }

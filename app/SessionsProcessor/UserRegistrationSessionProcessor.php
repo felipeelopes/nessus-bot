@@ -80,10 +80,10 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         }
 
         /** @var LiveService $liveService */
-        $liveService    = MockupService::getInstance()->instance(LiveService::class);
-        $gamertagExists = $liveService->gamertagExists($gamertag);
+        $liveService      = MockupService::getInstance()->instance(LiveService::class);
+        $gamertagInstance = $liveService->getGamertag($gamertag);
 
-        if (!$gamertagExists) {
+        if (!$gamertagInstance) {
             $botService->sendMessageCancelable($update->message->from->id, trans('UserRegistration.checkingFail', [
                 'gamertag'      => $gamertag,
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
@@ -94,11 +94,11 @@ class UserRegistrationSessionProcessor extends SessionProcessor
             return self::MOMENT_CHECK;
         }
 
+        $gamertag = $gamertagInstance->value;
+
         $botService->sendMessage(
             $update->message->from->id,
-            trans('UserRegistration.checkingSuccess', [
-                'gamertag' => $gamertag,
-            ])
+            trans('UserRegistration.checkingSuccess')
         );
 
         $groupId = Session::get(self::GROUP_ID_KEY) ?? env('NBOT_GROUP_ID');
@@ -113,7 +113,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         );
 
         $user = UserService::getInstance()->register($update->message->from);
-        GamertagService::getInstance()->register($user, $gamertag);
+        GamertagService::getInstance()->register($user, $gamertagInstance);
 
         assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_SUCCESS));
 

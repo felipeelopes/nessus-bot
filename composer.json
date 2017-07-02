@@ -1,6 +1,7 @@
 {
     "require": {
         "php": ">=7.1",
+        "doctrine/dbal": "~2.0",
         "guzzlehttp/guzzle": "~6.0",
         "laravel/framework": "5.4.*",
         "predis/predis": "^1.1"

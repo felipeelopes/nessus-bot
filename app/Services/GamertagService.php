@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Services;
 
+use Application\Adapters\Live\Gamertag;
 use Application\Models\User;
 use Application\Models\UserGamertag;
 use Application\Services\Contracts\ServiceContract;
@@ -30,15 +31,16 @@ class GamertagService implements ServiceContract
 
     /**
      * Register a new Gamertag to User.
-     * @param User   $user          User instance.
-     * @param string $gamertagValue Gamertag value.
+     * @param User     $user             User instance.
+     * @param Gamertag $gamertagInstance Gamertag instance.
      * @return UserGamertag
      */
-    public function register(User $user, string $gamertagValue): UserGamertag
+    public function register(User $user, Gamertag $gamertagInstance): UserGamertag
     {
         $gamertag                 = new UserGamertag;
         $gamertag->user_id        = $user->id;
-        $gamertag->gamertag_value = $gamertagValue;
+        $gamertag->gamertag_id    = $gamertagInstance->id;
+        $gamertag->gamertag_value = $gamertagInstance->value;
         $gamertag->save();
 
         return $gamertag;

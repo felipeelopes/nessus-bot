@@ -3,10 +3,10 @@
 declare(strict_types = 1);
 
 return [
-    'welcome'           => "*Olá, guardião!*\n\n" .
-                           "Antes de enviar novas mensagens:groupTitle, precisamos saber de apenas uma coisa:\n\n" .
+    'welcome'           => "*Olá, guardião!*\n" .
+                           "Precisamos de uma informação antes de enviar mensagens:groupTitle.\n\n" .
                            ':whichGamertag',
-    'welcomeGroupTitle' => ' para o grupo *:group*',
+    'welcomeGroupTitle' => ' no grupo *:group*',
     'welcomeToGroup'    => "*Vamos celebrar!*\n" .
                            'Nosso novo guardião, *:fullname* (Gamertag *:gamertag*), estará conosco nas próximas missões.',
     'welcomeAgain'      => "*Vamos celebrar, de novo!*\n" .
@@ -22,18 +22,14 @@ return [
 
     // Checking process.
     'checking'          => "Certo, *:gamertag*...\nDeixa eu verificar aqui... e...",
-    'checkingInvalid'   => "*Segure a emoção, guardião!*\n\n" .
-                           "Essa Gamertag pareceu meio confusa...\n" .
-                           "Vamos tentar mais uma vez?\n\n" .
+    'checkingInvalid'   => "*Não consegui entender essa Gamertag, guardião...*\n" .
                            "Digite sua Gamertag do jeitinho que aparece no *Xbox Live*.\n\n" .
                            ':whichGamertag',
-    'checkingFail'      => "*Guardião, tente se lembrar melhor...*\n\n" .
-                           "A Gamertag *:gamertag* não foi encontrada. Bem, pelo menos eu não consegui achar aqui nos arquivos da Vanguarda.\n\n" .
-                           "Podemos tentar de novo?\n\n" .
+    'checkingFail'      => "*Não encontrei essa Gamertag, guardião...*\n" .
                            "Digite sua Gamertag do jeitinho que aparece no *Xbox Live*.\n\n" .
                            ':whichGamertag',
-    'checkingSuccess'   => "Está anotado, guardião *:gamertag*!\n" .
-                           'Agora você já pode enviar novas mensagens para o grupo.',
+    'checkingSuccess'   => "*Está anotado, guardião*!\n" .
+                           'Agora você já pode enviar mensagens no grupo.',
 
     // Already registered.
     'alreadyRegistered' => "*Calma lá, guardião!*\n\n" .
