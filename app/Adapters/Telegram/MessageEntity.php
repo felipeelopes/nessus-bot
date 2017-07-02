@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Adapters\Telegram;
 
 use Application\Adapters\BaseFluent;
+use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 
 /**
@@ -47,7 +48,7 @@ class MessageEntity extends BaseFluent
 
             if ($botName === null) {
                 /** @var BotService $botService */
-                $botService = app(BotService::class);
+                $botService = MockupService::getInstance()->instance(BotService::class);
                 $botName    = $botService->getMe()->username;
             }
 

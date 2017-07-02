@@ -6,6 +6,7 @@ namespace Application\Controllers;
 
 use Application\Adapters\Telegram\Update;
 use Application\Controllers\Contracts\RouterRegisterContract;
+use Application\Services\MockupService;
 use Application\Services\SessionService;
 use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\EdgeCommandStrategy;
@@ -36,8 +37,8 @@ class BotController extends Controller implements RouterRegisterContract
     }
 
     /**
-     * Process Updates from Telegram.
-     * @param Request $request
+     * Process an Updates request from Telegram.
+     * @param Request $request Telegram request.
      */
     public function process(Request $request): void
     {
@@ -47,42 +48,47 @@ class BotController extends Controller implements RouterRegisterContract
             file_put_contents('debug/' . microtime(true) . '.json', json_encode($requestData, JSON_PRETTY_PRINT));
         }
 
-        $requestUpdate  = new Update($requestData);
-        $sessionService = new SessionService($requestUpdate);
+        $this->processUpdate(new Update($requestData));
+    }
 
-        app()->singleton(SessionService::class, function () use ($sessionService) {
-            return $sessionService;
-        });
+    /**
+     * Process an Update instance.
+     * @param Update $update Update instance.
+     */
+    public function processUpdate(Update $update): void
+    {
+        $mockupService = MockupService::getInstance();
+        $mockupService->singleton(SessionService::class, [ $update ]);
 
-        if (!$requestUpdate->message &&
-            !$requestUpdate->callback_query) {
+        if (!$update->message &&
+            !$update->callback_query) {
             return;
         }
 
         /** @var CancelCommandStrategy $cancelCommand */
-        $cancelCommand = app(CancelCommandStrategy::class);
-        if ($cancelCommand->process($requestUpdate)) {
+        $cancelCommand = $mockupService->instance(CancelCommandStrategy::class);
+        if ($cancelCommand->process($update)) {
             return;
         }
 
         /** @var UserSubscriptionStrategy $userRegistration */
-        $userSubscription = app(UserSubscriptionStrategy::class);
-        if ($userSubscription->process($requestUpdate)) {
+        $userSubscription = $mockupService->instance(UserSubscriptionStrategy::class);
+        if ($userSubscription->process($update)) {
             return;
         }
 
-        if (!$requestUpdate->message->text) {
+        if (!$update->message->text) {
             return;
         }
 
         /** @var UserRegistrationStrategy $userRegistration */
-        $userRegistration = app(UserRegistrationStrategy::class);
-        if ($userRegistration->process($requestUpdate)) {
+        $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
+        if ($userRegistration->process($update)) {
             return;
         }
 
         /** @var EdgeCommandStrategy $userRegistration */
-        $edgeCommand = app(EdgeCommandStrategy::class);
-        $edgeCommand->process($requestUpdate);
+        $edgeCommand = $mockupService->instance(EdgeCommandStrategy::class);
+        $edgeCommand->process($update);
     }
 }

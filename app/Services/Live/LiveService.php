@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Services\Live;
 
 use Application\Services\Contracts\ServiceContract;
+use Application\Services\MockupService;
 use Application\Services\Requester\RequesterService;
 
 class LiveService implements ServiceContract
@@ -14,7 +15,7 @@ class LiveService implements ServiceContract
      */
     public static function getInstance(): LiveService
     {
-        return app(LiveService::class);
+        return MockupService::getInstance()->instance(LiveService::class);
     }
 
     /**

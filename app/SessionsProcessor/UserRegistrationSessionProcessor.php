@@ -10,6 +10,7 @@ use Application\Exceptions\Telegram\RequestException;
 use Application\Services\CommandService;
 use Application\Services\GamertagService;
 use Application\Services\Live\LiveService;
+use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionProcessor;
@@ -69,7 +70,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         }
 
         /** @var LiveService $liveService */
-        $liveService    = app(LiveService::class);
+        $liveService    = MockupService::getInstance()->instance(LiveService::class);
         $gamertagExists = $liveService->gamertagExists($gamertag);
 
         if (!$gamertagExists) {

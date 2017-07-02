@@ -30,7 +30,7 @@ class SessionService implements ServiceContract
      */
     public static function getInstance(): SessionService
     {
-        return app(static::class);
+        return MockupService::getInstance()->instance(static::class);
     }
 
     /**
@@ -89,7 +89,6 @@ class SessionService implements ServiceContract
     {
         /** @var Session $session */
         $session = app(Session::class);
-
         $session->put('SessionService@moment', $name);
     }
 }

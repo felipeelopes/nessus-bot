@@ -6,6 +6,7 @@ namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
 use Application\Models\UserGamertag;
+use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\Strategies\Contracts\UpdateStrategyContract;
@@ -21,7 +22,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
 
         if ($update->message->new_chat_member) {
             /** @var UserService $userService */
-            $userService = app(UserService::class);
+            $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($update->message->new_chat_member->id);
 
             if ($user === null) {
@@ -51,7 +52,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
 
         if ($update->message->left_chat_member) {
             /** @var UserService $userService */
-            $userService = app(UserService::class);
+            $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($update->message->left_chat_member->id);
 
             if ($update->message->left_chat_member->id !== $update->message->from->id) {

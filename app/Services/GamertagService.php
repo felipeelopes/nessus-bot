@@ -15,7 +15,7 @@ class GamertagService implements ServiceContract
      */
     public static function getInstance(): GamertagService
     {
-        return app(static::class);
+        return MockupService::getInstance()->instance(static::class);
     }
 
     /**

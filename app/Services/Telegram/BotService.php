@@ -10,6 +10,7 @@ use Application\Adapters\Telegram\InlineKeyboardButton;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\User;
 use Application\Services\Contracts\ServiceContract;
+use Application\Services\MockupService;
 use Application\Services\Requester\RequesterService;
 
 class BotService implements ServiceContract
@@ -35,7 +36,7 @@ class BotService implements ServiceContract
      */
     public static function getInstance(): BotService
     {
-        return app(static::class);
+        return MockupService::getInstance()->instance(static::class);
     }
 
     /**

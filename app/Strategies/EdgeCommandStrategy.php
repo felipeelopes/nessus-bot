@@ -7,6 +7,7 @@ namespace Application\Strategies;
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Update;
 use Application\Services\CommandService;
+use Application\Services\MockupService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
@@ -55,7 +56,7 @@ class EdgeCommandStrategy implements UpdateStrategyContract
         }
 
         /** @var UserService $userService */
-        $userService = app(UserService::class);
+        $userService = MockupService::getInstance()->instance(UserService::class);
         $user        = $userService->get($update->message->from->id);
 
         if ($user === null) {

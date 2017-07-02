@@ -17,7 +17,7 @@ class UserService implements ServiceContract
      */
     public static function getInstance(): UserService
     {
-        return app(static::class);
+        return MockupService::getInstance()->instance(static::class);
     }
 
     /**
