@@ -124,7 +124,9 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
         if (strlen($message) > self::MAX_OBSERVATIONS) {
             $botService->sendPredefinedMessage(
                 $update->message->from->id,
-                trans('GridSubscription.creationWizardObservations'),
+                trans('GridSubscription.errorObservationsTooLong', [
+                    'length' => self::MAX_OBSERVATIONS,
+                ]),
                 PredefinitionService::getInstance()->optionsFrom(trans('GridSubscription.creationWizardObservationsOptions'))
             );
 

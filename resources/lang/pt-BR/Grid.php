@@ -7,8 +7,8 @@ return [
     'headerSubtitle'   => ' (_:subtitle_)',
 
     // Grid properties.
-    'gridOwner'        => "\xE2\x9E\x9C *Organizador*: :value\n",
-    'gridObservations' => "\xE2\x9E\x9C *Observações*: :value\n",
+    'gridOwner'        => "\xE2\x9E\x9C *Organizador*: :value \xF0\x9F\x94\xB9\n",
+    'gridObservations' => "\xE2\x9E\x9C *Exigências*: :value\n",
     'gridTiming'       => "\xE2\x9E\x9C *Horário*: :value\n",
     'gridPlayers'      => "\n*Participantes*: até :value\n",
 
@@ -24,5 +24,6 @@ return [
     'typeOwner'        => "\xF0\x9F\x94\xB9",
 
     // Timing properties.
-    'timingTomorrow'   => ' (*amanhã*, dia :day)',
+    'timingToday'      => 'hoje, às :timing',
+    'timingTomorrow'   => 'amanhã, dia :day às :timing',
 ];

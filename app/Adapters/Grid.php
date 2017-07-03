@@ -40,7 +40,7 @@ class Grid extends BaseFluent
         $userService = MockupService::getInstance()->instance(UserService::class);
         $user        = $userService->get($this->owner->id);
 
-        if ($structureType !== self::STRUCTURE_TYPE_EXAMPLE) {
+        if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             $result .= trans('Grid.gridOwner', [ 'value' => $user->getGamertag()->gamertag_value ]);
         }
 
@@ -49,14 +49,21 @@ class Grid extends BaseFluent
         }
 
         $timingNow  = Carbon::now()->second(0);
-        $timingDiff = $timingNow->diffInSeconds($this->timing, false);
         $timingHour = $this->timing->format('H:i');
 
-        if ($timingDiff <= 0) {
-            $timingHour .= trans('Grid.timingTomorrow', [ 'day' => $this->timing->format('d/m') ]);
+        if ($timingNow->day !== $this->timing->day) {
+            $result .= trans('Grid.gridTiming', [
+                'value' => trans('Grid.timingTomorrow', [
+                    'day'    => $this->timing->format('d/m'),
+                    'timing' => $timingHour,
+                ]),
+            ]);
         }
-
-        $result .= trans('Grid.gridTiming', [ 'value' => $timingHour ]);
+        else {
+            $result .= trans('Grid.gridTiming', [
+                'value' => trans('Grid.timingToday', [ 'timing' => $timingHour ]),
+            ]);
+        }
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);

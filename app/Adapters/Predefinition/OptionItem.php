@@ -9,7 +9,6 @@ use Application\Adapters\BaseFluent;
 /**
  * @property string|null $command     Option command.
  * @property string      $value       Option value.
- * @property string|null $prefix      Option prefix.
  * @property string|null $description Option description.
  */
 class OptionItem extends BaseFluent
@@ -20,20 +19,10 @@ class OptionItem extends BaseFluent
      */
     public function getDescription(): ?string
     {
-        if (!$this->value) {
+        if ($this->description) {
             return $this->description;
         }
 
-        $result = $this->value;
-
-        if ($this->prefix) {
-            $result = sprintf('*%s:* %s', $this->prefix, $result);
-        }
-
-        if ($this->description) {
-            $result = sprintf('%s (%s)', $result, $this->description);
-        }
-
-        return $result;
+        return $this->value;
     }
 }
