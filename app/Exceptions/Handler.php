@@ -17,7 +17,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $eexception): void
     {
-        if ($this->shouldReport($eexception)) {
+        if ($this->shouldReport($eexception) && env('SENTRY_DSN')) {
             /** @var \Raven_Client $sentry */
             $sentry = app('sentry');
             $sentry->captureException($eexception, [
