@@ -9,14 +9,14 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 /**
- * @property-read int                             $message_id         Message id.
- * @property-read User|null                       $from               Message sender.
- * @property-read Carbon                          $date               Message unixtime.
- * @property-read Chat                            $chat               Message chat.
- * @property-read string|null                     $text               Message text.
- * @property-read Collection|MessageEntity[]|null $entities           Message entities.
- * @property-read User|null                       $left_chat_member   User left.
- * @property-read User|null                       $new_chat_member    User new.
+ * @property-read int                        $message_id         Message id.
+ * @property-read User|null                  $from               Message sender.
+ * @property-read Carbon                     $date               Message unixtime.
+ * @property-read Chat                       $chat               Message chat.
+ * @property string|null                     $text               Message text.
+ * @property Collection|MessageEntity[]|null $entities           Message entities.
+ * @property-read User|null                  $left_chat_member   User left.
+ * @property-read User|null                  $new_chat_member    User new.
  */
 class Message extends BaseFluent
 {
@@ -33,28 +33,18 @@ class Message extends BaseFluent
         $this->instantiate('left_chat_member', User::class);
         $this->instantiate('new_chat_member', User::class);
 
-        $this->date = Carbon::createFromTimestamp((int) $this->date);
-    }
-
-    /**
-     * Check if the called command.
-     * @param string|null $command Command name.
-     * @return bool
-     */
-    public function isCommand(?string $command = null): bool
-    {
-        if ($command === null) {
-            return $this->getCommand() !== null;
+        if ($this->text) {
+            $this->text = trim($this->text);
         }
 
-        return $this->getCommand() === strtolower($command);
+        $this->date = Carbon::createFromTimestamp((int) $this->date);
     }
 
     /**
      * Returns a command if available.
      * @return null|string
      */
-    protected function getCommand(): ?string
+    public function getCommand(): ?string
     {
         if (!$this->entities) {
             return null;
@@ -73,5 +63,28 @@ class Message extends BaseFluent
         }
 
         return null;
+    }
+
+    /**
+     * Check if the called command.
+     * @param string|null $command Command name.
+     * @return bool
+     */
+    public function isCommand(?string $command = null): bool
+    {
+        if ($command === null) {
+            return $this->getCommand() !== null;
+        }
+
+        return $this->getCommand() === '/' . strtolower(trans('Command.commands.' . $command . 'Command'));
+    }
+
+    /**
+     * Identify if message is directly to Bot.
+     * @return bool
+     */
+    public function isPrivate(): bool
+    {
+        return $this->chat->type === Chat::TYPE_PRIVATE;
     }
 }

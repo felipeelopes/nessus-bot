@@ -7,6 +7,7 @@ namespace Application\Services;
 use Application\Adapters\Telegram\Update;
 use Application\Services\Contracts\ServiceContract;
 use Application\SessionsProcessor\Definition\SessionProcessor;
+use Application\Types\Process;
 use Illuminate\Contracts\Session\Session;
 
 class SessionService implements ServiceContract
@@ -47,6 +48,18 @@ class SessionService implements ServiceContract
         $session = app(Session::class);
 
         return $session->get('SessionService@moment');
+    }
+
+    /**
+     * Returns the Process instance.
+     * @return Process
+     */
+    public function getProcess(): Process
+    {
+        /** @var Session $session */
+        $session = app(Session::class);
+
+        return $session->get('SessionService@process') ?? new Process;
     }
 
     /**
@@ -94,5 +107,20 @@ class SessionService implements ServiceContract
         /** @var Session $session */
         $session = app(Session::class);
         $session->put('SessionService@moment', $name);
+
+        if ($name === null) {
+            $this->setProcess(null);
+        }
+    }
+
+    /**
+     * Update the Process instance.
+     * @param Process|null $process Session moment name.
+     */
+    public function setProcess(?Process $process): void
+    {
+        /** @var Session $session */
+        $session = app(Session::class);
+        $session->put('SessionService@process', $process);
     }
 }

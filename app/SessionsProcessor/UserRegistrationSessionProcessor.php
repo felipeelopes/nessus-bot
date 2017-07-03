@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Application\SessionsProcessor;
 
-use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\Telegram\RequestException;
 use Application\Services\Assertions\EventService;
@@ -26,23 +25,9 @@ class UserRegistrationSessionProcessor extends SessionProcessor
     public const EVENT_PRIVATE_WELCOME          = 'PrivateWelcome';
     public const EVENT_PUBLIC_MESSAGE           = 'PublicWelcome';
 
-    private const GROUP_ID_KEY = __CLASS__ . '@' . __FUNCTION__ . ':groupId';
-
     public const  MOMENT_ACCEPTED = 'accepted';
     private const MOMENT_CHECK    = 'check';
     private const MOMENT_WELCOME  = 'welcome';
-
-    /**
-     * Returns the group title if this information is available.
-     * @param $groupTitle
-     * @return string|null
-     */
-    private static function getGroupTitle($groupTitle): ?string
-    {
-        return $groupTitle !== null
-            ? trans('UserRegistration.welcomeGroupTitle', [ 'group' => $groupTitle ])
-            : null;
-    }
 
     /**
      * @inheritdoc
@@ -61,7 +46,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
     public function momentCheck(Update $update): ?string
     {
         // Check only if you are talking with the bot.
-        if ($update->message->chat->type !== Chat::TYPE_PRIVATE) {
+        if (!$update->message->isPrivate()) {
             return $this->momentWelcome($update);
         }
 
@@ -70,7 +55,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $gamertag        = trim($update->message->text);
 
         if (!$gamertagService->isValid($gamertag)) {
-            $botService->sendMessageCancelable($update->message->from->id, trans('UserRegistration.checkingInvalid', [
+            $botService->sendCancelableMessage($update->message->from->id, trans('UserRegistration.checkingInvalid', [
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
             ]));
 
@@ -84,7 +69,7 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $gamertagInstance = $liveService->getGamertag($gamertag);
 
         if (!$gamertagInstance) {
-            $botService->sendMessageCancelable($update->message->from->id, trans('UserRegistration.checkingFail', [
+            $botService->sendCancelableMessage($update->message->from->id, trans('UserRegistration.checkingFail', [
                 'gamertag'      => $gamertag,
                 'whichGamertag' => trans('UserRegistration.whichGamertag'),
             ]));
@@ -103,11 +88,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
             ])
         );
 
-        $groupId = Session::get(self::GROUP_ID_KEY) ?? env('NBOT_GROUP_ID');
-
-        $botService->sendSticker($groupId, 'CAADAQADAgADwvySEW6F5o6Z1x05Ag');
-        $botService->sendMessage(
-            $groupId,
+        $botService->sendPublicSticker('CAADAQADAgADwvySEW6F5o6Z1x05Ag');
+        $botService->sendPublicMessage(
             trans('UserRegistration.welcomeToGroup', [
                 'fullname' => $update->message->from->getFullname(),
                 'gamertag' => $gamertag,
@@ -131,15 +113,16 @@ class UserRegistrationSessionProcessor extends SessionProcessor
     {
         // Ignore registration check if message was sent directly to Bot.
         // Except if is the "/start" command.
-        if ($update->message->chat->type === Chat::TYPE_PRIVATE) {
-            if (!$update->message->isCommand(CommandService::COMMAND_START) &&
-                !$update->message->isCommand(CommandService::COMMAND_REGISTER)) {
-                return null;
-            }
+        if ($update->message->isPrivate() &&
+            !$update->message->isCommand(CommandService::COMMAND_START) &&
+            !$update->message->isCommand(CommandService::COMMAND_REGISTER)) {
+            return null;
         }
 
-        if ($update->message->chat->type !== Chat::TYPE_PRIVATE) {
-            Session::put(self::GROUP_ID_KEY, $update->message->chat->id);
+        $groupId = env('NBOT_GROUP_ID');
+
+        if (!$update->message->isPrivate()) {
+            Session::put($groupId, $update->message->chat->id);
         }
 
         assert(EventService::getInstance()->register(self::EVENT_DELETE_MESSAGE));
@@ -148,10 +131,10 @@ class UserRegistrationSessionProcessor extends SessionProcessor
         $botService->deleteMessage($update->message->chat->id, $update->message->message_id);
 
         try {
-            $botService->sendMessageCancelable(
+            $botService->sendCancelableMessage(
                 $update->message->from->id,
                 trans('UserRegistration.welcome', [
-                    'groupTitle'    => self::getGroupTitle($update->message->chat->title),
+                    'groupTitle'    => $botService->getChat($groupId)->title,
                     'whichGamertag' => trans('UserRegistration.whichGamertag'),
                 ])
             );
@@ -162,8 +145,8 @@ class UserRegistrationSessionProcessor extends SessionProcessor
             $botService->sendMessage(
                 $update->message->chat->id,
                 trans('UserRegistration.toPrivate', [
-                    'fullname' => $update->message->from->getFullname(),
-                    'botname'  => $botService->getMe()->username,
+                    'fullname'    => $update->message->from->getFullname(),
+                    'botUsername' => '@' . $botService->getMe()->username,
                 ])
             );
 

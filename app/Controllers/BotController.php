@@ -7,9 +7,13 @@ namespace Application\Controllers;
 use Application\Adapters\Telegram\Update;
 use Application\Controllers\Contracts\RouterRegisterContract;
 use Application\Services\MockupService;
+use Application\Services\PredefinitionService;
 use Application\Services\SessionService;
+use Application\Services\UserService;
 use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\EdgeCommandStrategy;
+use Application\Strategies\GridSubscriptionStrategy;
+use Application\Strategies\PredefinitionStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Application\Strategies\UserSubscriptionStrategy;
 use Illuminate\Http\Request;
@@ -42,13 +46,7 @@ class BotController extends Controller implements RouterRegisterContract
      */
     public function process(Request $request): void
     {
-        $requestData = json_decode($request->getContent(), true);
-
-        if (env('APP_ENV') === 'local') {
-            file_put_contents('debug/' . microtime(true) . '.json', json_encode($requestData, JSON_PRETTY_PRINT));
-        }
-
-        $this->processUpdate(new Update($requestData));
+        $this->processUpdate(new Update(json_decode($request->getContent(), true)));
     }
 
     /**
@@ -59,14 +57,25 @@ class BotController extends Controller implements RouterRegisterContract
     {
         $mockupService = MockupService::getInstance();
         $mockupService->singleton(SessionService::class, [ $update ]);
+        $mockupService->singleton(PredefinitionService::class);
 
         if (!$update->message) {
             return;
         }
 
+        /** @var UserService $userService */
+        $userService = MockupService::getInstance()->instance(UserService::class);
+        $user        = $userService->get($update->message->from->id);
+
+        /** @var PredefinitionStrategy $predefinition */
+        $predefinition = $mockupService->instance(PredefinitionStrategy::class);
+        if ($predefinition->process($user, $update)) {
+            return;
+        }
+
         /** @var CancelCommandStrategy $cancelCommand */
         $cancelCommand = $mockupService->instance(CancelCommandStrategy::class);
-        if ($cancelCommand->process($update)) {
+        if ($cancelCommand->process($user, $update)) {
             return;
         }
 
@@ -76,18 +85,24 @@ class BotController extends Controller implements RouterRegisterContract
             return;
         }
 
-        if (!$update->message->text) {
+        if ($update->message->text === null) {
             return;
         }
 
         /** @var UserRegistrationStrategy $userRegistration */
         $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
-        if ($userRegistration->process($update)) {
+        if ($userRegistration->process($user, $update)) {
+            return;
+        }
+
+        /** @var GridSubscriptionStrategy $gridSubscription */
+        $gridSubscription = $mockupService->instance(GridSubscriptionStrategy::class);
+        if ($gridSubscription->process($user, $update)) {
             return;
         }
 
         /** @var EdgeCommandStrategy $userRegistration */
         $edgeCommand = $mockupService->instance(EdgeCommandStrategy::class);
-        $edgeCommand->process($update);
+        $edgeCommand->process($user, $update);
     }
 }

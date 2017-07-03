@@ -41,6 +41,10 @@ abstract class SessionProcessor
 
         if ($moment !== null &&
             strpos($moment, $momentBase) === 0) {
+            if (!$update->message->isPrivate()) {
+                return null;
+            }
+
             $momentKey = substr($moment, strlen($momentBase));
 
             if ($this->registeredMoments->has($momentKey)) {
@@ -70,7 +74,11 @@ abstract class SessionProcessor
      */
     private function runMoment(callable $callable, Update $update, string $momentBase): ?string
     {
-        $nextMoment = $callable($update);
+        $sessionService = SessionService::getInstance();
+        $process        = $sessionService->getProcess();
+        $nextMoment     = $callable($update, $process);
+
+        $sessionService->setProcess($process);
 
         return $nextMoment !== null
             ? $momentBase . $nextMoment

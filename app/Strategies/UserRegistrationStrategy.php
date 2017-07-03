@@ -5,25 +5,20 @@ declare(strict_types = 1);
 namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
+use Application\Models\User;
 use Application\Services\CommandService;
-use Application\Services\MockupService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
-use Application\Services\UserService;
 use Application\SessionsProcessor\UserRegistrationSessionProcessor;
-use Application\Strategies\Contracts\UpdateStrategyContract;
+use Application\Strategies\Contracts\UserStrategyContract;
 
-class UserRegistrationStrategy implements UpdateStrategyContract
+class UserRegistrationStrategy implements UserStrategyContract
 {
     /**
      * @inheritdoc
      */
-    public function process(Update $update): ?bool
+    public function process(?User $user, Update $update): ?bool
     {
-        /** @var UserService $userService */
-        $userService = MockupService::getInstance()->instance(UserService::class);
-        $user        = $userService->get($update->message->from->id);
-
         if ($user === null) {
             $sessionService  = SessionService::getInstance();
             $serviceResponse = $sessionService->initializeProcessor(UserRegistrationSessionProcessor::class, $update);

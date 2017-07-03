@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Tests\Mockups\Requester\Telegram;
 
+use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\RequestResponse;
 use Application\Services\MockupService;
 use Tests\Mockups\Requester\RequesterServiceMockup as RequesterServiceMockupBase;
@@ -29,6 +30,23 @@ class RequesterServiceMockup extends RequesterServiceMockupBase
             return $request->toJson();
         }
 
-        return MockupService::getInstance()->callProvider(static::class, func_get_args());
+        if ($action === 'getChat') {
+            $request = new RequestResponse([
+                'ok'     => true,
+                'result' => [
+                    'id'         => env('NBOT_GROUP_ID'),
+                    'first_name' => 'Bot Group',
+                    'type'       => Chat::TYPE_SUPERGROUP,
+                ],
+            ]);
+
+            return $request->toJson();
+        }
+
+        if ($action === 'sendMessage') {
+            return MockupService::getInstance()->callProvider(static::class, func_get_args());
+        }
+
+        return null;
     }
 }

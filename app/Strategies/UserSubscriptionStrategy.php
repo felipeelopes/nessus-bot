@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
-use Application\Models\UserGamertag;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
@@ -29,14 +28,13 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 $botService->sendMessage(
                     $update->message->chat->id,
                     trans('UserRegistration.toPrivate', [
-                        'fullname' => $update->message->new_chat_member->getFullname(),
-                        'botname'  => $botService->getMe()->username,
+                        'fullname'    => $update->message->new_chat_member->getFullname(),
+                        'botUsername' => $botService->getMe()->username,
                     ])
                 );
             }
             else {
-                /** @var UserGamertag $userGamertags */
-                $userGamertags = $user->gamertags->first();
+                $userGamertags = $user->getGamertag();
 
                 if ($userGamertags) {
                     $botService->sendMessage(
@@ -74,8 +72,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 );
             }
             else {
-                /** @var UserGamertag $userGamertags */
-                $userGamertags = $user->gamertags->first();
+                $userGamertags = $user->getGamertag();
 
                 if ($userGamertags) {
                     $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');

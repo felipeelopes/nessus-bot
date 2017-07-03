@@ -30,8 +30,9 @@ class CommandTest extends CommandBase
         $mockupService->registerProvider(
             TelegramRequesterServiceMockup::class,
             function (string $method, string $action, array $params) use (&$mockupServiceThrowFirstOnly) {
-                if ($action === 'sendMessage' && $mockupServiceThrowFirstOnly === true) {
+                if ($mockupServiceThrowFirstOnly === true) {
                     $mockupServiceThrowFirstOnly = false;
+
                     throw new RequestException(new RequestResponse([ 'description' => '403 Forbidden' ]));
                 }
             }

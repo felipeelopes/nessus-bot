@@ -5,13 +5,15 @@ declare(strict_types = 1);
 namespace Application\Services\Telegram;
 
 use Application\Adapters\BaseFluent;
+use Application\Adapters\Predefinition\OptionItem;
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\User;
+use Application\Services\CommandService;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
+use Application\Services\PredefinitionService;
 use Application\Services\Requester\Telegram\RequesterService;
-use Application\Strategies\CancelCommandStrategy;
 
 class BotService implements ServiceContract
 {
@@ -86,6 +88,39 @@ class BotService implements ServiceContract
     }
 
     /**
+     * Send a "check on private" notification.
+     * @param Message $message Message instance.
+     * @return Message|null
+     */
+    public function notifyPrivateMessage(Message $message): ?Message
+    {
+        if ($message->isPrivate()) {
+            return null;
+        }
+
+        return $this->sendMessage(
+            $message->chat->id,
+            trans('PublicMessages.letsToPrivate', [
+                'botUsername' => '@' . $this->getMe()->username,
+            ])
+        );
+    }
+
+    /**
+     * Send a message to an User with the cancel option.
+     * @param string|int $chatId Chat id (eg. user identifier).
+     * @param string     $text   Message text.
+     * @return Message|null
+     */
+    public function sendCancelableMessage($chatId, string $text): ?Message
+    {
+        return $this->sendMessage($chatId, trans('CancelCommand.textPlaceholder', [
+            'text'    => $text,
+            'command' => '/' . trans('Command.commands.' . CommandService::COMMAND_CANCEL . 'Command'),
+        ]));
+    }
+
+    /**
      * Send a message to an user.
      * @param string|int $chatId      Chat id (eg. user identifier).
      * @param string     $text        Message text.
@@ -97,7 +132,7 @@ class BotService implements ServiceContract
         /** @var Message $response */
         $response = $this->requester->request(Message::class, 'sendMessage', array_filter([
             'chat_id'                  => $chatId,
-            'text'                     => $text,
+            'text'                     => preg_replace('/(\r?\n){3,}/', "\n\n", $text),
             'parse_mode'               => 'Markdown',
             'disable_web_page_preview' => true,
             'reply_markup'             => $replyMarkup !== null
@@ -109,17 +144,42 @@ class BotService implements ServiceContract
     }
 
     /**
-     * Send a message to an User with the cancel option.
-     * @param string|int $chatId Chat id (eg. user identifier).
-     * @param string     $text   Message text.
+     * Send a message with predefined options.
+     * @param string|int  $chatId  Chat id.
+     * @param string|null $text    Message text.
+     * @param array       $options Predefined options.
      * @return Message|null
      */
-    public function sendMessageCancelable($chatId, string $text): ?Message
+    public function sendPredefinedMessage($chatId, ?string $text, array $options): ?Message
     {
-        return $this->sendMessage($chatId, trans('CancelCommand.textPlaceholder', [
-            'text'    => $text,
-            'command' => CancelCommandStrategy::CANCEL_COMMAND,
-        ]));
+        $options[] = new OptionItem([ 'command' => CommandService::COMMAND_CANCEL ]);
+
+        $predefinitionService = PredefinitionService::getInstance();
+        $predefinitionService->setOptions($options);
+
+        $text .= $predefinitionService->buildOptions();
+
+        return $this->sendMessage($chatId, $text);
+    }
+
+    /**
+     * Send a public message.
+     * @param string $message Message to public.
+     * @return Message|null
+     */
+    public function sendPublicMessage(string $message): ?Message
+    {
+        return $this->sendMessage(env('NBOT_GROUP_ID'), $message);
+    }
+
+    /**
+     * Send a Sticker to public.
+     * @param string $sticker Message sticker.
+     * @return Message|null
+     */
+    public function sendPublicSticker(string $sticker): ?Message
+    {
+        return $this->sendSticker(env('NBOT_GROUP_ID'), $sticker);
     }
 
     /**
@@ -130,13 +190,10 @@ class BotService implements ServiceContract
      */
     public function sendSticker($chatId, string $sticker): ?Message
     {
-        /** @var Message $response */
-        $response = $this->requester->request(Message::class, 'sendSticker', [
+        return $this->requester->request(Message::class, 'sendSticker', [
             'chat_id'              => $chatId,
             'sticker'              => $sticker,
             'disable_notification' => true,
         ]);
-
-        return $response;
     }
 }

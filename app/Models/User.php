@@ -27,4 +27,13 @@ class User extends Model
     {
         return $this->hasMany(UserGamertag::class);
     }
+
+    /**
+     * Returns the main Gamertag from User.
+     * @return UserGamertag|null
+     */
+    public function getGamertag(): ?UserGamertag
+    {
+        return $this->gamertags->first();
+    }
 }

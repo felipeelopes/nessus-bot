@@ -4,40 +4,42 @@ declare(strict_types = 1);
 
 namespace Application\Strategies;
 
-use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\Update;
+use Application\Models\User;
 use Application\Services\CommandService;
 use Application\Services\MockupService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
-use Application\Services\UserService;
 use Application\SessionsProcessor\UserRegistrationSessionProcessor;
-use Application\Strategies\Contracts\UpdateStrategyContract;
+use Application\Strategies\Contracts\UserStrategyContract;
 
-class EdgeCommandStrategy implements UpdateStrategyContract
+class EdgeCommandStrategy implements UserStrategyContract
 {
     /**
      * @inheritdoc
      */
-    public function process(Update $update): ?bool
+    public function process(?User $user, Update $update): ?bool
     {
         $botService = BotService::getInstance();
 
-        if ($update->message->text === CommandService::COMMAND_START) {
+        if ($update->message->isCommand(CommandService::COMMAND_START)) {
+            /** @var CommandService $commandService */
+            $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->sendMessage(
                 $update->message->chat->id,
-                trans('UserHome.homeWelcomeBack', [
-                    'homeCommands' => trans('UserHome.homeCommands'),
-                ])
+                trans('UserHome.homeWelcomeBack', [ 'homeCommands' => $commandService->buildList($user) ])
             );
 
             return true;
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_COMMANDS)) {
+            /** @var CommandService $commandService */
+            $commandService = MockupService::getInstance()->instance(CommandService::class);
+            $botService->notifyPrivateMessage($update->message);
             $botService->sendMessage(
                 $update->message->from->id,
-                trans('UserHome.homeCommands')
+                $commandService->buildList($user)
             );
 
             return true;
@@ -53,20 +55,16 @@ class EdgeCommandStrategy implements UpdateStrategyContract
         }
 
         if ($update->message &&
-            $update->message->chat->type === Chat::TYPE_PRIVATE) {
+            $update->message->isPrivate()) {
+            /** @var CommandService $commandService */
+            $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->sendMessage(
                 $update->message->chat->id,
-                trans('UserHome.commandNotSupported', [
-                    'homeCommands' => trans('UserHome.homeCommands'),
-                ])
+                trans('UserHome.commandNotSupported', [ 'homeCommands' => $commandService->buildList($user) ])
             );
 
             return true;
         }
-
-        /** @var UserService $userService */
-        $userService = MockupService::getInstance()->instance(UserService::class);
-        $user        = $userService->get($update->message->from->id);
 
         if ($user === null) {
             SessionService::getInstance()->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
