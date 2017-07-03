@@ -85,6 +85,11 @@ return [
          */
         Application\Providers\ApplicationProvider::class,
         Application\Providers\RoutesProvider::class,
+
+        /**
+         * Vendor service providers...
+         */
+        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
     ],
 
     /**
@@ -123,5 +128,6 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
+        'Sentry'       => Sentry\SentryLaravel\SentryFacade::class,
     ],
 ];

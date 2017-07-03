@@ -4,7 +4,9 @@
         "doctrine/dbal": "~2.0",
         "guzzlehttp/guzzle": "~6.0",
         "laravel/framework": "5.4.*",
-        "predis/predis": "^1.1"
+        "predis/predis": "^1.1",
+        "sentry/sentry": "~1.0",
+        "sentry/sentry-laravel": "~0.7"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "2.*",
