@@ -13,6 +13,17 @@ use Illuminate\Support\Fluent;
 class BaseFluent extends Fluent
 {
     /**
+     * BaseFluent constructor.
+     * @param array|null $attributes
+     */
+    public function __construct($attributes = null)
+    {
+        if ($attributes !== null) {
+            parent::__construct($attributes);
+        }
+    }
+
+    /**
      * Process Fluent data if it is declared and instantiate a new class with this.
      * @param string $key   Data key.
      * @param string $class Data class type.
@@ -44,4 +55,5 @@ class BaseFluent extends Fluent
             }));
         }
     }
+
 }
