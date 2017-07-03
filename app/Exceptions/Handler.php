@@ -18,7 +18,11 @@ class Handler extends ExceptionHandler
     public function report(Exception $eexception): void
     {
         if ($this->shouldReport($eexception)) {
-            app('sentry')->captureException($eexception);
+            /** @var \Raven_Client $sentry */
+            $sentry = app('sentry');
+            $sentry->captureException($eexception, [
+                'extra' => [ '$_POST' => $_POST ],
+            ]);
         }
 
         parent::report($eexception);
