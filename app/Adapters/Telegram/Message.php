@@ -42,9 +42,9 @@ class Message extends BaseFluent
 
     /**
      * Returns a command if available.
-     * @return null|string
+     * @return MessageEntityBotCommand|null
      */
-    public function getCommand(): ?string
+    public function getCommand(): ?MessageEntityBotCommand
     {
         if (!$this->entities) {
             return null;
@@ -55,7 +55,7 @@ class Message extends BaseFluent
 
             if ($botCommand) {
                 if ($entity->offset === 0) {
-                    return $botCommand->command;
+                    return $botCommand;
                 }
 
                 break;
@@ -72,11 +72,17 @@ class Message extends BaseFluent
      */
     public function isCommand(?string $command = null): bool
     {
-        if ($command === null) {
-            return $this->getCommand() !== null;
+        $botCommand = $this->getCommand();
+
+        if ($botCommand === null) {
+            return false;
         }
 
-        return $this->getCommand() === '/' . strtolower(trans('Command.commands.' . $command . 'Command'));
+        if ($command === null) {
+            return $botCommand->command !== null;
+        }
+
+        return $botCommand->command === '/' . strtolower(trans('Command.commands.' . $command . 'Command'));
     }
 
     /**

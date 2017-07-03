@@ -52,10 +52,18 @@ class MessageEntity extends BaseFluent
                 $botName    = $botService->getMe()->username;
             }
 
+            $botArguments = [];
+
+            if (!preg_match('/\/\d/', $botCommand) &&
+                preg_match_all('/(?:(\d+)+_?)+?/', $botCommand, $matches, PREG_SET_ORDER)) {
+                $botArguments = array_pluck($matches, '1');
+                $botCommand   = substr($botCommand, 0, strpos($botCommand, array_get($botArguments, 0)));
+            }
+
             $this->bot_command = new MessageEntityBotCommand([
-                'bot'      => '@' . $botName,
-                'command'  => strtolower($botCommand),
-                'argument' => substr($parentMessage->text, $this->length + 1),
+                'bot'       => '@' . $botName,
+                'command'   => strtolower($botCommand),
+                'arguments' => $botArguments,
             ]);
         }
     }

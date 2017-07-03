@@ -6,9 +6,12 @@ namespace Application\SessionsProcessor;
 
 use Application\Adapters\Grid;
 use Application\Adapters\Telegram\Update;
+use Application\Models\Grid as GridModel;
+use Application\Models\GridSubscription;
 use Application\Services\CommandService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
+use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionProcessor;
 use Application\Types\Process;
 use Carbon\Carbon;
@@ -28,10 +31,11 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
     private const MOMENT_CREATION_CHECK_TIMING_CONFIRM   = 'creationCheckTimingConfirm';
     private const MOMENT_CREATION_CHECK_TITLE            = 'creationCheckTitle';
     private const MOMENT_CREATION_PUBLISH                = 'creationPublish';
-    private const MOMENT_CREATION_WELCOME                = 'creationWelcome';
+    private const MOMENT_WELCOME                         = 'welcome';
 
-    private const PROCESS_OBSERVATIONS = 'observations';
+    private const PROCESS_GRID         = 'grid';
     private const PROCESS_PLAYERS      = 'players';
+    private const PROCESS_REQUIREMENTS = 'requirements';
     private const PROCESS_SUBTITLE     = 'subtitle';
     private const PROCESS_TIMING       = 'timing';
     private const PROCESS_TITLE        = 'title';
@@ -41,7 +45,7 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
      */
     public function initialize(): void
     {
-        $this->register(self::MOMENT_CREATION_WELCOME, [ $this, 'momentCreationWizard' ]);
+        $this->register(self::MOMENT_WELCOME, [ $this, 'momentWelcome' ]);
         $this->register(self::MOMENT_CREATION_CHECK_TITLE, [ $this, 'momentCreationCheckTitle' ]);
         $this->register(self::MOMENT_CREATION_CHECK_SUBTITLE, [ $this, 'momentCreationCheckSubtitle' ]);
         $this->register(self::MOMENT_CREATION_CHECK_TIMING, [ $this, 'momentCreationCheckTiming' ]);
@@ -133,7 +137,7 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
             return self::MOMENT_CREATION_CHECK_TIMING;
         }
 
-        $process->put(self::PROCESS_OBSERVATIONS, $message);
+        $process->put(self::PROCESS_REQUIREMENTS, $message);
 
         $botService->sendCancelableMessage(
             $update->message->from->id,
@@ -235,18 +239,20 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
 
         $process->put(self::PROCESS_PLAYERS, $playersCount);
 
-        $grid = new Grid([
+        $processGrid = new Grid([
             'title'        => $process->get(self::PROCESS_TITLE),
             'subtitle'     => $process->get(self::PROCESS_SUBTITLE),
-            'observations' => $process->get(self::PROCESS_OBSERVATIONS),
-            'timing'       => $process->get(self::PROCESS_TIMING),
+            'requirements' => $process->get(self::PROCESS_REQUIREMENTS),
             'players'      => $process->get(self::PROCESS_PLAYERS),
+            'timing'       => $process->get(self::PROCESS_TIMING),
             'owner'        => $update->message->from,
         ]);
 
+        $process->offsetSet(self::PROCESS_GRID, $processGrid);
+
         $botService->sendMessage(
             $update->message->from->id,
-            $grid->getStructure(Grid::STRUCTURE_TYPE_EXAMPLE)
+            $processGrid->getStructure(Grid::STRUCTURE_TYPE_EXAMPLE)
         );
         $botService->sendPredefinedMessage(
             $update->message->from->id,
@@ -278,16 +284,29 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
             return self::MOMENT_CREATION_PUBLISH;
         }
 
-        $grid = new Grid([
-            'title'        => $process->get(self::PROCESS_TITLE),
-            'subtitle'     => $process->get(self::PROCESS_SUBTITLE),
-            'observations' => $process->get(self::PROCESS_OBSERVATIONS),
-            'timing'       => $process->get(self::PROCESS_TIMING),
-            'players'      => $process->get(self::PROCESS_PLAYERS),
-            'owner'        => $update->message->from,
-        ]);
+        $user = UserService::getInstance()->get($update->message->from->id);
 
-        $botService->sendPublicMessage($grid->getStructure(Grid::STRUCTURE_TYPE_FULL));
+        $grid                    = new GridModel;
+        $grid->gamertag_id       = $user->getGamertag()->id;
+        $grid->grid_title        = $process->get(self::PROCESS_TITLE);
+        $grid->grid_subtitle     = $process->get(self::PROCESS_SUBTITLE);
+        $grid->grid_requirements = $process->get(self::PROCESS_REQUIREMENTS);
+        $grid->grid_players      = $process->get(self::PROCESS_PLAYERS);
+        $grid->grid_timing       = $process->get(self::PROCESS_TIMING);
+        $grid->save();
+
+        $gridSubscription                           = new GridSubscription;
+        $gridSubscription->grid_id                  = $grid->id;
+        $gridSubscription->gamertag_id              = $user->getGamertag()->id;
+        $gridSubscription->subscription_description = null;
+        $gridSubscription->subscription_rule        = GridSubscription::RULE_OWNER;
+        $gridSubscription->save();
+
+        /** @var Grid $processGrid */
+        $processGrid          = $process->offsetGet(self::PROCESS_GRID);
+        $processGrid->grid_id = $grid->id;
+
+        $botService->sendPublicMessage($processGrid->getStructure(Grid::STRUCTURE_TYPE_FULL));
         $botService->sendMessage(
             $update->message->from->id,
             trans('GridSubscription.creationWizardPublished')
@@ -302,28 +321,28 @@ class GridSubscriptionSessionProcessor extends SessionProcessor
      * @param Process $process Process collection.
      * @return null|string
      */
-    public function momentCreationWizard(Update $update, Process $process): ?string
+    public function momentWelcome(Update $update, Process $process): ?string
     {
-        if (!$update->message->isCommand(CommandService::COMMAND_NEW_GRID)) {
-            return null;
+        if ($update->message->isCommand(CommandService::COMMAND_NEW_GRID)) {
+            $process->clear();
+
+            $botService = BotService::getInstance();
+
+            $botService->notifyPrivateMessage($update->message);
+            $botService->sendMessage(
+                $update->message->from->id,
+                trans('GridSubscription.creationBeta')
+            );
+            $botService->sendPredefinedMessage(
+                $update->message->from->id,
+                trans('GridSubscription.creationWizard'),
+                PredefinitionService::getInstance()->optionsFrom(trans('GridSubscription.creationWizardOptions'))
+            );
+
+            return self::MOMENT_CREATION_CHECK_TITLE;
         }
 
-        $process->clear();
-
-        $botService = BotService::getInstance();
-
-        $botService->notifyPrivateMessage($update->message);
-        $botService->sendMessage(
-            $update->message->from->id,
-            trans('GridSubscription.creationBeta')
-        );
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridSubscription.creationWizard'),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridSubscription.creationWizardOptions'))
-        );
-
-        return self::MOMENT_CREATION_CHECK_TITLE;
+        return null;
     }
 
     /**

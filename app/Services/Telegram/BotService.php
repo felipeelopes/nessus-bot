@@ -145,14 +145,17 @@ class BotService implements ServiceContract
 
     /**
      * Send a message with predefined options.
-     * @param string|int  $chatId  Chat id.
-     * @param string|null $text    Message text.
-     * @param array       $options Predefined options.
+     * @param string|int  $chatId       Chat id.
+     * @param string|null $text         Message text.
+     * @param array       $options      Predefined options.
+     * @param bool|null   $isCancelable Show the cancel command (default: true).
      * @return Message|null
      */
-    public function sendPredefinedMessage($chatId, ?string $text, array $options): ?Message
+    public function sendPredefinedMessage($chatId, ?string $text, array $options, ?bool $isCancelable = null): ?Message
     {
-        $options[] = new OptionItem([ 'command' => CommandService::COMMAND_CANCEL ]);
+        if ($isCancelable !== false) {
+            $options[] = new OptionItem([ 'command' => CommandService::COMMAND_CANCEL ]);
+        }
 
         $predefinitionService = PredefinitionService::getInstance();
         $predefinitionService->setOptions($options);

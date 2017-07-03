@@ -14,6 +14,16 @@ use Application\Adapters\BaseFluent;
 class OptionItem extends BaseFluent
 {
     /**
+     * Generate an Option Item based on an existing command.
+     * @param $commandName
+     * @return OptionItem
+     */
+    public static function fromCommand($commandName): OptionItem
+    {
+        return new OptionItem([ 'command' => $commandName ]);
+    }
+
+    /**
      * Returns the option description.
      * @return string|null
      */

@@ -14,7 +14,8 @@ use GuzzleHttp\Exception\ClientException;
 
 class RequesterService
 {
-    const CACHE_HOUR = Carbon::HOURS_PER_DAY * Carbon::MINUTES_PER_HOUR;
+    const CACHE_DAY  = Carbon::MINUTES_PER_HOUR * Carbon::HOURS_PER_DAY;
+    const CACHE_HOUR = Carbon::MINUTES_PER_HOUR;
 
     /**
      * Base URI.

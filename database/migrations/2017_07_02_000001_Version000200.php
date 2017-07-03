@@ -31,7 +31,7 @@ class Version000200 extends Migration
             $table->string('grid_title', 80);
             $table->string('grid_subtitle', 20)
                 ->offsetSet('nullable', true);
-            $table->string('grid_observations', 400)
+            $table->string('grid_requirements', 400)
                 ->offsetSet('nullable', true);
             $table->unsignedSmallInteger('grid_players');
             $table->dateTime('grid_timing');
@@ -41,8 +41,8 @@ class Version000200 extends Migration
                 Grid::STATUS_PLAYING,
                 Grid::STATUS_FINISHED,
                 Grid::STATUS_CANCELED,
-            ])->offsetSet('defaultValue', Grid::STATUS_WAITING);
-            $table->string('grid_status_description', 40)
+            ])->offsetSet('default', Grid::STATUS_WAITING);
+            $table->string('grid_status_details', 40)
                 ->offsetSet('nullable', true);
             $table->timestamps();
             $table->softDeletes();
@@ -63,7 +63,7 @@ class Version000200 extends Migration
                 GridSubscription::RULE_MANAGER,
                 GridSubscription::RULE_TITULAR,
                 GridSubscription::RULE_RESERVE,
-            ])->offsetSet('defaultValue', GridSubscription::RULE_RESERVE);
+            ])->offsetSet('default', GridSubscription::RULE_RESERVE);
             $table->enum('reserve_type', [
                 GridSubscription::RESERVE_TYPE_WAIT,
                 GridSubscription::RESERVE_TYPE_TOP,

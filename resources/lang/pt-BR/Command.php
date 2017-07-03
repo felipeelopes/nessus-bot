@@ -16,10 +16,16 @@ return [
         'newGridCommand'     => 'NovaGrade',
         'newGridDescription' => 'Criar uma nova grade',
 
+        'listGridsCommand'     => 'ListarGrades',
+        'listGridsDescription' => 'Listar as grades disponíveis',
+
         'registerCommand'     => 'Registrar',
         'registerDescription' => 'Primeiro passo para fazer parte do clã',
 
-        'rulesCommand'     => 'Regras',
-        'rulesDescription' => 'Regras do clã',
+        'rulesCommand'         => 'Regras',
+        'rulesDescription'     => 'Regras do clã',
+
+        // Short commands.
+        'gridShowShortCommand' => 'G',
     ],
 ];

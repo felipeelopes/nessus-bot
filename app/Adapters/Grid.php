@@ -5,22 +5,43 @@ declare(strict_types = 1);
 namespace Application\Adapters;
 
 use Application\Adapters\Telegram\User;
+use Application\Models\Grid as GridModel;
+use Application\Models\GridSubscription;
 use Application\Services\MockupService;
 use Application\Services\UserService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 /**
  * @property string      $title        Grid title.
  * @property string|null $subtitle     Grid subtitle.
- * @property string|null $observations Grid observations.
+ * @property string|null $requirements Grid requirements.
  * @property Carbon      $timing       Grid timing.
  * @property int         $players      Grid players.
  * @property User        $owner        Grid owner.
+ * @property int|null    $grid_id      Grid id reference.
  */
 class Grid extends BaseFluent
 {
     public const STRUCTURE_TYPE_EXAMPLE = 'example';
     public const STRUCTURE_TYPE_FULL    = 'full';
+
+    /**
+     * Returns a Grid adapter from a Grid model.
+     * @param GridModel $grid Grid model instance.
+     * @return Grid
+     */
+    public static function fromModel(GridModel $grid): Grid
+    {
+        return new Grid([
+            'title'        => $grid->grid_title,
+            'subtitle'     => $grid->grid_subtitle,
+            'requirements' => $grid->grid_requirements,
+            'timing'       => $grid->grid_timing,
+            'grid_id'      => $grid->id,
+        ]);
+    }
 
     /**
      * Return the grid structure.
@@ -36,16 +57,41 @@ class Grid extends BaseFluent
                 : null,
         ]);
 
-        /** @var UserService $userService */
-        $userService = MockupService::getInstance()->instance(UserService::class);
-        $user        = $userService->get($this->owner->id);
+        $grid = null;
+
+        if ($this->grid_id) {
+            /** @var Builder $gridQuery */
+            /** @var GridModel $grid */
+            $gridQuery = GridModel::query();
+            $gridQuery->with('subscribers.gamertag');
+            $grid = $gridQuery->find($this->grid_id);
+        }
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
+            /** @var UserService $userService */
+            $userService = MockupService::getInstance()->instance(UserService::class);
+            $user        = $userService->get($this->owner->id);
+
             $result .= trans('Grid.gridOwner', [ 'value' => $user->getGamertag()->gamertag_value ]);
         }
 
-        if ($this->observations) {
-            $result .= trans('Grid.gridObservations', [ 'value' => $this->observations ]);
+        if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {
+            $gridStatusDetail = $grid->grid_status_details;
+
+            if ($gridStatusDetail !== null) {
+                $gridStatusDetail = trans('Grid.gridStatusDetails', [
+                    'details' => $gridStatusDetail,
+                ]);
+            }
+
+            $result .= trans('Grid.gridStatus', [
+                'value'   => trans('Grid.status' . Str::ucfirst($grid->grid_status)),
+                'details' => $gridStatusDetail,
+            ]);
+        }
+
+        if ($this->requirements) {
+            $result .= trans('Grid.gridObservations', [ 'value' => $this->requirements ]);
         }
 
         $timingNow  = Carbon::now()->second(0);
@@ -69,25 +115,32 @@ class Grid extends BaseFluent
             $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);
         }
 
-        if ($structureType === self::STRUCTURE_TYPE_FULL) {
-            $result .= trans('Grid.titularsHeader');
+        if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {
+            $resultTitulars = [];
+            $resultReserves = null;
 
-            $ownerUser = $this->owner->getUserRegister();
+            /** @var GridSubscription $gridSubscriber */
+            foreach ($grid->subscribers as $gridSubscriber) {
+                $gridSubscriberMask = [
+                    'gamertag' => $gridSubscriber->gamertag->gamertag_value,
+                    'icon'     => ' ' . $gridSubscriber->getIcon(),
+                ];
 
-            $result .= trans('Grid.titularItem', [
-                'gamertag' => $ownerUser->getGamertag()->gamertag_value,
-                'icon'     => trans('Grid.typeOwner'),
-            ]);
+                if ($gridSubscriber->isTitular()) {
+                    $resultTitulars[] = trans('Grid.titularItem', $gridSubscriberMask);
+                    continue;
+                }
 
-            for ($i = 1; $i < $this->players; $i++) {
-                $result .= trans('Grid.titularItem', [
-                    'gamertag' => '',
-                    'icon'     => '',
-                ]);
+                $resultReserves .= trans('Grid.reserveItem', $gridSubscriberMask);
             }
 
-            $result .= trans('Grid.reservesHeader');
-            $result .= trans('Grid.reserveItem');
+            $result .= trans('Grid.titularsHeader');
+            $result .= implode(array_pad($resultTitulars, $grid->grid_players, trans('Grid.titularItemEmpty')));
+
+            if ($resultReserves) {
+                $result .= trans('Grid.reservesHeader');
+                $result .= trans('Grid.reserveItem');
+            }
         }
 
         return $result;

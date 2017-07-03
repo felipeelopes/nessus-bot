@@ -18,7 +18,7 @@ class PredefinitionStrategy implements UserStrategyContract
     public function process(?User $user, Update $update): ?bool
     {
         if ($update->message->isCommand()) {
-            $command = substr($update->message->getCommand(), 1);
+            $command = substr($update->message->getCommand()->command, 1);
 
             if (!ctype_digit($command)) {
                 return null;
