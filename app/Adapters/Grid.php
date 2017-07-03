@@ -80,10 +80,7 @@ class Grid extends BaseFluent
             }
 
             $result .= trans('Grid.reservesHeader');
-
-            for ($i = 0; $i < 3; $i++) {
-                $result .= trans('Grid.reserveItem');
-            }
+            $result .= trans('Grid.reserveItem');
         }
 
         return $result;

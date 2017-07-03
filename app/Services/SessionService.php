@@ -77,7 +77,9 @@ class SessionService implements ServiceContract
         $classInstance->initialize();
         $nextMoment = $classInstance->run($update);
 
-        SessionService::getInstance()->setMoment($nextMoment);
+        if ($nextMoment !== SessionProcessor::MOMENT_IGNORE) {
+            SessionService::getInstance()->setMoment($nextMoment);
+        }
 
         return $nextMoment;
     }

@@ -10,6 +10,8 @@ use Illuminate\Support\Collection;
 
 abstract class SessionProcessor
 {
+    public const MOMENT_IGNORE = 'ignore';
+
     /**
      * Registered moments.
      * @var Collection|callable[]
@@ -42,7 +44,7 @@ abstract class SessionProcessor
         if ($moment !== null &&
             strpos($moment, $momentBase) === 0) {
             if (!$update->message->isPrivate()) {
-                return null;
+                return self::MOMENT_IGNORE;
             }
 
             $momentKey = substr($moment, strlen($momentBase));
