@@ -7,16 +7,16 @@ namespace Application\Services;
 class FormattingService
 {
     private const SUPERSCRIPTED_NUMBERS = [
-        '0' => "\xE2\x81\xB0",
-        '1' => "\xC2\xB9",
-        '2' => "\xC2\xB2",
-        '3' => "\xC2\xB3",
-        '4' => "\xE2\x81\xB4",
-        '5' => "\xE2\x81\xB5",
-        '6' => "\xE2\x81\xB6",
-        '7' => "\xE2\x81\xB7",
-        '8' => "\xE2\x81\xB8",
-        '9' => "\xE2\x81\xB9",
+        0 => "\xE2\x81\xB0",
+        1 => "\xC2\xB9",
+        2 => "\xC2\xB2",
+        3 => "\xC2\xB3",
+        4 => "\xE2\x81\xB4",
+        5 => "\xE2\x81\xB5",
+        6 => "\xE2\x81\xB6",
+        7 => "\xE2\x81\xB7",
+        8 => "\xE2\x81\xB8",
+        9 => "\xE2\x81\xB9",
     ];
 
     /**
@@ -41,7 +41,7 @@ class FormattingService
      */
     public static function toSuperscript($number): string
     {
-        $numbers = str_split($number, 1);
+        $numbers = str_split($number);
         $result  = '';
 
         foreach ($numbers as $n) {

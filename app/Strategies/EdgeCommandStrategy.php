@@ -10,7 +10,7 @@ use Application\Services\CommandService;
 use Application\Services\MockupService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
-use Application\SessionsProcessor\UserRegistrationSessionProcessor;
+use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
 use Application\Strategies\Contracts\UserStrategyContract;
 
 class EdgeCommandStrategy implements UserStrategyContract
@@ -67,7 +67,12 @@ class EdgeCommandStrategy implements UserStrategyContract
         }
 
         if ($user === null) {
-            SessionService::getInstance()->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
+            $sessionService = SessionService::getInstance();
+            $sessionService->setInitialMoment(WelcomeMoment::class);
+
+            if ($sessionService->run($update)) {
+                return true;
+            }
         }
 
         return true;

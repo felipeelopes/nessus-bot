@@ -8,7 +8,7 @@ use Application\Adapters\Telegram\RequestResponse;
 use Application\Exceptions\Telegram\RequestException;
 use Application\Services\Assertions\EventService;
 use Application\Services\MockupService;
-use Application\SessionsProcessor\UserRegistrationSessionProcessor;
+use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use PHPUnit\Framework\TestCase;
 use Tests\CommandBase;
@@ -39,8 +39,8 @@ class CommandTest extends CommandBase
         );
 
         $this->assertPublicMessage('First Message with Bot still not Started', function (EventService $eventService) {
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_DELETE_MESSAGE));
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_PUBLIC_MESSAGE));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_DELETE_MESSAGE));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_WELCOME_PUBLIC));
         });
 
         $mockupService->registerProvider(TelegramRequesterServiceMockup::class, function () {
@@ -48,8 +48,8 @@ class CommandTest extends CommandBase
         });
 
         $this->assertPublicMessage('First Message with Bot Started', function (EventService $eventService) {
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_DELETE_MESSAGE));
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_PRIVATE_WELCOME));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_DELETE_MESSAGE));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_WELCOME_PRIVATE));
         });
 
         $mockupService->registerProvider(LiveRequesterServiceMockup::class, function () {
@@ -57,12 +57,12 @@ class CommandTest extends CommandBase
         });
 
         $this->assertBotMessage('VeryLongGamertagIsInvalid', function (EventService $eventService) {
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_CHECK_GAMERTAG_INVALID));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_CHECK_GAMERTAG_INVALID));
         });
 
         // It will be mocked to be not found initially.
         $this->assertBotMessage('ValidGamertag', function (EventService $eventService) {
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_CHECK_GAMERTAG_NOT_FOUND));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_CHECK_GAMERTAG_NOT_FOUND));
         });
 
         $mockupService->registerProvider(LiveRequesterServiceMockup::class, function () {
@@ -71,7 +71,7 @@ class CommandTest extends CommandBase
 
         // Now we mock to be found.
         $this->assertBotMessage('ValidGamertag', function (EventService $eventService) {
-            $this->assertTrue($eventService->has(UserRegistrationSessionProcessor::EVENT_CHECK_GAMERTAG_SUCCESS));
+            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_CHECK_GAMERTAG_SUCCESS));
         });
 
         $mockupService->registerProvider(TelegramRequesterServiceMockup::class, function (string $method, string $action, array $params) {
@@ -81,7 +81,7 @@ class CommandTest extends CommandBase
         });
 
         $this->assertPublicMessage('First Public Message', function (EventService $eventService) {
-            $this->assertFalse($eventService->has(UserRegistrationSessionProcessor::EVENT_DELETE_MESSAGE));
+            $this->assertFalse($eventService->has(WelcomeMoment::EVENT_DELETE_MESSAGE));
         });
     }
 }

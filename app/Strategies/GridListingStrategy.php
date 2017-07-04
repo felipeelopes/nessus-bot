@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class GridListingStrategy implements UserStrategyContract
 {
+    private const CACHE_GRID_KEY    = __CLASS__ . '@grid:';
     private const CACHE_LISTING_KEY = __CLASS__ . '@listing';
 
     /**
@@ -52,7 +53,9 @@ class GridListingStrategy implements UserStrategyContract
                     false
                 );
 
-                $this->deleteLastMessage($update, $botService);
+                if (!$update->message->isPrivate()) {
+                    $this->deletePrevious(self::CACHE_LISTING_KEY, $botService);
+                }
 
                 return true;
             }
@@ -92,10 +95,15 @@ class GridListingStrategy implements UserStrategyContract
                 ]);
             }
 
-            $message = $botService->sendMessage($update->message->chat->id, $result);
-            $this->deleteLastMessage($update, $botService);
+            $message = $botService->sendPredefinedMessage(
+                $update->message->chat->id,
+                $result,
+                [ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ],
+                false
+            );
 
             if (!$update->message->isPrivate()) {
+                $this->deletePrevious(self::CACHE_LISTING_KEY, $botService);
                 Cache::put(self::CACHE_LISTING_KEY, $message, RequesterService::CACHE_DAY);
             }
 
@@ -125,10 +133,17 @@ class GridListingStrategy implements UserStrategyContract
 
             $gridAdapter = GridAdapter::fromModel($grid);
 
-            $botService->sendMessage(
+            $gridMessage = $botService->sendMessage(
                 $update->message->chat->id,
                 $gridAdapter->getStructure(GridAdapter::STRUCTURE_TYPE_FULL)
             );
+
+            if (!$update->message->isPrivate()) {
+                $gridCacheKey = self::CACHE_GRID_KEY . $grid->id;
+
+                $this->deletePrevious($gridCacheKey, $botService);
+                Cache::put($gridCacheKey, $gridMessage, RequesterService::CACHE_DAY);
+            }
 
             return true;
         }
@@ -137,19 +152,19 @@ class GridListingStrategy implements UserStrategyContract
     }
 
     /**
-     * Delete the last message sent.
-     * @param Update     $update     Update instance.
+     * Delete previous listing message.
+     * @param string     $cacheKey   Cache key to delete.
      * @param BotService $botService Bot Service instance.
      */
-    private function deleteLastMessage(Update $update, BotService $botService): void
+    private function deletePrevious(string $cacheKey, BotService $botService): void
     {
-        if (!$update->message->isPrivate()) {
-            /** @var Message $messageLast */
-            $messageLast = Cache::get(self::CACHE_LISTING_KEY);
+        /** @var Message $messageLast */
+        $messageLast = Cache::get($cacheKey);
 
-            if ($messageLast) {
-                $botService->deleteMessage($messageLast->chat->id, $messageLast->message_id);
-            }
+        if ($messageLast) {
+            $botService->deleteMessage($messageLast->chat->id, $messageLast->message_id);
+
+            Cache::forget($cacheKey);
         }
     }
 

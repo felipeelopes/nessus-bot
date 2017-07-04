@@ -12,12 +12,12 @@ use Illuminate\Support\Collection;
 
 /**
  * @property Collection|GridSubscription[] $subscribers         Grid subscribers.
- * @property UserGamertag                  $gamertagOwner       Gamertag instance.
+ * @property UserGamertag                  $gamertag            Owner Gamertag instance.
  * @property int                           $gamertag_id         Owner Gamertag id.
  * @property string                        $grid_title          Grid title.
  * @property string|null                   $grid_subtitle       Grid subtitle.
  * @property string|null                   $grid_requirements   Grid requirements.
- * @property int                           $grid_playersGrid    players limit.
+ * @property int                           $grid_players        Grid players limit.
  * @property Carbon                        $grid_timing         Grid timing to start.
  * @property string                        $grid_status         Grid status.
  * @property string                        $grid_status_details Grid status description.

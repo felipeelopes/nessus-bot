@@ -6,12 +6,6 @@ $confirmTimingYes   = 'Confirmar';
 $confirmCreationYes = 'Confirmar';
 
 return [
-    'creationBeta' => "\xE2\x9A\xA0 *Atenção, guardião...*\n" .
-                      "Esta é uma versão de testes do *Sistema de Inscrição de Grades da Vanguarda* (_SIGV_).\n\n" .
-                      "\xE2\x9E\x9C No momento, o sistema apenas criará a grade e publicará no grupo. " .
-                      "Os recursos de notificação e participação ainda estão em desenvolvimento.\n\n" .
-                      "\xE2\x9E\x9C Se tiver alguma sugestão, este será o melhor momento para discutí-lo.",
-
     'creationWizard'        => "*Percebi a presença de inimigos, guardião!*\n" .
                                "Precisamos definir um plano de missão para não deixá-los avançar.\n\n" .
                                "*\xE2\x9E\x9C Qual será o título da missão?*\n" .
@@ -33,9 +27,9 @@ return [
         [ 'value' => 'Heróico com Desafio' ],
     ],
 
-    'creationWizardObservations'        => "*\xE2\x9E\x9C Quais serão as exigências da missão?*\n" .
-                                           'Opcional (até 400 caracteres).',
-    'creationWizardObservationsOptions' => [
+    'creationWizardRequirements'        => "*\xE2\x9E\x9C Quais serão as exigências da missão?*\n" .
+                                           'Opcional (até :max caracteres).',
+    'creationWizardRequirementsOptions' => [
         [ 'description' => 'Nenhuma' ],
     ],
 
@@ -70,14 +64,15 @@ return [
                                  'A grade foi publicada no grupo.',
 
     'errorTitleTooLong'        => "*O título ficou grande demais!*\n" .
-                                  "Tente não ultrapassar :length caracteres.\n\n" .
+                                  "Tente não ultrapassar :max caracteres.\n\n" .
                                   "*\xE2\x9E\x9C Qual será o título da missão?*",
     'errorSubtitleTooLong'     => "*O subtítulo ficou grande demais!*\n" .
-                                  "Tente não ultrapassar :length caracteres.\n\n" .
+                                  "Tente não ultrapassar :max caracteres.\n\n" .
                                   "*\xE2\x9E\x9C Qual será o subtítulo da missão?*",
-    'errorObservationsTooLong' => "*São exigências demais!*\n" .
-                                  "Tente não ultrapassar :length caracteres.\n\n" .
-                                  "*\xE2\x9E\x9C Quais serão as exigências da missão?*",
+    'errorRequirementsTooLong' => "*São exigências demais!*\n" .
+                                  "Tente não ultrapassar :max caracteres.\n\n" .
+                                  "*\xE2\x9E\x9C Quais serão as exigências da missão?*\n" .
+                                  'Opcional (até :max caracteres).',
     'errorTimingInvalid'       => "*O formato informado não é válido!*\n" .
                                   "Digite no formato HH:MM (ex. 10:30).\n\n" .
                                   "*\xE2\x9E\x9C Que horas será a missão?*",

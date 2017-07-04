@@ -9,7 +9,7 @@ use Application\Models\User;
 use Application\Services\CommandService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
-use Application\SessionsProcessor\UserRegistrationSessionProcessor;
+use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
 use Application\Strategies\Contracts\UserStrategyContract;
 
 class UserRegistrationStrategy implements UserStrategyContract
@@ -20,16 +20,10 @@ class UserRegistrationStrategy implements UserStrategyContract
     public function process(?User $user, Update $update): ?bool
     {
         if ($user === null) {
-            $sessionService  = SessionService::getInstance();
-            $serviceResponse = $sessionService->initializeProcessor(UserRegistrationSessionProcessor::class, $update);
+            $sessionService = SessionService::getInstance();
+            $sessionService->setInitialMoment(WelcomeMoment::class);
 
-            if ($serviceResponse === UserRegistrationSessionProcessor::class . '@' . UserRegistrationSessionProcessor::MOMENT_ACCEPTED) {
-                $sessionService->setMoment(null);
-
-                return true;
-            }
-
-            return $serviceResponse !== null;
+            return $sessionService->run($update);
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_REGISTER)) {

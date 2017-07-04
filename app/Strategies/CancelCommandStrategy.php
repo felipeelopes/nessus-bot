@@ -20,7 +20,7 @@ class CancelCommandStrategy implements UserStrategyContract
     public function process(?User $user, Update $update): ?bool
     {
         if ($update->message->isCommand()) {
-            SessionService::getInstance()->setMoment(null);
+            SessionService::getInstance()->clearMoment();
 
             if ($update->message->isCommand(CommandService::COMMAND_CANCEL)) {
                 /** @var CommandService $commandService */

@@ -12,8 +12,8 @@ use Application\Services\SessionService;
 use Application\Services\UserService;
 use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\EdgeCommandStrategy;
+use Application\Strategies\GridCreationStrategy;
 use Application\Strategies\GridListingStrategy;
-use Application\Strategies\GridSubscriptionStrategy;
 use Application\Strategies\PredefinitionStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Application\Strategies\UserSubscriptionStrategy;
@@ -102,9 +102,9 @@ class BotController extends Controller implements RouterRegisterContract
             return;
         }
 
-        /** @var GridSubscriptionStrategy $gridSubscription */
-        $gridSubscription = $mockupService->instance(GridSubscriptionStrategy::class);
-        if ($gridSubscription->process($user, $update)) {
+        /** @var GridCreationStrategy $gridCreation */
+        $gridCreation = $mockupService->instance(GridCreationStrategy::class);
+        if ($gridCreation->process($user, $update)) {
             return;
         }
 

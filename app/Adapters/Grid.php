@@ -91,7 +91,7 @@ class Grid extends BaseFluent
         }
 
         if ($this->requirements) {
-            $result .= trans('Grid.gridObservations', [ 'value' => $this->requirements ]);
+            $result .= trans('Grid.gridRequirements', [ 'value' => $this->requirements ]);
         }
 
         $timingNow  = Carbon::now()->second(0);
