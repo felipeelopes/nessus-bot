@@ -3,9 +3,14 @@
 declare(strict_types = 1);
 
 return [
-    'userLeftAdmin'   => "*Guardião caído!*\nSe quiser mais detalhes, fale com o *:admin*.",
-    'userLeftUnknown' => "*Guardião caído!*\nEmbora eu não tenha ideia de quem seja.",
-    'userLeftKnown'   => "*Guardião caído!*\n*:fullname* (Gamertag *:gamertag*) não faz mais parte da equipe.",
+    'userLeftAdmin'   => "*Guardião caído!*\n" .
+                         ":fullname* (Gamertag *:gamertag*) não faz mais parte da equipe.\n" .
+                         'Se quiser mais detalhes, fale com o *:admin*.',
+    'userLeftUnknown' => "*Guardião caído!*\n" .
+                         ":fullname* não faz mais parte da equipe.\n" .
+                         'Embora eu não tenha ideia de quem seja.',
+    'userLeftKnown'   => "*Guardião caído!*\n" .
+                         '*:fullname* (Gamertag *:gamertag*) não faz mais parte da equipe.',
 
     'thankfulMessage' => "*Carta de despedida*\n\n" .
                          "Guardião, embora esteja saindo de nosso clã, agradecemos muito ter dividido seu tempo conosco.\n" .

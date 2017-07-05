@@ -54,13 +54,17 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             $user        = $userService->get($update->message->left_chat_member->id);
 
             if ($update->message->left_chat_member->id !== $update->message->from->id) {
+                $userGamertags = $user->getGamertag();
+
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBwADwvySEXi2rT98M7GIAg');
                 $botService->sendMessage(
                     $update->message->chat->id,
                     trans('UserSubscription.userLeftAdmin', [
-                        'admin' => $update->message->from->username
+                        'admin'    => $update->message->from->username
                             ? '@' . $update->message->from->username
                             : $update->message->from->getFullname(),
+                        'fullname' => $update->message->left_chat_member->getFullname(),
+                        'gamertag' => $userGamertags->gamertag_value,
                     ])
                 );
             }
@@ -68,7 +72,9 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');
                 $botService->sendMessage(
                     $update->message->chat->id,
-                    trans('UserSubscription.userLeftUnknown')
+                    trans('UserSubscription.userLeftUnknown', [
+                        'fullname' => $update->message->left_chat_member->getFullname(),
+                    ])
                 );
             }
             else {
