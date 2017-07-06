@@ -38,7 +38,8 @@ class  Grid extends Model
      * @var string[]
      */
     protected $casts = [
-        'grid_timing' => 'datetime',
+        'grid_players' => 'int',
+        'grid_timing'  => 'datetime',
     ];
 
     /**

@@ -119,6 +119,16 @@ class MockupService
     }
 
     /**
+     * Reset all internal instances.
+     */
+    public function reset(): void
+    {
+        $this->mockupClasses   = [];
+        $this->mockupProviders = [];
+        $this->singletons      = [];
+    }
+
+    /**
      * Generate or update a singleton instance of class.
      * @param string     $class                Class name.
      * @param array|null $constructorArguments Constructor arguments.

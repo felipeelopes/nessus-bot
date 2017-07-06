@@ -6,6 +6,7 @@ namespace Application\SessionsProcessor\GridCreation;
 
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
+use Application\Services\Assertions\EventService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
@@ -13,6 +14,9 @@ use Application\Types\Process;
 
 class TimingConfirmMoment extends SessionMoment
 {
+    public const EVENT_CONFIRM = 'confirm';
+    public const EVENT_REQUEST = 'request';
+
     /**
      * @inheritdoc
      */
@@ -26,6 +30,8 @@ class TimingConfirmMoment extends SessionMoment
             ]),
             PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardTimingConfirmOptions'))
         );
+
+        assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
 
     /**
@@ -39,6 +45,8 @@ class TimingConfirmMoment extends SessionMoment
 
             throw new ForceMomentException($processTiming);
         }
+
+        assert(EventService::getInstance()->register(self::EVENT_CONFIRM));
 
         return PlayersMoment::class;
     }

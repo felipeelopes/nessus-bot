@@ -9,7 +9,6 @@ use Application\Exceptions\Telegram\RequestException;
 use Application\Services\Assertions\EventService;
 use Application\Services\MockupService;
 use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use PHPUnit\Framework\TestCase;
 use Tests\CommandBase;
 use Tests\Mockups\Requester\Live\RequesterServiceMockup as LiveRequesterServiceMockup;
@@ -18,10 +17,8 @@ use Tests\Mockups\Requester\Telegram\RequesterServiceMockup as TelegramRequester
 /**
  * @mixin TestCase
  */
-class CommandTest extends CommandBase
+class UserSubscriptionTest extends CommandBase
 {
-    use DatabaseMigrations;
-
     public function testUserSubscription(): void
     {
         $mockupService = MockupService::getInstance();

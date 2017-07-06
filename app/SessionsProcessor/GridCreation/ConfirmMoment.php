@@ -8,6 +8,7 @@ use Application\Adapters\Grid;
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid as GridModel;
 use Application\Models\GridSubscription;
+use Application\Services\Assertions\EventService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
@@ -16,6 +17,10 @@ use Application\Types\Process;
 
 class ConfirmMoment extends SessionMoment
 {
+    public const EVENT_INVALID_CONFIRMATION = 'invalidConfirmation';
+    public const EVENT_REQUEST              = 'request';
+    public const EVENT_SAVE                 = 'save';
+
     private const PROCESS_GRID = 'grid';
 
     /**
@@ -43,6 +48,8 @@ class ConfirmMoment extends SessionMoment
             trans('GridCreation.creationWizardConfirmCreationHeader'),
             PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions'))
         );
+
+        assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
 
     /**
@@ -79,6 +86,8 @@ class ConfirmMoment extends SessionMoment
             trans('GridCreation.creationWizardPublished')
         );
 
+        assert(EventService::getInstance()->register(self::EVENT_SAVE));
+
         return null;
     }
 
@@ -95,6 +104,8 @@ class ConfirmMoment extends SessionMoment
                 trans('GridCreation.errorPublishInvalid'),
                 PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions'))
             );
+
+            assert(EventService::getInstance()->register(self::EVENT_INVALID_CONFIRMATION));
 
             return self::class;
         }

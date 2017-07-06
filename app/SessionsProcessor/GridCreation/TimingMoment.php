@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\SessionsProcessor\GridCreation;
 
 use Application\Adapters\Telegram\Update;
+use Application\Services\Assertions\EventService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\Types\Process;
@@ -12,6 +13,13 @@ use Carbon\Carbon;
 
 class TimingMoment extends SessionMoment
 {
+    public const EVENT_INVALID_FORMAT      = 'invalidFormat';
+    public const EVENT_INVALID_TIMING      = 'invalidTiming';
+    public const EVENT_INVALID_TOO_CLOSEST = 'invalidTooClosest';
+    public const EVENT_REQUEST             = 'request';
+    public const EVENT_TIMING_TODAY        = 'timingToday';
+    public const EVENT_TIMING_TOMORROW     = 'timingTomorrow';
+
     public const PROCESS_TIMING      = 'timing';
     public const PROCESS_TIMING_TEXT = 'timingText';
 
@@ -28,6 +36,8 @@ class TimingMoment extends SessionMoment
                 $update->message->from->id,
                 trans('GridCreation.errorTimingInvalid')
             );
+
+            assert(EventService::getInstance()->register(self::EVENT_INVALID_FORMAT));
 
             return self::class;
         }
@@ -48,6 +58,8 @@ class TimingMoment extends SessionMoment
                 trans('GridCreation.errorTimingInvalid')
             );
 
+            assert(EventService::getInstance()->register(self::EVENT_INVALID_TIMING));
+
             return self::class;
         }
 
@@ -61,6 +73,8 @@ class TimingMoment extends SessionMoment
                 trans('GridCreation.errorTimingTooShort')
             );
 
+            assert(EventService::getInstance()->register(self::EVENT_INVALID_TOO_CLOSEST));
+
             return self::class;
         }
 
@@ -71,6 +85,8 @@ class TimingMoment extends SessionMoment
             $timingText = trans('GridCreation.creationWizardTimingConfirmToday', [
                 'timing' => $timingCarbon->format('H:i'),
             ]);
+
+            assert(EventService::getInstance()->register(self::EVENT_TIMING_TODAY));
         }
         else {
             $timingCarbon->addDay();
@@ -78,6 +94,8 @@ class TimingMoment extends SessionMoment
                 'day'    => $timingCarbon->format('d/m'),
                 'timing' => $timingCarbon->format('H:i'),
             ]);
+
+            assert(EventService::getInstance()->register(self::EVENT_TIMING_TOMORROW));
         }
 
         $process->put(self::PROCESS_TIMING, $timingCarbon);
@@ -96,6 +114,8 @@ class TimingMoment extends SessionMoment
             $update->message->from->id,
             trans('GridCreation.creationWizardTiming')
         );
+
+        assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
 
     /**
