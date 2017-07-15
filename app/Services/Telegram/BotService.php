@@ -14,6 +14,7 @@ use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\PredefinitionService;
 use Application\Services\Requester\Telegram\RequesterService;
+use Cache;
 
 class BotService implements ServiceContract
 {
@@ -98,12 +99,24 @@ class BotService implements ServiceContract
             return null;
         }
 
-        return $this->sendMessage(
+        $createdMessage = $this->sendMessage(
             $message->chat->id,
             trans('PublicMessages.letsToPrivate', [
                 'botUsername' => '@' . $this->getMe()->username,
             ])
         );
+
+        $previousMessageId = __CLASS__ . '@' . __FUNCTION__ . '.messageId';
+        $previousMessage   = Cache::get($previousMessageId);
+
+        /** @var Message $previousMessage */
+        if ($previousMessage !== null) {
+            $this->deleteMessage($previousMessage->chat->id, $previousMessage->message_id);
+        }
+
+        Cache::forever($previousMessageId, $createdMessage);
+
+        return $createdMessage;
     }
 
     /**
