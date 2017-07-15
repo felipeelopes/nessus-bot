@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
  * @property string|null                   $grid_requirements   Grid requirements.
  * @property int                           $grid_players        Grid players limit.
  * @property Carbon                        $grid_timing         Grid timing to start.
+ * @property Carbon                        $grid_duration       Grid duration.
  * @property string                        $grid_status         Grid status.
  * @property string                        $grid_status_details Grid status description.
  *
@@ -83,6 +84,26 @@ class Grid extends Model
     public function gamertag(): HasOne
     {
         return $this->hasOne(UserGamertag::class);
+    }
+
+    /**
+     * Returns the duration as float.
+     * @return float
+     */
+    public function getDurationAsFloat(): float
+    {
+        return $this->grid_duration->hour +
+               ($this->grid_duration->minute / Carbon::MINUTES_PER_HOUR);
+    }
+
+    /**
+     * Returns a Carbon from timing.
+     * @param string $value Duration value.
+     * @return Carbon
+     */
+    public function getGridDurationAttribute($value): Carbon
+    {
+        return Carbon::createFromFormat('H:i:s', $value);
     }
 
     /**

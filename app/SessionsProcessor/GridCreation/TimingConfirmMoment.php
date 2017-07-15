@@ -48,6 +48,6 @@ class TimingConfirmMoment extends SessionMoment
 
         assert(EventService::getInstance()->register(self::EVENT_CONFIRM));
 
-        return PlayersMoment::class;
+        return DurationMoment::class;
     }
 }

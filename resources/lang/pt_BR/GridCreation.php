@@ -45,6 +45,17 @@ return [
     ],
     'creationWizardTimingConfirmYes'      => $confirmTimingYes,
 
+    'creationWizardDuration'        => "*\xE2\x9E\x9C Quantas horas durará a missão, em média?*\n" .
+                                       'Informe o valor.',
+    'creationWizardDurationOptions' => [
+        [ 'value' => '0.5', 'description' => 'menos de uma hora' ],
+        [ 'value' => '1', 'description' => 'cerca de uma hora' ],
+        [ 'value' => '2', 'description' => 'cerca de duas horas' ],
+        [ 'value' => '3', 'description' => 'cerca de três horas' ],
+        [ 'value' => '4', 'description' => 'entre quatro a cinco horas' ],
+        [ 'value' => '6', 'description' => 'acima de seis horas' ],
+    ],
+
     'creationWizardPlayers'        => "*\xE2\x9E\x9C Quantos participarão do esquadrão?*\n" .
                                       'Digite um valor entre 2 e :max.',
     'creationWizardPlayersOptions' => [
@@ -79,6 +90,9 @@ return [
     'errorTimingTooShort'      => "*O horário está muito próximo!*\n" .
                                   "O tempo mínimo é de 15 minutos.\n\n" .
                                   "*\xE2\x9E\x9C Que horas será a missão?*",
+    'errorDurationInvalid'     => "*O valor de duração é inválido!*\n" .
+                                  "Digite o valor em horas ou escolha uma das opções predefinidas.\n\n" .
+                                  "*\xE2\x9E\x9C Quantas horas durará a missão, em média?*",
     'errorPlayersInvalid'      => "*O número de participantes informado não é válido!*\n" .
                                   "Digite um valor entre 2 e :max.\n\n" .
                                   "*\xE2\x9E\x9C Quantos participarão do esquadrão?*",

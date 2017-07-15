@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
  * @property string|null $subtitle     Grid subtitle.
  * @property string|null $requirements Grid requirements.
  * @property Carbon      $timing       Grid timing.
+ * @property int         $duration     Grid duration.
  * @property int         $players      Grid players.
  * @property User        $owner        Grid owner.
  * @property int|null    $grid_id      Grid id reference.
@@ -39,6 +40,7 @@ class Grid extends BaseFluent
             'subtitle'     => $grid->grid_subtitle,
             'requirements' => $grid->grid_requirements,
             'timing'       => $grid->grid_timing,
+            'duration'     => $grid->getDurationAsFloat(),
             'grid_id'      => $grid->id,
         ]);
     }
@@ -109,6 +111,21 @@ class Grid extends BaseFluent
             $result .= trans('Grid.gridTiming', [
                 'value' => trans('Grid.timingToday', [ 'timing' => $timingHour ]),
             ]);
+        }
+
+        $durationArray            = [];
+        $durationHours            = (int) $this->duration;
+        $durationArray['hours']   = trans_choice('Grid.durationHours', $durationHours, [ 'hours' => $durationHours ]);
+        $durationMinutes          = round(fmod((float) $this->duration, 1) * 60);
+        $durationArray['minutes'] = trans_choice('Grid.durationMinutes', $durationMinutes, [ 'minutes' => $durationMinutes ]);
+        $durationCount            = count(array_filter($durationArray));
+
+        if ($durationCount !== 0) {
+            $duration = $durationCount === 1
+                ? array_first($durationArray)
+                : trans('Grid.durationBoth', $durationArray);
+
+            $result .= trans('Grid.gridDuration', [ 'value' => $duration ]);
         }
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
