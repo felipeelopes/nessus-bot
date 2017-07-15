@@ -70,5 +70,4 @@ class RequirementsMoment extends SessionMoment
 
         return null;
     }
-
 }

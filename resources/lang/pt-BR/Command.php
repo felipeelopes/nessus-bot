@@ -19,13 +19,16 @@ return [
         'listGridsCommand'     => 'ListarGrades',
         'listGridsDescription' => 'Listar as grades disponíveis',
 
+        'myGridsCommand'     => 'MinhasGrades',
+        'myGridsDescription' => 'Listar suas grades em aberto',
+
         'registerCommand'     => 'Registrar',
         'registerDescription' => 'Primeiro passo para fazer parte do clã',
 
-        'rulesCommand'         => 'Regras',
-        'rulesDescription'     => 'Regras do clã',
+        'rulesCommand'            => 'Regras',
+        'rulesDescription'        => 'Regras do clã',
 
         // Short commands.
-        'gridShowShortCommand' => 'G',
+        'gridShowShortCommand'    => 'G',
     ],
 ];

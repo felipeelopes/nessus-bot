@@ -6,6 +6,7 @@ return [
     'isEmpty' => "*Aparentemente tudo tranquilo, guardião...*\n" .
                  'Não há nenhuma grade de missão em aberto.',
 
+    'titleBase'     => "*:title:*\n",
     'titlePlaying'  => "*Em andamento:*\n",
     'titleToday'    => "*Próximos eventos:*\n",
     'titleTomorrow' => "*Somente amanhã:*\n",

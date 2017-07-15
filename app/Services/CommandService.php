@@ -12,6 +12,7 @@ class CommandService
     public const COMMAND_COMMANDS        = 'commands';
     public const COMMAND_GRID_SHOW_SHORT = 'gridShowShort';
     public const COMMAND_LIST_GRIDS      = 'listGrids';
+    public const COMMAND_MY_GRIDS        = 'myGrids';
     public const COMMAND_NEW_GRID        = 'newGrid';
     public const COMMAND_REGISTER        = 'register';
     public const COMMAND_RULES           = 'rules';
@@ -40,6 +41,7 @@ class CommandService
         if ($user !== null) {
             $commands[] = static::COMMAND_NEW_GRID;
             $commands[] = static::COMMAND_LIST_GRIDS;
+            $commands[] = static::COMMAND_MY_GRIDS;
         }
 
         $result = $this->buildCommandsList(trans('Command.mainCommands'), $commands);

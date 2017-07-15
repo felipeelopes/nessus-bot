@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property string                        $grid_status_details Grid status description.
  *
  * @method Builder filterOpeneds()
+ * @method Builder filterOwneds(User $user)
  * @method Builder orderByTiming()
  */
 class  Grid extends Model
@@ -128,6 +129,16 @@ class  Grid extends Model
     {
         $builder->whereIn('grid_status', [ self::STATUS_WAITING, self::STATUS_GATHERING, self::STATUS_PLAYING ]);
         $builder->whereRaw("grid_timing >= TIMESTAMP(NOW(), '-00:15:00')");
+    }
+
+    /**
+     * Filter for only owned opened grids.
+     * @param Builder $builder Builder instance.
+     * @param User    $user    User instance.
+     */
+    public function scopeFilterOwneds(Builder $builder, User $user): void
+    {
+        $builder->where('gamertag_id', $user->getGamertag()->id);
     }
 
     /**

@@ -81,5 +81,4 @@ class TitleMoment extends SessionMoment
 
         return null;
     }
-
 }
