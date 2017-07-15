@@ -26,7 +26,7 @@ class GridListingStrategy implements UserStrategyContract
     private const CACHE_LISTING_KEY = __CLASS__ . '@listing';
 
     private const MODE_GENERAL = 'gridShow';
-    private const MODE_OWNEDS  = 'myGridsShow';
+    private const MODE_OWNEDS  = 'myGridShow';
 
     /**
      * @inheritdoc
@@ -62,10 +62,10 @@ class GridListingStrategy implements UserStrategyContract
             $gridsQuery = Grid::query();
             $gridsQuery->with('subscribers');
             $gridsQuery->filterOwneds($user);
+            $gridsQuery->filterAvailables();
             $grids = $gridsQuery->get()->sort(function (Grid $gridA, Grid $gridB) {
-                return ($gridB->grid_status === Grid::STATUS_CANCELED) <=> ($gridA->grid_status === Grid::STATUS_CANCELED)
-                    ?: ($gridB->grid_status === Grid::STATUS_FINISHED) <=> ($gridA->grid_status === Grid::STATUS_FINISHED)
-                        ?: $gridB->grid_timing->lt($gridA->grid_timing);
+                return ($gridA->getStatusCode() <=> $gridB->getStatusCode())
+                    ?: $gridA->grid_timing->gte($gridB->grid_timing);
             });
 
             $this->sendGridListing($update, $botService, $grids, self::MODE_OWNEDS);

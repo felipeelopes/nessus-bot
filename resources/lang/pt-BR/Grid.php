@@ -30,7 +30,7 @@ return [
 
     // Grid statuses.
     'statusWaiting'     => 'disponível',
-    'statusGathering'   => 'reunindo...',
+    'statusGathering'   => 'reunindo',
     'statusPlaying'     => 'em andamento',
     'statusFinished'    => 'concluído',
     'statusCanceled'    => 'cancelado',

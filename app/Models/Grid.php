@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as BuilderQuery;
 use Illuminate\Support\Collection;
 
 /**
@@ -22,11 +23,13 @@ use Illuminate\Support\Collection;
  * @property string                        $grid_status         Grid status.
  * @property string                        $grid_status_details Grid status description.
  *
+ * @method Builder filterAvailables()
  * @method Builder filterOpeneds()
  * @method Builder filterOwneds(User $user)
+ * @method Builder filterSubscribeds(User $user)
  * @method Builder orderByTiming()
  */
-class  Grid extends Model
+class Grid extends Model
 {
     public const STATUS_CANCELED  = 'canceled';
     public const STATUS_FINISHED  = 'finished';
@@ -104,6 +107,33 @@ class  Grid extends Model
     }
 
     /**
+     * Returns the status code.
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        switch ($this->grid_status) {
+            case self::STATUS_PLAYING:
+                return 1;
+                break;
+            case self::STATUS_GATHERING:
+                return 2;
+                break;
+            case self::STATUS_WAITING:
+                return 3;
+                break;
+            case self::STATUS_FINISHED:
+                return 4;
+                break;
+            case self::STATUS_CANCELED:
+                return 5;
+                break;
+        }
+
+        return 0;
+    }
+
+    /**
      * Identify if grid is playing.
      * @return bool
      */
@@ -122,12 +152,21 @@ class  Grid extends Model
     }
 
     /**
+     * Filter for only available grids.
+     * @param Builder $builder Builder instance.
+     */
+    public function scopeFilterAvailables(Builder $builder): void
+    {
+        $builder->whereIn('grid_status', [ self::STATUS_WAITING, self::STATUS_GATHERING, self::STATUS_PLAYING ]);
+    }
+
+    /**
      * Filter for only opened grids.
      * @param Builder $builder Builder instance.
      */
     public function scopeFilterOpeneds(Builder $builder): void
     {
-        $builder->whereIn('grid_status', [ self::STATUS_WAITING, self::STATUS_GATHERING, self::STATUS_PLAYING ]);
+        $this->filterAvailables();
         $builder->whereRaw("grid_timing >= TIMESTAMP(NOW(), '-00:15:00')");
     }
 
@@ -139,6 +178,20 @@ class  Grid extends Model
     public function scopeFilterOwneds(Builder $builder, User $user): void
     {
         $builder->where('gamertag_id', $user->getGamertag()->id);
+    }
+
+    /**
+     * Filter for only owned opened grids.
+     * @param Builder $builder Builder instance.
+     * @param User    $user    User instance.
+     */
+    public function scopeFilterSubscribeds(Builder $builder, User $user): void
+    {
+        $builder->whereIn('id', function (BuilderQuery $builder) use ($user) {
+            $builder->select('grid_id');
+            $builder->from((new GridSubscription)->getTable());
+            $builder->where('gamertag_id', $user->getGamertag()->id);
+        });
     }
 
     /**

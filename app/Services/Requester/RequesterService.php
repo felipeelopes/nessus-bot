@@ -56,7 +56,7 @@ class RequesterService
         catch (ClientException $clientException) {
             if ($clientException->getCode() === 403) {
                 $response        = $clientException->getResponse();
-                $requestResponse = new RequestResponse(json_decode($response->getBody()->getContents()), true);
+                $requestResponse = new RequestResponse(json_decode($response->getBody()->getContents(), true));
 
                 if ($requestResponse->description === 'Forbidden: bot was blocked by the user') {
                     return null;
