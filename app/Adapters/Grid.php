@@ -74,7 +74,7 @@ class Grid extends BaseFluent
             $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($this->owner->id);
 
-            $result .= trans('Grid.gridOwner', [ 'value' => $user->getGamertag()->gamertag_value ]);
+            $result .= trans('Grid.gridOwner', [ 'value' => $user->gamertag->gamertag_value ]);
         }
 
         if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {

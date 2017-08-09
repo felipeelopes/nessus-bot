@@ -34,7 +34,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 );
             }
             else {
-                $userGamertags = $user->getGamertag();
+                $userGamertags = $user->gamertag;
 
                 if ($userGamertags) {
                     $botService->sendMessage(
@@ -54,7 +54,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             $user        = $userService->get($update->message->left_chat_member->id);
 
             if ($update->message->left_chat_member->id !== $update->message->from->id) {
-                $userGamertags = $user->getGamertag();
+                $userGamertags = $user->gamertag;
 
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBwADwvySEXi2rT98M7GIAg');
                 $botService->sendMessage(
@@ -78,7 +78,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 );
             }
             else {
-                $userGamertags = $user->getGamertag();
+                $userGamertags = $user->gamertag;
 
                 if ($userGamertags) {
                     $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');

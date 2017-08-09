@@ -65,7 +65,7 @@ class ConfirmMoment extends SessionMoment
         $processGrid = $process->offsetGet(self::PROCESS_GRID);
 
         $grid                    = new GridModel;
-        $grid->gamertag_id       = $user->getGamertag()->id;
+        $grid->gamertag_id       = $user->gamertag->id;
         $grid->grid_title        = $processGrid->title;
         $grid->grid_subtitle     = $processGrid->subtitle;
         $grid->grid_requirements = $processGrid->requirements;
@@ -76,7 +76,7 @@ class ConfirmMoment extends SessionMoment
 
         $gridSubscription                    = new GridSubscription;
         $gridSubscription->grid_id           = $grid->id;
-        $gridSubscription->gamertag_id       = $user->getGamertag()->id;
+        $gridSubscription->gamertag_id       = $user->gamertag->id;
         $gridSubscription->subscription_rule = GridSubscription::RULE_OWNER;
         $gridSubscription->save();
 
