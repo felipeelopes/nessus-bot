@@ -13,6 +13,7 @@ use Application\Types\Process;
 
 class DurationMoment extends SessionMoment
 {
+    public const EVENT_INVALID = 'invalid';
     public const EVENT_REQUEST = 'request';
     public const EVENT_SAVE    = 'save';
 
@@ -57,6 +58,8 @@ class DurationMoment extends SessionMoment
                 trans('GridCreation.errorDurationInvalid'),
                 PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
             );
+
+            assert(EventService::getInstance()->register(self::EVENT_INVALID));
 
             return self::class;
         }

@@ -7,6 +7,7 @@ namespace Tests\Bot;
 use Application\Services\Assertions\EventService;
 use Application\Services\CommandService;
 use Application\SessionsProcessor\GridCreation\ConfirmMoment;
+use Application\SessionsProcessor\GridCreation\DurationMoment;
 use Application\SessionsProcessor\GridCreation\PlayersMoment;
 use Application\SessionsProcessor\GridCreation\RequirementsMoment;
 use Application\SessionsProcessor\GridCreation\SubtitleMoment;
@@ -111,6 +112,18 @@ class GridCreationTest extends CommandBase
         $this->assertBotMessage(trans('GridCreation.creationWizardTimingConfirmYes'),
             function (EventService $eventService) {
                 $this->assertTrue($eventService->has(TimingConfirmMoment::EVENT_CONFIRM));
+                $this->assertTrue($eventService->has(DurationMoment::EVENT_REQUEST));
+            });
+
+        // Duration.
+        $this->assertBotMessage('invalid duration',
+            function (EventService $eventService) {
+                $this->assertTrue($eventService->has(DurationMoment::EVENT_INVALID));
+            });
+
+        $this->assertBotMessage(trans('GridCreation.creationWizardDurationOptions.0.value'),
+            function (EventService $eventService) {
+                $this->assertTrue($eventService->has(DurationMoment::EVENT_SAVE));
                 $this->assertTrue($eventService->has(PlayersMoment::EVENT_REQUEST));
             });
 
