@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property-read UserGamertag|null $gamertag        User gametag.
- * @property int                    $user_numberUser number identification from Telegram.
+ * @property int                    $user_number     User number identification from Telegram.
  * @property string                 $user_username   User username.
  * @property string                 $user_firstname  User first name.
  * @property string                 $user_lastname   User last name.

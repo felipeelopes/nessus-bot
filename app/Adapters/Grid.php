@@ -35,7 +35,7 @@ class Grid extends BaseFluent
      */
     public static function fromModel(GridModel $grid): Grid
     {
-        return new Grid([
+        return new self([
             'title'        => $grid->grid_title,
             'subtitle'     => $grid->grid_subtitle,
             'requirements' => $grid->grid_requirements,

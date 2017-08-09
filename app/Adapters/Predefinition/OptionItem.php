@@ -20,7 +20,7 @@ class OptionItem extends BaseFluent
      */
     public static function fromCommand($commandName): OptionItem
     {
-        return new OptionItem([ 'command' => $commandName ]);
+        return new self([ 'command' => $commandName ]);
     }
 
     /**

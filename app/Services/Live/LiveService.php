@@ -16,7 +16,7 @@ class LiveService implements ServiceContract
      */
     public static function getInstance(): LiveService
     {
-        return MockupService::getInstance()->instance(LiveService::class);
+        return MockupService::getInstance()->instance(__CLASS__);
     }
 
     /**

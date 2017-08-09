@@ -39,7 +39,7 @@ class MockupService
     public static function getInstance(): MockupService
     {
         if (!static::$instance) {
-            return static::$instance = new MockupService;
+            return static::$instance = new self;
         }
 
         return static::$instance;
