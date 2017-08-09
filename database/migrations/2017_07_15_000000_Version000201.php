@@ -27,6 +27,7 @@ class Version000201 extends Migration
         Schema::table('grids', function (Blueprint $table) {
             $gridDuration = $table->time('grid_duration');
             $gridDuration->offsetSet('after', 'grid_timing');
+            $gridDuration->offsetSet('nullable', true);
         });
     }
 }
