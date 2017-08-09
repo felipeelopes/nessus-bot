@@ -121,7 +121,7 @@ class Grid extends BaseFluent
         $durationCount            = count(array_filter($durationArray));
 
         if ($durationCount !== 0) {
-            $duration = $durationCount === 1
+            $duration = $durationMinutes === 0.0
                 ? array_first($durationArray)
                 : trans('Grid.durationBoth', $durationArray);
 
