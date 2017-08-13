@@ -66,15 +66,6 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
-        if ($user === null) {
-            $sessionService = SessionService::getInstance();
-            $sessionService->setInitialMoment(WelcomeMoment::class);
-
-            if ($sessionService->run($update)) {
-                return true;
-            }
-        }
-
         return true;
     }
 }
