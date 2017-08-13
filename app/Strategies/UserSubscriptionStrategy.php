@@ -29,7 +29,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                     $update->message->chat->id,
                     trans('UserRegistration.toPrivate', [
                         'fullname'    => $update->message->new_chat_member->getFullname(),
-                        'botUsername' => $botService->getMe()->username,
+                        'botUsername' => '@' . $botService->getMe()->username,
                     ])
                 );
             }
