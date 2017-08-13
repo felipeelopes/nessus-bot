@@ -53,6 +53,10 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($update->message->left_chat_member->id);
 
+            if ($user === null) {
+                return true;
+            }
+
             if ($update->message->left_chat_member->id !== $update->message->from->id) {
                 $userGamertags = $user->gamertag;
 
