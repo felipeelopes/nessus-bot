@@ -21,6 +21,7 @@ class InitializationMoment extends SessionMoment
     public const PROCESS_CONTINUE = 'continue';
     public const PROCESS_GRID     = 'grid';
 
+    const REPLY_MODIFY_SUBTITLE = 'ModifySubtitle';
     const REPLY_MODIFY_TITLE    = 'ModifyTitle';
 
     /**
@@ -72,6 +73,9 @@ class InitializationMoment extends SessionMoment
         switch ($update->message->text) {
             case self::REPLY_MODIFY_TITLE:
                 throw new ForceMomentException(ModifyTitleMoment::class);
+                break;
+            case self::REPLY_MODIFY_SUBTITLE:
+                throw new ForceMomentException(ModifySubtitleMoment::class);
                 break;
         }
 

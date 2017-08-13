@@ -2,48 +2,37 @@
 
 declare(strict_types = 1);
 
-namespace Application\SessionsProcessor\GridCreation;
+namespace Application\SessionsProcessor\GridModification;
 
 use Application\Adapters\Telegram\Update;
-use Application\Services\Assertions\EventService;
+use Application\Models\Grid;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
+use Application\SessionsProcessor\GridCreation\SubtitleMoment;
+use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 
-class SubtitleMoment extends SessionMoment
+class ModifySubtitleMoment extends SessionMoment
 {
-    public const EVENT_LONG_RESPONSE = 'longResponse';
-    public const EVENT_REQUEST       = 'request';
-    public const EVENT_SAVE          = 'save';
-
-    public const MAX_SUBTITLE = 20;
-
-    public const PROCESS_SUBTITLE = 'subtitle';
-
-    /**
-     * Validate the input max length.
-     * @param string $input Input value.
-     * @return bool
-     */
-    public static function inputMaxLengthValidation($input): bool
-    {
-        return strlen($input) > self::MAX_SUBTITLE;
-    }
+    use ModificationMoment;
 
     /**
      * @inheritdoc
      */
     public function request(Update $update, Process $process): void
     {
+        /** @var Grid $grid */
+        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+
         $botService = BotService::getInstance();
         $botService->sendPredefinedMessage(
             $update->message->from->id,
-            trans('GridCreation.creationWizardSubtitle'),
+            trans('GridModification.modifySubtitleWizard', [
+                'current' => $grid->grid_subtitle ?: trans('GridModification.modifySubtitleNone'),
+            ]),
             PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions'))
         );
-
-        assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
 
     /**
@@ -51,11 +40,16 @@ class SubtitleMoment extends SessionMoment
      */
     public function save(string $input, Update $update, Process $process): ?string
     {
-        $process->put(self::PROCESS_SUBTITLE, $input);
+        /** @var Grid $grid */
+        $grid                = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid->grid_subtitle = $input;
+        $grid->save();
 
-        assert(EventService::getInstance()->register(self::EVENT_SAVE));
+        static::notifyUpdate($update, $process, trans('GridModification.modifySubtitleUpdated', [
+            'value' => $input ?: trans('GridModification.modifySubtitleNone'),
+        ]));
 
-        return RequirementsMoment::class;
+        return InitializationMoment::class;
     }
 
     /**
@@ -63,15 +57,13 @@ class SubtitleMoment extends SessionMoment
      */
     public function validateInput(string $input, Update $update, Process $process): ?string
     {
-        if (self::inputMaxLengthValidation($input)) {
+        if (SubtitleMoment::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
             $botService->sendPredefinedMessage(
                 $update->message->from->id,
-                trans('GridCreation.errorSubtitleTooLong', [ 'max' => self::MAX_SUBTITLE ]),
+                trans('GridModification.errorSubtitleTooLong', [ 'max' => SubtitleMoment::MAX_SUBTITLE ]),
                 PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions'))
             );
-
-            assert(EventService::getInstance()->register(self::EVENT_LONG_RESPONSE));
 
             return self::class;
         }
