@@ -121,7 +121,7 @@ class TimingMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         $validateTiming = self::processTiming($update, $process);
 

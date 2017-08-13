@@ -23,12 +23,12 @@ class SubtitleMoment extends SessionMoment
 
     /**
      * Validate the input max length.
-     * @param string $input Input value.
+     * @param string|null $input Input value.
      * @return bool
      */
-    public static function inputMaxLengthValidation($input): bool
+    public static function inputMaxLengthValidation(?string $input): bool
     {
-        return strlen($input) > self::MAX_SUBTITLE;
+        return strlen((string) $input) > self::MAX_SUBTITLE;
     }
 
     /**
@@ -49,7 +49,7 @@ class SubtitleMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         $process->put(self::PROCESS_SUBTITLE, $input);
 
@@ -61,7 +61,7 @@ class SubtitleMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         if (self::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();

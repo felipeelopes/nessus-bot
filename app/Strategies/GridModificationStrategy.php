@@ -4,12 +4,10 @@ declare(strict_types = 1);
 
 namespace Application\Strategies;
 
-use Application\Adapters\Grid as GridAdapter;
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
 use Application\Models\User;
 use Application\Services\CommandService;
-use Application\Services\PredefinitionService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\GridModification\InitializationMoment;

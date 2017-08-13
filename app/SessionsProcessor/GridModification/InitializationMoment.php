@@ -68,7 +68,7 @@ class InitializationMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         switch ($update->message->text) {
             case self::REPLY_MODIFY_TITLE:

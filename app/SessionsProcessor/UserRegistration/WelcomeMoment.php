@@ -72,7 +72,7 @@ class WelcomeMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         /** @var Gamertag $gamertagInstance */
         $gamertagInstance = $process->offsetGet(self::PROCESS_GAMERTAG);
@@ -117,7 +117,7 @@ class WelcomeMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         $botService      = BotService::getInstance();
         $gamertagService = GamertagService::getInstance();

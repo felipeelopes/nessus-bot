@@ -8,9 +8,7 @@ use Application\Adapters\Telegram\Update;
 use Application\Models\User;
 use Application\Services\CommandService;
 use Application\Services\MockupService;
-use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
-use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
 use Application\Strategies\Contracts\UserStrategyContract;
 
 class EdgeCommandStrategy implements UserStrategyContract

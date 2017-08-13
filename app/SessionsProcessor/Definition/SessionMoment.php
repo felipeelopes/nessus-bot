@@ -20,12 +20,12 @@ abstract class SessionMoment
 
     /**
      * Save the user input.
-     * @param string  $input   User input message.
-     * @param Update  $update  Update instance.
-     * @param Process $process Process collection.
+     * @param string|null $input   User input message.
+     * @param Update      $update  Update instance.
+     * @param Process     $process Process collection.
      * @return null|string
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         return null;
     }
@@ -43,12 +43,12 @@ abstract class SessionMoment
 
     /**
      * Validate user input.
-     * @param string  $input   User input message.
-     * @param Update  $update  Update instance.
-     * @param Process $process Process collection.
+     * @param string|null $input   User input message.
+     * @param Update      $update  Update instance.
+     * @param Process     $process Process collection.
      * @return null|string
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         return null;
     }

@@ -40,7 +40,7 @@ class PlayersMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         $process->put(self::PROCESS_PLAYERS, (int) $input);
 
@@ -52,7 +52,7 @@ class PlayersMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         $botService   = BotService::getInstance();
         $playersCount = (int) $input;

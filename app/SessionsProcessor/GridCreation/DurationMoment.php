@@ -37,7 +37,7 @@ class DurationMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         $process->put(self::PROCESS_DURATION, $input);
 
@@ -49,7 +49,7 @@ class DurationMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         if (!is_numeric($input)) {
             $botService = BotService::getInstance();

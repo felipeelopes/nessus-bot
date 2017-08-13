@@ -38,7 +38,7 @@ class ModifySubtitleMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         /** @var Grid $grid */
         $grid                = $process->get(InitializationMoment::PROCESS_GRID);
@@ -55,7 +55,7 @@ class ModifySubtitleMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         if (SubtitleMoment::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();

@@ -37,7 +37,7 @@ class TimingConfirmMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         if ($input !== trans('GridCreation.creationWizardTimingConfirmYes')) {
             $processTiming = TimingMoment::processTiming($update, $process)

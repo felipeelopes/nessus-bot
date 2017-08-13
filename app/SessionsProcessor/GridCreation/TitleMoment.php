@@ -24,12 +24,12 @@ class TitleMoment extends SessionMoment
 
     /**
      * Validate the input max length.
-     * @param string $input Input value.
+     * @param string|null $input Input value.
      * @return bool
      */
-    public static function inputMaxLengthValidation(string $input): bool
+    public static function inputMaxLengthValidation(?string $input): bool
     {
-        return strlen($input) > self::MAX_TITLE;
+        return strlen((string) $input) > self::MAX_TITLE;
     }
 
     /**
@@ -52,7 +52,7 @@ class TitleMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         $process->put(self::PROCESS_TITLE, $input);
 
@@ -72,7 +72,7 @@ class TitleMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         if (self::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();

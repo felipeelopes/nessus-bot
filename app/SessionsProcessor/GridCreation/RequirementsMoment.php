@@ -39,7 +39,7 @@ class RequirementsMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         $process->put(self::PROCESS_REQUIREMENTS, $input);
 
@@ -51,7 +51,7 @@ class RequirementsMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         $botService = BotService::getInstance();
         $message    = $update->message->text;

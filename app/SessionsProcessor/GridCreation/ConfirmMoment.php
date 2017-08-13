@@ -57,7 +57,7 @@ class ConfirmMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function save(string $input, Update $update, Process $process): ?string
+    public function save(?string $input, Update $update, Process $process): ?string
     {
         $user = UserService::getInstance()->get($update->message->from->id);
 
@@ -97,7 +97,7 @@ class ConfirmMoment extends SessionMoment
     /**
      * @inheritdoc
      */
-    public function validateInput(string $input, Update $update, Process $process): ?string
+    public function validateInput(?string $input, Update $update, Process $process): ?string
     {
         $botService = BotService::getInstance();
 
