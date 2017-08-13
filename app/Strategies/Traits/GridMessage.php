@@ -12,6 +12,7 @@ use Application\Services\CommandService;
 use Application\Services\FormattingService;
 use Application\Services\Requester\RequesterService;
 use Application\Services\Telegram\BotService;
+use Application\Strategies\GridListingStrategy;
 use Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -99,7 +100,7 @@ trait GridMessage
 
         /** @var Grid $grid */
         foreach ($grids as $grid) {
-            $gridTitle = $mode === self::MODE_GENERAL
+            $gridTitle = $mode === GridListingStrategy::MODE_GENERAL
                 ? $this->getGridTitle($grid)
                 : trans('GridListing.titleBase', [
                     'title' => Str::ucfirst($this->getGridStatusText($grid)),

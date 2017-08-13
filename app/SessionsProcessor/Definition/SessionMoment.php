@@ -14,7 +14,9 @@ abstract class SessionMoment
      * @param Update  $update  Update instance.
      * @param Process $process Process collection.
      */
-    abstract public function request(Update $update, Process $process): void;
+    public function request(Update $update, Process $process): void
+    {
+    }
 
     /**
      * Save the user input.

@@ -14,6 +14,7 @@ use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\EdgeCommandStrategy;
 use Application\Strategies\GridCreationStrategy;
 use Application\Strategies\GridListingStrategy;
+use Application\Strategies\GridModificationStrategy;
 use Application\Strategies\PredefinitionStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Application\Strategies\UserSubscriptionStrategy;
@@ -100,6 +101,12 @@ class BotController extends Controller implements RouterRegisterContract
             /** @var GridListingStrategy $gridListing */
             $gridListing = $mockupService->instance(GridListingStrategy::class);
             if ($gridListing->process($user, $update)) {
+                return;
+            }
+
+            /** @var GridModificationStrategy $gridModification */
+            $gridModification = $mockupService->instance(GridModificationStrategy::class);
+            if ($gridModification->process($user, $update)) {
                 return;
             }
 

@@ -20,7 +20,7 @@ class GridListingStrategy implements UserStrategyContract
 {
     use GridMessage;
 
-    private const MODE_GENERAL = 'gridShow';
+    public const MODE_GENERAL = 'gridShow';
 
     /**
      * @inheritdoc

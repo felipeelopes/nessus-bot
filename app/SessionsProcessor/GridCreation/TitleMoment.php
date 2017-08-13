@@ -14,13 +14,23 @@ use Application\Types\Process;
 
 class TitleMoment extends SessionMoment
 {
-    public const  EVENT_LONG_RESPONSE = 'longResponse';
-    public const  EVENT_REQUEST       = 'request';
-    public const  EVENT_SAVE          = 'save';
+    public const EVENT_LONG_RESPONSE = 'longResponse';
+    public const EVENT_REQUEST       = 'request';
+    public const EVENT_SAVE          = 'save';
 
-    private const MAX_TITLE = 80;
+    public const MAX_TITLE = 80;
 
-    public const  PROCESS_TITLE = 'title';
+    public const PROCESS_TITLE = 'title';
+
+    /**
+     * Validate the input max length.
+     * @param string $input Input value.
+     * @return bool
+     */
+    public static function inputMaxLengthValidation(string $input): bool
+    {
+        return strlen($input) > self::MAX_TITLE;
+    }
 
     /**
      * @inheritdoc
@@ -64,10 +74,8 @@ class TitleMoment extends SessionMoment
      */
     public function validateInput(string $input, Update $update, Process $process): ?string
     {
-        $botService = BotService::getInstance();
-        $message    = $update->message->text;
-
-        if (strlen($message) > self::MAX_TITLE) {
+        if (self::inputMaxLengthValidation($input)) {
+            $botService = BotService::getInstance();
             $botService->sendPredefinedMessage(
                 $update->message->from->id,
                 trans('GridCreation.errorTitleTooLong', [ 'max' => self::MAX_TITLE ]),
