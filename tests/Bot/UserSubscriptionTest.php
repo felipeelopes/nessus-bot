@@ -58,9 +58,11 @@ class UserSubscriptionTest extends CommandBase
         });
 
         // It will be mocked to be not found initially.
-        $this->assertBotMessage('ValidGamertag', function (EventService $eventService) {
-            $this->assertTrue($eventService->has(WelcomeMoment::EVENT_CHECK_GAMERTAG_NOT_FOUND));
-        });
+        if (env('NBOT_OPTION_XBOX_CHECK')) {
+            $this->assertBotMessage('ValidGamertag', function (EventService $eventService) {
+                $this->assertTrue($eventService->has(WelcomeMoment::EVENT_CHECK_GAMERTAG_NOT_FOUND));
+            });
+        }
 
         $mockupService->registerProvider(LiveRequesterServiceMockup::class, function () {
             return json_encode([ 'id' => 123, 'Gamertag' => 'ValidGamertag' ]);

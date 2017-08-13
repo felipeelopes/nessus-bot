@@ -132,19 +132,24 @@ class WelcomeMoment extends SessionMoment
             return self::class;
         }
 
-        $botService->sendMessage($update->message->from->id, trans('UserRegistration.checkingGamertag'));
+        if (env('NBOT_OPTION_XBOX_CHECK')) {
+            $botService->sendMessage($update->message->from->id, trans('UserRegistration.checkingGamertag'));
 
-        $gamertagInstance = LiveService::getInstance()->getGamertag($input);
+            $gamertagInstance = LiveService::getInstance()->getGamertag($input);
 
-        if (!$gamertagInstance) {
-            $botService->sendCancelableMessage($update->message->from->id, trans('UserRegistration.checkingFail', [
-                'gamertag'      => $input,
-                'whichGamertag' => trans('UserRegistration.whichGamertag'),
-            ]));
+            if (!$gamertagInstance) {
+                $botService->sendCancelableMessage($update->message->from->id, trans('UserRegistration.checkingFail', [
+                    'gamertag'      => $input,
+                    'whichGamertag' => trans('UserRegistration.whichGamertag'),
+                ]));
 
-            assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_NOT_FOUND));
+                assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_NOT_FOUND));
 
-            return self::class;
+                return self::class;
+            }
+        }
+        else {
+            $gamertagInstance = new Gamertag([ 'value' => $input ]);
         }
 
         $process->offsetSet(self::PROCESS_GAMERTAG, $gamertagInstance);
