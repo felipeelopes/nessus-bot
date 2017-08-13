@@ -12,6 +12,7 @@ return [
     'modificationOptions' => [
         [ 'value' => InitializationMoment::REPLY_MODIFY_TITLE, 'description' => 'Modificar título...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_SUBTITLE, 'description' => 'Modificar subtítulo...' ],
+        [ 'value' => InitializationMoment::REPLY_MODIFY_REQUIREMENTS, 'description' => 'Modificar exigências...' ],
     ],
 
     'modifyTitleWizard'  => "*\xE2\x9E\x9C Qual será o novo título da missão?*\n" .
@@ -32,4 +33,15 @@ return [
     'errorSubtitleTooLong' => "*O novo subtítulo ficou grande demais!*\n" .
                               "Tente não ultrapassar :max caracteres.\n\n" .
                               "*\xE2\x9E\x9C Qual será o novo subtítulo da missão?*",
+
+    'modifyRequirementsWizard'  => "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
+                                   "Limite de :max caracteres.\n\n" .
+                                   '*Exigências atual*: :current',
+    'modifyRequirementsNone'    => '_(nenhuma)_',
+    'modifyRequirementsUpdated' => "*Exigências salva:* :value\n\n",
+
+    'errorRequirementsTooLong' => "*São exigências demais!*\n" .
+                                  "Tente não ultrapassar :max caracteres.\n\n" .
+                                  "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
+                                  'Limite de :max caracteres.',
 ];

@@ -21,8 +21,9 @@ class InitializationMoment extends SessionMoment
     public const PROCESS_CONTINUE = 'continue';
     public const PROCESS_GRID     = 'grid';
 
-    const REPLY_MODIFY_SUBTITLE = 'ModifySubtitle';
-    const REPLY_MODIFY_TITLE    = 'ModifyTitle';
+    const REPLY_MODIFY_REQUIREMENTS = 'ModifyRequirements';
+    const REPLY_MODIFY_SUBTITLE     = 'ModifySubtitle';
+    const REPLY_MODIFY_TITLE        = 'ModifyTitle';
 
     /**
      * @inheritdoc
@@ -76,6 +77,9 @@ class InitializationMoment extends SessionMoment
                 break;
             case self::REPLY_MODIFY_SUBTITLE:
                 throw new ForceMomentException(ModifySubtitleMoment::class);
+                break;
+            case self::REPLY_MODIFY_REQUIREMENTS:
+                throw new ForceMomentException(ModifyRequirementsMoment::class);
                 break;
         }
 

@@ -17,9 +17,19 @@ class RequirementsMoment extends SessionMoment
     public const EVENT_REQUEST       = 'response';
     public const EVENT_SAVE          = 'save';
 
-    private const MAX_REQUIREMENTS = 400;
+    public const MAX_REQUIREMENTS = 400;
 
     public const  PROCESS_REQUIREMENTS = 'requirements';
+
+    /**
+     * Validate the input max length.
+     * @param string|null $input Input value.
+     * @return bool
+     */
+    public static function inputMaxLengthValidation(?string $input): bool
+    {
+        return strlen((string) $input) > self::MAX_REQUIREMENTS;
+    }
 
     /**
      * @inheritdoc
@@ -53,10 +63,8 @@ class RequirementsMoment extends SessionMoment
      */
     public function validateInput(?string $input, Update $update, Process $process): ?string
     {
-        $botService = BotService::getInstance();
-        $message    = $update->message->text;
-
-        if (strlen($message) > self::MAX_REQUIREMENTS) {
+        if (self::inputMaxLengthValidation($input)) {
+            $botService = BotService::getInstance();
             $botService->sendPredefinedMessage(
                 $update->message->from->id,
                 trans('GridCreation.errorRequirementsTooLong', [ 'max' => self::MAX_REQUIREMENTS ]),
