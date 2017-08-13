@@ -92,10 +92,6 @@ class Grid extends BaseFluent
             ]);
         }
 
-        if ($this->requirements) {
-            $result .= trans('Grid.gridRequirements', [ 'value' => $this->requirements ]);
-        }
-
         $timingNow  = Carbon::now()->second(0);
         $timingHour = $this->timing->format('H:i');
 
@@ -130,6 +126,10 @@ class Grid extends BaseFluent
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);
+        }
+
+        if ($this->requirements) {
+            $result .= trans('Grid.gridRequirements', [ 'value' => $this->requirements ]);
         }
 
         if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {
