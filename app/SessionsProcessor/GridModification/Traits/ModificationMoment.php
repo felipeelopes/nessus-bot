@@ -47,7 +47,7 @@ trait ModificationMoment
         }
 
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
+        $botService->sendOptionsMessage(
             $update->message->chat->id,
             $updateMessage,
             PredefinitionService::getInstance()->optionsFrom(trans('GridModification.modificationOptions'))

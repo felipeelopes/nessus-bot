@@ -157,6 +157,19 @@ class BotService implements ServiceContract
     }
 
     /**
+     * Send a message with specific options.
+     * @param string|int  $chatId       Chat id.
+     * @param string|null $text         Message text.
+     * @param array       $options      Specific options.
+     * @param bool|null   $isCancelable Show the cancel command (default: true).
+     * @return Message|null
+     */
+    public function sendOptionsMessage($chatId, ?string $text, array $options, ?bool $isCancelable = null): ?Message
+    {
+        return $this->sendPredefinedMessageWithTemplate($chatId, $text, $options, 'Predefinition.specificOptions', $isCancelable);
+    }
+
+    /**
      * Send a message with predefined options.
      * @param string|int  $chatId       Chat id.
      * @param string|null $text         Message text.
@@ -166,16 +179,7 @@ class BotService implements ServiceContract
      */
     public function sendPredefinedMessage($chatId, ?string $text, array $options, ?bool $isCancelable = null): ?Message
     {
-        if ($isCancelable !== false) {
-            $options[] = new OptionItem([ 'command' => CommandService::COMMAND_CANCEL ]);
-        }
-
-        $predefinitionService = PredefinitionService::getInstance();
-        $predefinitionService->setOptions($options);
-
-        $text .= $predefinitionService->buildOptions();
-
-        return $this->sendMessage($chatId, $text);
+        return $this->sendPredefinedMessageWithTemplate($chatId, $text, $options, null, $isCancelable);
     }
 
     /**
@@ -211,5 +215,28 @@ class BotService implements ServiceContract
             'sticker'              => $sticker,
             'disable_notification' => true,
         ]);
+    }
+
+    /**
+     * Send a predefined message with a specific template.
+     * @param string|int  $chatId       Chat id.
+     * @param string|null $text         Message text.
+     * @param array       $options      Options list.
+     * @param null|string $template     Template.
+     * @param bool|null   $isCancelable Show the cancel command (default: true).
+     * @return Message|null
+     */
+    private function sendPredefinedMessageWithTemplate($chatId, ?string $text, array $options, ?string $template = null, ?bool $isCancelable = null): ?Message
+    {
+        if ($isCancelable !== false) {
+            $options[] = new OptionItem([ 'command' => CommandService::COMMAND_CANCEL ]);
+        }
+
+        $predefinitionService = PredefinitionService::getInstance();
+        $predefinitionService->setOptions($options);
+
+        $text .= $predefinitionService->buildOptions($template);
+
+        return $this->sendMessage($chatId, $text);
     }
 }
