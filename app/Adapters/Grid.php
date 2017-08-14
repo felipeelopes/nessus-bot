@@ -92,34 +92,27 @@ class Grid extends BaseFluent
             ]);
         }
 
-        $timingNow  = Carbon::now()->second(0);
-        $timingHour = $this->timing->format('H:i');
-
-        if ($timingNow->day !== $this->timing->day) {
-            $result .= trans('Grid.gridTiming', [
-                'value' => trans('Grid.timingTomorrow', [
-                    'day'    => $this->timing->format('d/m'),
-                    'timing' => $timingHour,
-                ]),
-            ]);
-        }
-        else {
-            $result .= trans('Grid.gridTiming', [
-                'value' => trans('Grid.timingToday', [ 'timing' => $timingHour ]),
-            ]);
-        }
+        $result .= trans('Grid.gridTiming', [
+            'value' => $this->getTimingFormatted(),
+        ]);
 
         $durationArray            = [];
         $durationHours            = (int) $this->duration;
         $durationArray['hours']   = trans_choice('Grid.durationHours', $durationHours, [ 'hours' => $durationHours ]);
-        $durationMinutes          = round(fmod((float) $this->duration, 1) * 60);
+        $durationMinutes          = (int) round(fmod((float) $this->duration, 1) * 60);
         $durationArray['minutes'] = trans_choice('Grid.durationMinutes', $durationMinutes, [ 'minutes' => $durationMinutes ]);
         $durationCount            = count(array_filter($durationArray));
 
         if ($durationCount !== 0) {
-            $duration = $durationMinutes === 0.0
-                ? array_first($durationArray)
-                : trans('Grid.durationBoth', $durationArray);
+            if ($durationMinutes === 0) {
+                $duration = array_first($durationArray);
+            }
+            else if ($durationHours === 0) {
+                $duration = array_last($durationArray);
+            }
+            else {
+                $duration = trans('Grid.durationBoth', $durationArray);
+            }
 
             $result .= trans('Grid.gridDuration', [ 'value' => $duration ]);
         }
@@ -161,5 +154,24 @@ class Grid extends BaseFluent
         }
 
         return $result;
+    }
+
+    /**
+     * Returns the timing formatted.
+     * @return string
+     */
+    public function getTimingFormatted(): string
+    {
+        $timingNow  = Carbon::now()->second(0);
+        $timingHour = $this->timing->format('H:i');
+
+        if ($timingNow->day !== $this->timing->day) {
+            return trans('Grid.timingTomorrow', [
+                'day'    => $this->timing->format('d/m'),
+                'timing' => $timingHour,
+            ]);
+        }
+
+        return trans('Grid.timingToday', [ 'timing' => $timingHour ]);
     }
 }

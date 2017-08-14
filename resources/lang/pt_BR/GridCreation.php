@@ -39,7 +39,7 @@ return [
     'creationWizardTimingConfirm'         => "*\xE2\x9E\x9C Confirmar o horário para :timing?*\n" .
                                              'Se estiver errado, digite um novo horário.',
     'creationWizardTimingConfirmToday'    => 'hoje, às :timing',
-    'creationWizardTimingConfirmTomorrow' => 'amanhã, dia :day às :timing',
+    'creationWizardTimingConfirmTomorrow' => 'amanhã, dia :day, às :timing',
     'creationWizardTimingConfirmOptions'  => [
         [ 'value' => $confirmTimingYes ],
     ],
@@ -65,7 +65,10 @@ return [
     ],
 
     'creationWizardConfirmCreationHeader'  => "*Esta é a última etapa, guardião!*\n" .
-                                              'Se tudo estiver certo, basta confirmar.',
+                                              "Se tudo estiver certo, basta confirmar.\n\n" .
+                                              "---\n\n" .
+                                              ":structure\n\n" .
+                                              "---\n\n",
     'creationWizardConfirmCreationOptions' => [
         [ 'value' => $confirmCreationYes, 'description' => 'Confirmar e publicar no grupo' ],
     ],

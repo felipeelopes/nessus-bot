@@ -41,13 +41,11 @@ class ConfirmMoment extends SessionMoment
         $process->offsetSet(self::PROCESS_GRID, $processGrid);
 
         $botService = BotService::getInstance();
-        $botService->sendMessage(
-            $update->message->from->id,
-            $processGrid->getStructure(Grid::STRUCTURE_TYPE_EXAMPLE)
-        );
         $botService->sendPredefinedMessage(
             $update->message->from->id,
-            trans('GridCreation.creationWizardConfirmCreationHeader'),
+            trans('GridCreation.creationWizardConfirmCreationHeader', [
+                'structure' => $processGrid->getStructure(Grid::STRUCTURE_TYPE_EXAMPLE),
+            ]),
             PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions'))
         );
 

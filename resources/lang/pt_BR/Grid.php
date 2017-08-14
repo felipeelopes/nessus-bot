@@ -12,7 +12,7 @@ return [
     'gridStatusDetails' => ' (_:details_)',
     'gridRequirements'  => "\xE2\x9E\x9C *Exigências*: :value\n",
     'gridTiming'        => "\xE2\x9E\x9C *Horário*: :value\n",
-    'gridDuration'      => "\xE2\x9E\x9C *Duração*: :value\n",
+    'gridDuration'      => "\xE2\x9E\x9C *Duração*: cerca de :value\n",
     'gridPlayers'       => "\n*Participantes*: até :value\n",
 
     // Grid titulars.
@@ -38,7 +38,7 @@ return [
 
     // Timing properties.
     'timingToday'       => 'hoje, às :timing',
-    'timingTomorrow'    => 'amanhã, dia :day às :timing',
+    'timingTomorrow'    => 'amanhã, dia :day, às :timing',
 
     // Duration timing.
     'durationHours'     => ':hours hora|:hours horas',
