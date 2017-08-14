@@ -13,12 +13,13 @@ return [
         [ 'value' => InitializationMoment::REPLY_MODIFY_TITLE, 'description' => 'Modificar título...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_SUBTITLE, 'description' => 'Modificar subtítulo...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_REQUIREMENTS, 'description' => 'Modificar exigências...' ],
+        [ 'value' => InitializationMoment::REPLY_MODIFY_TIMING, 'description' => 'Modificar horário...' ],
     ],
 
     'modifyTitleWizard'  => "*\xE2\x9E\x9C Qual será o novo título da missão?*\n" .
                             "Limite de 80 caracteres.\n\n" .
                             '*Título atual*: :current',
-    'modifyTitleUpdated' => "*Título salvo:* :value\n\n",
+    'modifyTitleUpdated' => "*Título atualizado:* :value\n\n",
 
     'errorTitleTooLong' => "*O novo título ficou grande demais!*\n" .
                            "Tente não ultrapassar :max caracteres.\n\n" .
@@ -28,7 +29,7 @@ return [
                                "Limite de 20 caracteres.\n\n" .
                                '*Subtítulo atual*: :current',
     'modifySubtitleNone'    => '_(nenhum)_',
-    'modifySubtitleUpdated' => "*Subtítulo salvo:* :value\n\n",
+    'modifySubtitleUpdated' => "*Subtítulo atualizado:* :value\n\n",
 
     'errorSubtitleTooLong' => "*O novo subtítulo ficou grande demais!*\n" .
                               "Tente não ultrapassar :max caracteres.\n\n" .
@@ -38,10 +39,22 @@ return [
                                    "Limite de :max caracteres.\n\n" .
                                    '*Exigências atual*: :current',
     'modifyRequirementsNone'    => '_(nenhuma)_',
-    'modifyRequirementsUpdated' => "*Exigências salva:* :value\n\n",
+    'modifyRequirementsUpdated' => "*Exigências atualizada:* :value\n\n",
 
     'errorRequirementsTooLong' => "*São exigências demais!*\n" .
                                   "Tente não ultrapassar :max caracteres.\n\n" .
                                   "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
                                   'Limite de :max caracteres.',
+
+    'modifyTimingWizard'  => "*\xE2\x9E\x9C Qual será o novo horário da missão?*\n" .
+                             "Digite no formato HH:MM (ex. 10:30).\n\n" .
+                             '*Horário atual:* :current',
+    'modifyTimingUpdated' => "*Horário atualizado:* :value\n\n",
+
+    'errorTimingInvalid'  => "*O formato informado não é válido!*\n" .
+                             "Digite no formato HH:MM (ex. 10:30).\n\n" .
+                             "*\xE2\x9E\x9C Qual será o novo horário da missão?*",
+    'errorTimingTooShort' => "*O horário está muito próximo!*\n" .
+                             "O tempo mínimo é de 15 minutos.\n\n" .
+                             "*\xE2\x9E\x9C Qual será o novo horário da missão?*",
 ];

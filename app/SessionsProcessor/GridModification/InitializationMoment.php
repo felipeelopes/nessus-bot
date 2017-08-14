@@ -23,6 +23,7 @@ class InitializationMoment extends SessionMoment
 
     const REPLY_MODIFY_REQUIREMENTS = 'ModifyRequirements';
     const REPLY_MODIFY_SUBTITLE     = 'ModifySubtitle';
+    const REPLY_MODIFY_TIMING       = 'ModifyTiming';
     const REPLY_MODIFY_TITLE        = 'ModifyTitle';
 
     /**
@@ -80,6 +81,9 @@ class InitializationMoment extends SessionMoment
                 break;
             case self::REPLY_MODIFY_REQUIREMENTS:
                 throw new ForceMomentException(ModifyRequirementsMoment::class);
+                break;
+            case self::REPLY_MODIFY_TIMING:
+                throw new ForceMomentException(ModifyTimingMoment::class);
                 break;
         }
 
