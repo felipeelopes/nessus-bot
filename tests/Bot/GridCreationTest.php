@@ -96,6 +96,8 @@ class GridCreationTest extends CommandBase
                 $this->assertTrue($eventService->has(TimingMoment::EVENT_INVALID_TIMING));
             });
 
+        Carbon::setTestNow('2017-01-01 15:00:00');
+
         $this->assertBotMessage(Carbon::now()->addMinute(5)->format('H:i'),
             function (EventService $eventService) {
                 $this->assertTrue($eventService->has(TimingMoment::EVENT_INVALID_TOO_CLOSEST));
