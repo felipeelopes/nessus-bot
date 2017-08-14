@@ -2,47 +2,40 @@
 
 declare(strict_types = 1);
 
-namespace Application\SessionsProcessor\GridCreation;
+namespace Application\SessionsProcessor\GridModification;
 
+use Application\Adapters\Grid as GridAdapter;
 use Application\Adapters\Telegram\Update;
-use Application\Services\Assertions\EventService;
+use Application\Models\Grid;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
+use Application\SessionsProcessor\GridCreation\DurationMoment;
+use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
-use Carbon\Carbon;
 
-class DurationMoment extends SessionMoment
+class ModifyDurationMoment extends SessionMoment
 {
-    public const EVENT_INVALID = 'invalid';
-    public const EVENT_REQUEST = 'request';
-    public const EVENT_SAVE    = 'save';
-
-    public const PROCESS_DURATION = 'duration';
-
-    /**
-     * Parse duration to Carbon.
-     * @param string|null $duration Duration input.
-     * @return Carbon
-     */
-    public static function parseDuration(?string $duration): Carbon
-    {
-        return Carbon::createFromTime((int) $duration, round(fmod((float) $duration, 1) * 60), 0);
-    }
+    use ModificationMoment;
 
     /**
      * @inheritdoc
      */
     public function request(Update $update, Process $process): void
     {
+        /** @var Grid $grid */
+        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+
+        $gridAdapter = GridAdapter::fromModel($grid);
+
         $botService = BotService::getInstance();
         $botService->sendPredefinedMessage(
             $update->message->from->id,
-            trans('GridCreation.creationWizardDuration'),
+            trans('GridModification.modifyDurationWizard', [
+                'current' => $gridAdapter->getDurationFormatted(),
+            ]),
             PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
         );
-
-        assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
 
     /**
@@ -50,11 +43,18 @@ class DurationMoment extends SessionMoment
      */
     public function save(?string $input, Update $update, Process $process): ?string
     {
-        $process->put(self::PROCESS_DURATION, $input);
+        /** @var Grid $grid */
+        $grid                = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid->grid_duration = DurationMoment::parseDuration($input);
+        $grid->save();
 
-        assert(EventService::getInstance()->register(self::EVENT_SAVE));
+        $gridAdapter = GridAdapter::fromModel($grid);
 
-        return PlayersMoment::class;
+        static::notifyUpdate($update, $process, trans('GridModification.modifyDurationUpdated', [
+            'value' => $gridAdapter->getDurationFormatted(),
+        ]));
+
+        return InitializationMoment::class;
     }
 
     /**
@@ -66,11 +66,9 @@ class DurationMoment extends SessionMoment
             $botService = BotService::getInstance();
             $botService->sendPredefinedMessage(
                 $update->message->from->id,
-                trans('GridCreation.errorDurationInvalid'),
+                trans('GridModification.errorDurationInvalid'),
                 PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
             );
-
-            assert(EventService::getInstance()->register(self::EVENT_INVALID));
 
             return self::class;
         }

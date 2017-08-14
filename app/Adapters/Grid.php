@@ -46,6 +46,34 @@ class Grid extends BaseFluent
     }
 
     /**
+     * Return the grid duration formatted.
+     * @return string|null
+     */
+    public function getDurationFormatted(): ?string
+    {
+        $durationArray            = [];
+        $durationHours            = (int) $this->duration;
+        $durationArray['hours']   = trans_choice('Grid.durationHours', $durationHours, [ 'hours' => $durationHours ]);
+        $durationMinutes          = (int) round(fmod((float) $this->duration, 1) * 60);
+        $durationArray['minutes'] = trans_choice('Grid.durationMinutes', $durationMinutes, [ 'minutes' => $durationMinutes ]);
+        $durationCount            = count(array_filter($durationArray));
+
+        if ($durationCount !== 0) {
+            if ($durationMinutes === 0) {
+                return array_first($durationArray);
+            }
+
+            if ($durationHours === 0) {
+                return array_last($durationArray);
+            }
+
+            return trans('Grid.durationBoth', $durationArray);
+        }
+
+        return null;
+    }
+
+    /**
      * Return the grid structure.
      * @param string $structureType Structure type (STRUCTURE_TYPE consts).
      * @return string
@@ -96,26 +124,9 @@ class Grid extends BaseFluent
             'value' => $this->getTimingFormatted(),
         ]);
 
-        $durationArray            = [];
-        $durationHours            = (int) $this->duration;
-        $durationArray['hours']   = trans_choice('Grid.durationHours', $durationHours, [ 'hours' => $durationHours ]);
-        $durationMinutes          = (int) round(fmod((float) $this->duration, 1) * 60);
-        $durationArray['minutes'] = trans_choice('Grid.durationMinutes', $durationMinutes, [ 'minutes' => $durationMinutes ]);
-        $durationCount            = count(array_filter($durationArray));
-
-        if ($durationCount !== 0) {
-            if ($durationMinutes === 0) {
-                $duration = array_first($durationArray);
-            }
-            else if ($durationHours === 0) {
-                $duration = array_last($durationArray);
-            }
-            else {
-                $duration = trans('Grid.durationBoth', $durationArray);
-            }
-
-            $result .= trans('Grid.gridDuration', [ 'value' => $duration ]);
-        }
+        $result .= trans('Grid.gridDuration', [
+            'value' => $this->getDurationFormatted(),
+        ]);
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);

@@ -103,6 +103,10 @@ class Grid extends Model
      */
     public function getGridDurationAttribute($value): Carbon
     {
+        if ($value instanceof Carbon) {
+            return $value;
+        }
+
         return Carbon::createFromFormat('H:i:s', $value);
     }
 

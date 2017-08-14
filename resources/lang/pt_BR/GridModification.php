@@ -14,6 +14,7 @@ return [
         [ 'value' => InitializationMoment::REPLY_MODIFY_SUBTITLE, 'description' => 'Modificar subtítulo...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_REQUIREMENTS, 'description' => 'Modificar exigências...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_TIMING, 'description' => 'Modificar horário...' ],
+        [ 'value' => InitializationMoment::REPLY_MODIFY_DURATION, 'description' => 'Modificar duração...' ],
     ],
 
     'modifyTitleWizard'  => "*\xE2\x9E\x9C Qual será o novo título da missão?*\n" .
@@ -57,4 +58,13 @@ return [
     'errorTimingTooShort' => "*O horário está muito próximo!*\n" .
                              "O tempo mínimo é de 15 minutos.\n\n" .
                              "*\xE2\x9E\x9C Qual será o novo horário da missão?*",
+
+    'modifyDurationWizard'  => "*\xE2\x9E\x9C Qual será a nova duração da missão, em média?*\n" .
+                               "Informe o novo valor.\n\n" .
+                               '*Duração atual*: :current',
+    'modifyDurationUpdated' => "*Duração atualizada:* cerca de :value\n\n",
+
+    'errorDurationInvalid' => "*O valor de duração é inválido!*\n" .
+                              "Digite o valor em horas ou escolha uma das opções predefinidas.\n\n" .
+                              "*\xE2\x9E\x9C Qual será a nova duração da missão, em média?*",
 ];

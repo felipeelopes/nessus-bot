@@ -14,7 +14,6 @@ use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\Types\Process;
-use Carbon\Carbon;
 
 class ConfirmMoment extends SessionMoment
 {
@@ -69,7 +68,7 @@ class ConfirmMoment extends SessionMoment
         $grid->grid_requirements = $processGrid->requirements;
         $grid->grid_players      = $processGrid->players;
         $grid->grid_timing       = $processGrid->timing;
-        $grid->grid_duration     = Carbon::createFromTime((int) $processGrid->duration, round(fmod((float) $processGrid->duration, 1) * 60), 0);
+        $grid->grid_duration     = DurationMoment::parseDuration($processGrid->duration);
         $grid->save();
 
         $gridSubscription                    = new GridSubscription;
