@@ -8,17 +8,6 @@ use Illuminate\Database\Schema\Blueprint;
 class Version000201 extends Migration
 {
     /**
-     * Reverse the migrations.
-     * @return void
-     */
-    public function down(): void
-    {
-        Schema::table('grids', function (Blueprint $table) {
-            $table->dropColumn('grid_duration');
-        });
-    }
-
-    /**
      * Run the migrations.
      * @return void
      */

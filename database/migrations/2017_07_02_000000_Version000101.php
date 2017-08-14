@@ -8,17 +8,6 @@ use Illuminate\Database\Schema\Blueprint;
 class Version000101 extends Migration
 {
     /**
-     * Reverse the migrations.
-     * @return void
-     */
-    public function down(): void
-    {
-        Schema::table('user_gamertags', function (Blueprint $table) {
-            $table->dropColumn('gamertag_id');
-        });
-    }
-
-    /**
      * Run the migrations.
      * @return void
      */

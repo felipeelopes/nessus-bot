@@ -10,16 +10,6 @@ use Illuminate\Database\Schema\Blueprint;
 class Version000200 extends Migration
 {
     /**
-     * Reverse the migrations.
-     * @return void
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('grids');
-        Schema::dropIfExists('grid_subscriptions');
-    }
-
-    /**
      * Run the migrations.
      * @return void
      */

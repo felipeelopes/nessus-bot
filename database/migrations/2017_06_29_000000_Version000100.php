@@ -8,16 +8,6 @@ use Illuminate\Database\Schema\Blueprint;
 class Version000100 extends Migration
 {
     /**
-     * Reverse the migrations.
-     * @return void
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('user_gamertags');
-    }
-
-    /**
      * Run the migrations.
      * @return void
      */
