@@ -15,6 +15,7 @@ return [
         [ 'value' => InitializationMoment::REPLY_MODIFY_REQUIREMENTS, 'description' => 'Modificar exigências...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_TIMING, 'description' => 'Modificar horário...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_DURATION, 'description' => 'Modificar duração...' ],
+        [ 'value' => InitializationMoment::REPLY_MODIFY_PLAYERS, 'description' => 'Modificar número de titulares...' ],
     ],
 
     'modifyTitleWizard'  => "*\xE2\x9E\x9C Qual será o novo título da missão?*\n" .
@@ -67,4 +68,19 @@ return [
     'errorDurationInvalid' => "*O valor de duração é inválido!*\n" .
                               "Digite o valor em horas ou escolha uma das opções predefinidas.\n\n" .
                               "*\xE2\x9E\x9C Qual será a nova duração da missão, em média?*",
+
+    'modifyPlayersWizard' => "*\xE2\x9E\x9C Qual será o novo número de titulares?*\n" .
+                             "Digite um valor entre 2 e :max.\n\n" .
+                             '*Número atual*: :current participantes',
+    'modifyPlayersUpdated' => "*Número atualizado:* :value participantes\n\n",
+
+    'errorPlayersInvalid' => "*O número de participantes informado não é válido!*\n" .
+                             "Digite um valor entre 2 e :max.\n\n" .
+                             "*\xE2\x9E\x9C Quantos participarão do esquadrão?*",
+    'errorPlayersTooFew'  => "*O número de participantes não pode ser inferior a 2!*\n" .
+                             "Digite um valor entre 2 e :max.\n\n" .
+                             "*\xE2\x9E\x9C Quantos participarão do esquadrão?*",
+    'errorPlayersTooMuch' => "*O número de participantes não pode ser superior a :max!*\n" .
+                             "Digite um valor entre 2 e :max.\n\n" .
+                             "*\xE2\x9E\x9C Quantos participarão do esquadrão?*",
 ];

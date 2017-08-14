@@ -22,6 +22,7 @@ class InitializationMoment extends SessionMoment
     public const PROCESS_GRID     = 'grid';
 
     const REPLY_MODIFY_DURATION     = 'ModifyDuration';
+    const REPLY_MODIFY_PLAYERS      = 'ModifyPlayers';
     const REPLY_MODIFY_REQUIREMENTS = 'ModifyRequirements';
     const REPLY_MODIFY_SUBTITLE     = 'ModifySubtitle';
     const REPLY_MODIFY_TIMING       = 'ModifyTiming';
@@ -88,6 +89,9 @@ class InitializationMoment extends SessionMoment
                 break;
             case self::REPLY_MODIFY_DURATION:
                 throw new ForceMomentException(ModifyDurationMoment::class);
+                break;
+            case self::REPLY_MODIFY_PLAYERS:
+                throw new ForceMomentException(ModifyPlayersMoment::class);
                 break;
         }
 
