@@ -7,15 +7,12 @@ namespace Application\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder as BuilderQuery;
 use Illuminate\Support\Collection;
 
 /**
  * @property Collection|GridSubscription[] $subscribers         Grid subscribers.
  * @property Collection|GridSubscription[] $subscribers_sorted  Grid subscribers (sorted).
- * @property UserGamertag                  $gamertag            Owner Gamertag instance.
- * @property int                           $gamertag_id         Owner Gamertag id.
  * @property string                        $grid_title          Grid title.
  * @property string|null                   $grid_subtitle       Grid subtitle.
  * @property string|null                   $grid_requirements   Grid requirements.
@@ -77,15 +74,6 @@ class Grid extends Model
             GridSubscription::POSITION_RESERVE_TOP,
             GridSubscription::POSITION_RESERVE_BOTTOM,
         ]);
-    }
-
-    /**
-     * Owner Gamertag related.
-     * @return HasOne
-     */
-    public function gamertag(): HasOne
-    {
-        return $this->hasOne(UserGamertag::class);
     }
 
     /**
