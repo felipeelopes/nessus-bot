@@ -87,7 +87,7 @@ class GridSubscription extends Model
         ]);
 
         // For reserves, keep position ordered: reserveTops, then reserveBottoms.
-        // Then order by subscription timestamp.
+        // Then order by subscription reserve timestamp.
         $builder->orderByRaw('
             IF(
                 `subscription_position` <> ?,
@@ -96,7 +96,7 @@ class GridSubscription extends Model
             ),
             IF(
                 `subscription_position` <> ?,
-                `created_at`,
+                `reserved_at`,
                 NULL
             )
         ', [
