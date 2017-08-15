@@ -11,6 +11,7 @@ use Application\Services\CommandService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
+use Application\SessionsProcessor\GridModification\TransferOwner\TransferOwnerMoment;
 use Application\Types\Process;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -27,6 +28,7 @@ class InitializationMoment extends SessionMoment
     const REPLY_MODIFY_SUBTITLE     = 'ModifySubtitle';
     const REPLY_MODIFY_TIMING       = 'ModifyTiming';
     const REPLY_MODIFY_TITLE        = 'ModifyTitle';
+    const REPLY_TRANSFER_OWNER      = 'TransferOwner';
 
     /**
      * @inheritdoc
@@ -92,6 +94,9 @@ class InitializationMoment extends SessionMoment
                 break;
             case self::REPLY_MODIFY_PLAYERS:
                 throw new ForceMomentException(ModifyPlayersMoment::class);
+                break;
+            case self::REPLY_TRANSFER_OWNER:
+                throw new ForceMomentException(TransferOwnerMoment::class);
                 break;
         }
 

@@ -13,6 +13,7 @@ use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\GridModification\InitializationMoment;
 use Application\Types\Process;
+use Illuminate\Support\Collection;
 
 trait ModificationMoment
 {
@@ -24,7 +25,12 @@ trait ModificationMoment
      */
     public static function notifyMessage(Update $update, Process $process, string $message): void
     {
-        $availableOptions = [
+        $user = UserService::getInstance()->get($update->message->from->id);
+
+        /** @var Grid $grid */
+        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+
+        $availableOptions = (new Collection([
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
                 'description' => trans('GridModification.modifyTitleOption'),
@@ -49,7 +55,24 @@ trait ModificationMoment
                 'value'       => InitializationMoment::REPLY_MODIFY_PLAYERS,
                 'description' => trans('GridModification.modifyPlayersOption'),
             ],
-        ];
+            [
+                'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
+                'description' => trans('GridModification.transferOwnerOption'),
+                'conditional' => function () use ($user, $grid) {
+                    /** @var GridSubscription $subscriberOwner */
+                    $subscriberOwner = $grid->subscribers->where('subscription_rule', GridSubscription::RULE_OWNER)->first();
+
+                    return $subscriberOwner->gamertag->id === $user->gamertag->id;
+                },
+            ],
+        ]))->filter(function ($availableOption) {
+            return !array_key_exists('conditional', $availableOption) ||
+                   call_user_func($availableOption['conditional']) !== false;
+        })->map(function ($availableOption) {
+            return (new Collection($availableOption))
+                ->except([ 'conditional' ])
+                ->all();
+        });
 
         $botService = BotService::getInstance();
         $botService->sendOptionsMessage(

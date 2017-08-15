@@ -16,6 +16,7 @@ return [
         [ 'value' => InitializationMoment::REPLY_MODIFY_TIMING, 'description' => 'Modificar horário...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_DURATION, 'description' => 'Modificar duração...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_PLAYERS, 'description' => 'Modificar número de titulares...' ],
+        [ 'value' => InitializationMoment::REPLY_TRANSFER_OWNER, 'description' => 'Redefinir organizador...' ],
     ],
 
     'modifyTitleOption'  => 'Modificar título...',
@@ -89,4 +90,16 @@ return [
     'errorPlayersTooMuch' => "*O número de participantes não pode ser superior a :max!*\n" .
                              "Digite um valor entre 2 e :max.\n\n" .
                              "*\xE2\x9E\x9C Quantos participarão do esquadrão?*",
+
+    'transferOwnerOption'  => 'Redefinir organizador...',
+    'transferOwnerIsEmpty' => "*Err... não há outro participante nesta grade além de você.*\n" .
+                              'Para redefinir o organizador para outro participante, ' .
+                              'é necessário que haja outros membros inscritos nela.',
+    'transferOwnerWizard'  => "*\xE2\x9E\x9C Selecione o novo organizador da grade:*\n" .
+                              'Após este processo você será redefinido como moderador da grade automaticamente.',
+    'transferOwnerUpdated' => "*O novo organizador é:* :value\n\n",
+
+    'errorTransferOwnerUnavailable' => "*Err... participante não encontrado.*\n" .
+                                       "Vamos tentar novamente...\n\n" .
+                                       "*\xE2\x9E\x9C Selecione o novo organizador da grade:*",
 ];
