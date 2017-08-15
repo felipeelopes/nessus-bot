@@ -19,7 +19,7 @@ class InitializationMoment extends SessionMoment
     use ModificationMoment;
 
     public const PROCESS_CONTINUE = 'continue';
-    public const PROCESS_GRID     = 'grid';
+    public const PROCESS_GRID_ID  = 'gridId';
 
     const REPLY_MODIFY_DURATION     = 'ModifyDuration';
     const REPLY_MODIFY_MANAGERS     = 'ModifyManagers';
@@ -61,7 +61,7 @@ class InitializationMoment extends SessionMoment
             }
 
             $process->offsetSet(self::PROCESS_CONTINUE, true);
-            $process->offsetSet(self::PROCESS_GRID, $grid);
+            $process->offsetSet(self::PROCESS_GRID_ID, $grid->id);
 
             static::notifyOptions($update, $process);
 

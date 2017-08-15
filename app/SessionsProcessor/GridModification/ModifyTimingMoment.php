@@ -24,7 +24,7 @@ class ModifyTimingMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         $gridAdapter = GridAdapter::fromModel($grid);
 
@@ -43,7 +43,7 @@ class ModifyTimingMoment extends SessionMoment
     public function save(?string $input, Update $update, Process $process): ?string
     {
         /** @var Grid $grid */
-        $grid              = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid              = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
         $grid->grid_timing = $process->get(TimingMoment::PROCESS_TIMING);
         $grid->save();
 

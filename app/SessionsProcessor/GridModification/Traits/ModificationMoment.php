@@ -28,7 +28,7 @@ trait ModificationMoment
         $user = UserService::getInstance()->get($update->message->from->id);
 
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         /** @var GridSubscription $subscriberOwner */
         $subscriberOwner = $grid->subscribers->where('subscription_rule', GridSubscription::RULE_OWNER)->first();
@@ -101,7 +101,7 @@ trait ModificationMoment
     public static function notifyUpdate(Update $update, Process $process, ?string $updateTitle): void
     {
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         $gridAdapter = GridAdapter::fromModel($grid);
 

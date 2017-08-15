@@ -31,7 +31,7 @@ class TransferOwnerMoment extends SessionMoment
         $user = UserService::getInstance()->get($update->message->from->id);
 
         /** @var Grid|Builder $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
         $grid->load('subscribers.gamertag');
 
         $gridSubscribersGamertags = [];
@@ -75,7 +75,7 @@ class TransferOwnerMoment extends SessionMoment
         $user = UserService::getInstance()->get($update->message->from->id);
 
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         /** @var GridSubscription $subscriberHim */
         $subscribers = $grid->subscribers;
@@ -102,7 +102,7 @@ class TransferOwnerMoment extends SessionMoment
     public function validateInitialization(Update $update, Process $process): bool
     {
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         if ($grid->subscribers->count() < 2) {
             self::notifyMessage($update, $process, trans('GridModification.transferOwnerIsEmpty'));

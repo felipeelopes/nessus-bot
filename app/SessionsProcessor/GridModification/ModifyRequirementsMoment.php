@@ -24,7 +24,7 @@ class ModifyRequirementsMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         $botService = BotService::getInstance();
         $botService->sendPredefinedMessage(
@@ -43,7 +43,7 @@ class ModifyRequirementsMoment extends SessionMoment
     public function save(?string $input, Update $update, Process $process): ?string
     {
         /** @var Grid $grid */
-        $grid                    = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid                    = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
         $grid->grid_requirements = $input;
         $grid->save();
 

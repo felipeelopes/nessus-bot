@@ -31,7 +31,7 @@ class ModifyManagersMoment extends SessionMoment
     private static function getSubscribers(Update $update, Process $process): Collection
     {
         /** @var Grid|Builder $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
         $grid->load([
             'subscribers' => function (HasMany $builder) {
                 /** @var GridSubscription $builder */
@@ -112,7 +112,7 @@ class ModifyManagersMoment extends SessionMoment
     public function save(?string $input, Update $update, Process $process): ?string
     {
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         /** @var GridSubscription $subscriberModified */
         $subscribers        = $grid->subscribers;
@@ -142,7 +142,7 @@ class ModifyManagersMoment extends SessionMoment
     public function validateInitialization(Update $update, Process $process): bool
     {
         /** @var Grid $grid */
-        $grid = $process->get(InitializationMoment::PROCESS_GRID);
+        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         if ($grid->subscribers->count() < 2) {
             self::notifyMessage($update, $process, trans('GridModification.modifyManagersIsEmpty'));
