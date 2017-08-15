@@ -18,6 +18,7 @@ return [
         [ 'value' => InitializationMoment::REPLY_MODIFY_PLAYERS, 'description' => 'Modificar número de titulares...' ],
     ],
 
+    'modifyTitleOption'  => 'Modificar título...',
     'modifyTitleWizard'  => "*\xE2\x9E\x9C Qual será o novo título da missão?*\n" .
                             "Limite de 80 caracteres.\n\n" .
                             '*Título atual*: :current',
@@ -27,6 +28,7 @@ return [
                            "Tente não ultrapassar :max caracteres.\n\n" .
                            "*\xE2\x9E\x9C Qual será o novo título da missão?*",
 
+    'modifySubtitleOption'  => 'Modificar subtítulo...',
     'modifySubtitleWizard'  => "*\xE2\x9E\x9C Qual será o novo subtítulo da missão?*\n" .
                                "Limite de 20 caracteres.\n\n" .
                                '*Subtítulo atual*: :current',
@@ -37,6 +39,7 @@ return [
                               "Tente não ultrapassar :max caracteres.\n\n" .
                               "*\xE2\x9E\x9C Qual será o novo subtítulo da missão?*",
 
+    'modifyRequirementsOption'  => 'Modificar exigências...',
     'modifyRequirementsWizard'  => "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
                                    "Limite de :max caracteres.\n\n" .
                                    '*Exigências atual*: :current',
@@ -48,6 +51,7 @@ return [
                                   "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
                                   'Limite de :max caracteres.',
 
+    'modifyTimingOption'  => 'Modificar horário...',
     'modifyTimingWizard'  => "*\xE2\x9E\x9C Qual será o novo horário da missão?*\n" .
                              "Digite no formato HH:MM (ex. 10:30).\n\n" .
                              '*Horário atual:* :current',
@@ -60,6 +64,7 @@ return [
                              "O tempo mínimo é de 15 minutos.\n\n" .
                              "*\xE2\x9E\x9C Qual será o novo horário da missão?*",
 
+    'modifyDurationOption'  => 'Modificar duração...',
     'modifyDurationWizard'  => "*\xE2\x9E\x9C Qual será a nova duração da missão, em média?*\n" .
                                "Informe o novo valor.\n\n" .
                                '*Duração atual*: :current',
@@ -69,9 +74,10 @@ return [
                               "Digite o valor em horas ou escolha uma das opções predefinidas.\n\n" .
                               "*\xE2\x9E\x9C Qual será a nova duração da missão, em média?*",
 
-    'modifyPlayersWizard' => "*\xE2\x9E\x9C Qual será o novo número de titulares?*\n" .
-                             "Digite um valor entre 2 e :max.\n\n" .
-                             '*Número atual*: :current participantes',
+    'modifyPlayersOption'  => 'Modificar número de titulares...',
+    'modifyPlayersWizard'  => "*\xE2\x9E\x9C Qual será o novo número de titulares?*\n" .
+                              "Digite um valor entre 2 e :max.\n\n" .
+                              '*Número atual*: :current participantes',
     'modifyPlayersUpdated' => "*Número atualizado:* :value participantes\n\n",
 
     'errorPlayersInvalid' => "*O número de participantes informado não é válido!*\n" .
