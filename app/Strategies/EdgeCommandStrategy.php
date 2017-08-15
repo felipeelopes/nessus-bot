@@ -10,6 +10,7 @@ use Application\Services\CommandService;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Strategies\Contracts\UserStrategyContract;
+use Carbon\Carbon;
 
 class EdgeCommandStrategy implements UserStrategyContract
 {
@@ -48,6 +49,60 @@ class EdgeCommandStrategy implements UserStrategyContract
                 $update->message->chat->id,
                 trans('UserRules.followIt')
             );
+
+            return true;
+        }
+
+        if ($update->message->isCommand(CommandService::COMMAND_NEWS)) {
+            $launchDate = new Carbon('2017-09-06 00:00:00');
+            $carbonNow  = Carbon::now();
+            $diffDays   = $carbonNow->diffInDays($launchDate, false);
+
+            if ($diffDays >= 2) {
+                $botService->sendMessage(
+                    $update->message->chat->id,
+                    trans('EdgeCommand.launchDays', [
+                        'date' => $launchDate->format('d/m/Y'),
+                        'days' => $diffDays,
+                    ])
+                );
+            }
+            else {
+                $diffHours = Carbon::now()->diffInHours($launchDate, false);
+                $isSoon    = $diffHours >= 2;
+
+                if ($isSoon && $launchDate->isToday()) {
+                    $diffHours = Carbon::now()->diffInHours($launchDate, false);
+
+                    $botService->sendMessage(
+                        $update->message->chat->id,
+                        trans('EdgeCommand.launchToday', [
+                            'hours' => $diffHours,
+                        ])
+                    );
+                }
+                else if ($isSoon) {
+                    $botService->sendMessage(
+                        $update->message->chat->id,
+                        trans('EdgeCommand.launchHours', [
+                            'date'  => $launchDate->format('d/m/Y'),
+                            'hours' => $diffHours,
+                        ])
+                    );
+                }
+                else if ($diffHours >= 0) {
+                    $botService->sendMessage(
+                        $update->message->chat->id,
+                        trans('EdgeCommand.launchSoon')
+                    );
+                }
+                else {
+                    $botService->sendMessage(
+                        $update->message->chat->id,
+                        trans('EdgeCommand.launched')
+                    );
+                }
+            }
 
             return true;
         }

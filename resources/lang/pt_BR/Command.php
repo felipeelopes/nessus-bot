@@ -16,6 +16,9 @@ return [
         'newGridCommand'     => 'NovaGrade',
         'newGridDescription' => 'Criar uma nova grade',
 
+        'newsCommand'     => 'NoticiasDestiny',
+        'newsDescription' => 'Exibe as últimas notícias relacionadas',
+
         'listGridsCommand'     => 'ListarGrades',
         'listGridsDescription' => 'Listar as grades disponíveis',
 
