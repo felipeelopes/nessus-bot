@@ -137,8 +137,15 @@ class SessionService implements ServiceContract
         $momentInstance = new $momentCurrent;
 
         // Check if initial validation pass.
-        if ($momentInstance->validateInitialization($update, $processInstance) === false) {
-            return null;
+        try {
+            if ($momentInstance->validateInitialization($update, $processInstance) === false) {
+                return null;
+            }
+        }
+        catch (ForceMomentException $forceMomentException) {
+            $session->put(self::SESSION_MOMENT_CURRENT, $forceMomentException->getMoment());
+
+            return true;
         }
 
         try {
