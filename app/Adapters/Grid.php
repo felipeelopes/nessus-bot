@@ -138,13 +138,13 @@ class Grid extends BaseFluent
 
         if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {
             $resultTitulars = [];
-            $resultReserves = null;
+            $resultReserves = [];
 
             /** @var GridSubscription $gridSubscriber */
             foreach ($grid->subscribers as $gridSubscriber) {
                 $gridSubscriberMask = [
                     'gamertag' => $gridSubscriber->gamertag->gamertag_value,
-                    'icon'     => ' ' . $gridSubscriber->getIcon(),
+                    'icon'     => implode(' ', $gridSubscriber->getIcons()),
                 ];
 
                 if ($gridSubscriber->isTitular()) {
@@ -152,7 +152,7 @@ class Grid extends BaseFluent
                     continue;
                 }
 
-                $resultReserves .= trans('Grid.reserveItem', $gridSubscriberMask);
+                $resultReserves [] = trans('Grid.reserveItem', $gridSubscriberMask);
             }
 
             $result .= trans('Grid.titularsHeader');
@@ -160,7 +160,7 @@ class Grid extends BaseFluent
 
             if ($resultReserves) {
                 $result .= trans('Grid.reservesHeader');
-                $result .= trans('Grid.reserveItem');
+                $result .= implode($resultReserves);
             }
         }
 

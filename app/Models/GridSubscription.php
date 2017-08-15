@@ -35,24 +35,25 @@ class GridSubscription extends Model
     }
 
     /**
-     * Returns the subscription type icon.
-     * @return null|string
+     * Returns the subscription type icons.
+     * @return string[]
      */
-    public function getIcon(): ?string
+    public function getIcons(): array
     {
-        if ($this->subscription_rule === self::RULE_OWNER) {
-            return trans('Grid.typeOwner');
-        }
-
-        if ($this->subscription_rule === self::RULE_MANAGER) {
-            return trans('Grid.typeManager');
-        }
+        $icons = [];
 
         if ($this->subscription_position === self::POSITION_RESERVE_TOP) {
-            return trans('Grid.typeTop');
+            $icons[] = trans('Grid.typeTop');
         }
 
-        return null;
+        if ($this->subscription_rule === self::RULE_OWNER) {
+            $icons[] = trans('Grid.typeOwner');
+        }
+        else if ($this->subscription_rule === self::RULE_MANAGER) {
+            $icons[] = trans('Grid.typeManager');
+        }
+
+        return $icons;
     }
 
     /**

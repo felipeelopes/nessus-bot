@@ -17,12 +17,12 @@ return [
 
     // Grid titulars.
     'titularsHeader'    => "\n*Titulares:*\n",
-    'titularItem'       => "\xF0\x9F\x8E\xAE :gamertag:icon\n",
+    'titularItem'       => "\xF0\x9F\x8E\xAE :gamertag :icon\n",
     'titularItemEmpty'  => "\xF0\x9F\x8E\xAE \n",
 
     // Grid reserves.
     'reservesHeader'    => "\n*Reservas:*\n",
-    'reserveItem'       => "\xF0\x9F\x95\xB9 :gamertag:icon\n",
+    'reserveItem'       => "\xF0\x9F\x95\xB9 :gamertag :icon\n",
 
     // Grid user type.
     'typeOwner'         => "\xE2\xAD\x90",
