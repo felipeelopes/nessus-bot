@@ -51,9 +51,8 @@ return [
         [ 'value' => '0.5', 'description' => 'menos de uma hora' ],
         [ 'value' => '1', 'description' => 'cerca de uma hora' ],
         [ 'value' => '2', 'description' => 'cerca de duas horas' ],
-        [ 'value' => '3', 'description' => 'cerca de três horas' ],
-        [ 'value' => '4', 'description' => 'entre quatro a cinco horas' ],
-        [ 'value' => '6', 'description' => 'acima de seis horas' ],
+        [ 'value' => '4', 'description' => 'cerca de quatro horas' ],
+        [ 'value' => '6', 'description' => 'cerca de seis horas' ],
     ],
 
     'creationWizardPlayers'        => "*\xE2\x9E\x9C Quantos participarão do esquadrão?*\n" .
