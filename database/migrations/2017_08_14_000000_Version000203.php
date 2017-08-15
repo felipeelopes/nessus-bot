@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 use Application\Models\GridSubscription;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class Version000203 extends Migration
 {
@@ -13,7 +14,7 @@ class Version000203 extends Migration
      */
     public function up(): void
     {
-        $gridSubscriptionsTable = '`' . (new GridSubscription)->getTable() . '`';
+        $gridSubscriptionsTable = '`' . DB::getTablePrefix() . (new GridSubscription)->getTable() . '`';
 
         // Split `subscription_rule` in two:
         // `subscription_position` to store the user position on grid: titular, reserve-top or reserve-bottom;
@@ -41,9 +42,8 @@ class Version000203 extends Migration
         ");
 
         // With that, `reserve_type` could be dropped.
-        DB::statement("
-            ALTER TABLE {$gridSubscriptionsTable}
-                DROP COLUMN `reserve_type`;
-        ");
+        Schema::table('grid_subscriptions', function (Blueprint $table) {
+            $table->dropColumn('reserve_type');
+        });
     }
 }

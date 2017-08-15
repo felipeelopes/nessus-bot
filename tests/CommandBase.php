@@ -18,6 +18,7 @@ use Application\Services\Requester\Telegram\RequesterService as TelegramRequeste
 use Artisan;
 use Cache;
 use Carbon\Carbon;
+use DB;
 use PHPUnit\Framework\TestCase;
 use Session;
 use Tests\Mockups\Requester\Live\RequesterServiceMockup as LiveRequesterServiceMockup;
@@ -137,7 +138,17 @@ abstract class CommandBase extends TestCase
      */
     protected function setUp(): void
     {
-        Artisan::call('migrate:refresh');
+        $tables = DB::select('SHOW TABLES');
+
+        foreach ($tables as $table) {
+            $tableName = array_first($table);
+
+            if (strpos($tableName, DB::getTablePrefix()) === 0) {
+                DB::statement("DROP TABLE {$tableName}");
+            }
+        }
+
+        Artisan::call('migrate');
 
         MockupService::getInstance()->singleton(EventService::class);
 
@@ -168,8 +179,6 @@ abstract class CommandBase extends TestCase
      */
     protected function tearDown(): void
     {
-        Artisan::call('migrate:rollback');
-
         $mockupService = MockupService::getInstance();
         $mockupService->reset();
     }
