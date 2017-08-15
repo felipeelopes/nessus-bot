@@ -30,6 +30,10 @@ trait ModificationMoment
         /** @var Grid $grid */
         $grid = $process->get(InitializationMoment::PROCESS_GRID);
 
+        /** @var GridSubscription $subscriberOwner */
+        $subscriberOwner = $grid->subscribers->where('subscription_rule', GridSubscription::RULE_OWNER)->first();
+        $isOwner         = $subscriberOwner->gamertag->id === $user->gamertag->id;
+
         $availableOptions = (new Collection([
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
@@ -58,20 +62,11 @@ trait ModificationMoment
             [
                 'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
                 'description' => trans('GridModification.transferOwnerOption'),
-                'conditional' => function () use ($user, $grid) {
-                    /** @var GridSubscription $subscriberOwner */
-                    $subscriberOwner = $grid->subscribers->where('subscription_rule', GridSubscription::RULE_OWNER)->first();
-
-                    return $subscriberOwner->gamertag->id === $user->gamertag->id;
-                },
+                'conditional' => $isOwner,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
-                   call_user_func($availableOption['conditional']) !== false;
-        })->map(function ($availableOption) {
-            return (new Collection($availableOption))
-                ->except([ 'conditional' ])
-                ->all();
+                   $availableOption['conditional'] !== false;
         });
 
         $botService = BotService::getInstance();

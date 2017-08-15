@@ -32,7 +32,7 @@ class TransferOwnerMoment extends SessionMoment
 
         /** @var Grid|Builder $grid */
         $grid = $process->get(InitializationMoment::PROCESS_GRID);
-        $grid->with('subscribers.gamertag');
+        $grid->load('subscribers.gamertag');
 
         $gridSubscribersGamertags = [];
 
