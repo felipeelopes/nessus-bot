@@ -25,8 +25,8 @@ return [
     'reserveItem'       => "\xF0\x9F\x95\xB9 :gamertag:icon\n",
 
     // Grid user type.
-    'typeOwner'         => "\xF0\x9F\x94\xB9",
-    'typeManager'       => "\xF0\x9F\x94\xB8",
+    'typeOwner'         => "\xE2\xAD\x90",
+    'typeManager'       => "\xE2\x9A\x99",
     'typeTop'           => "\xF0\x9F\x94\x9D",
 
     // Grid statuses.
