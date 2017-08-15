@@ -51,12 +51,12 @@ class Version000200 extends Migration
             $table->enum('subscription_rule', [
                 GridSubscription::RULE_OWNER,
                 GridSubscription::RULE_MANAGER,
-                GridSubscription::RULE_TITULAR,
-                GridSubscription::RULE_RESERVE,
-            ])->offsetSet('default', GridSubscription::RULE_RESERVE);
+                'titular',
+                'reserve',
+            ])->offsetSet('default', 'reserve');
             $table->enum('reserve_type', [
-                GridSubscription::RESERVE_TYPE_WAIT,
-                GridSubscription::RESERVE_TYPE_TOP,
+                'wait',
+                'top',
             ])->offsetSet('nullable', true);
             $table->timestamps();
             $table->softDeletes();

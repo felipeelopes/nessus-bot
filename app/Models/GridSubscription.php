@@ -11,24 +11,19 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int          $gamertag_id              Gamertag id reference.
  * @property string|null  $subscription_description Subscription description.
  * @property string       $subscription_rule        Subscription rule (RULE consts).
+ * @property string       $subscription_position    Subscription position (POSITION consts).
  * @property string|null  $reserve_type             Reserve type (RESERVE_TYPE consts).
  * @property UserGamertag $gamertag                 Gamertag reference.
  */
 class GridSubscription extends Model
 {
-    public const GROUP_RULE_TITULARS = [
-        self::RULE_OWNER,
-        self::RULE_MANAGER,
-        self::RULE_TITULAR,
-    ];
-
-    public const RESERVE_TYPE_TOP  = 'top';
-    public const RESERVE_TYPE_WAIT = 'wait';
+    public const POSITION_RESERVE_BOTTOM = 'reserveBottom';
+    public const POSITION_RESERVE_TOP    = 'reserveTop';
+    public const POSITION_TITULAR        = 'titular';
 
     public const RULE_MANAGER = 'manager';
     public const RULE_OWNER   = 'owner';
-    public const RULE_RESERVE = 'reserve';
-    public const RULE_TITULAR = 'titular';
+    public const RULE_USER    = 'user';
 
     /**
      * Returns the gamertag subscribed.
@@ -53,7 +48,7 @@ class GridSubscription extends Model
             return trans('Grid.typeManager');
         }
 
-        if ($this->reserve_type === self::RESERVE_TYPE_TOP) {
+        if ($this->subscription_position === self::POSITION_RESERVE_TOP) {
             return trans('Grid.typeTop');
         }
 
@@ -66,6 +61,6 @@ class GridSubscription extends Model
      */
     public function isTitular(): bool
     {
-        return in_array($this->subscription_rule, self::GROUP_RULE_TITULARS, true);
+        return $this->subscription_position === self::POSITION_TITULAR;
     }
 }

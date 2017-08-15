@@ -49,12 +49,12 @@ class Grid extends Model
 
     /**
      * Count ocurrences by rule.
-     * @param string[] $rules Rules to count.
+     * @param string[] $positions Positions to count.
      * @return int
      */
-    public function countByRule(array $rules): int
+    public function countByPosition(array $positions): int
     {
-        return $this->subscribers->whereIn('subscription_rule', $rules)->count();
+        return $this->subscribers->whereIn('subscription_position', $positions)->count();
     }
 
     /**
@@ -63,7 +63,7 @@ class Grid extends Model
      */
     public function countPlayers(): int
     {
-        return $this->countByRule(GridSubscription::GROUP_RULE_TITULARS);
+        return $this->countByPosition([ GridSubscription::POSITION_TITULAR ]);
     }
 
     /**
@@ -72,8 +72,9 @@ class Grid extends Model
      */
     public function countReserves(): int
     {
-        return $this->countByRule([
-            GridSubscription::RULE_RESERVE,
+        return $this->countByPosition([
+            GridSubscription::POSITION_RESERVE_TOP,
+            GridSubscription::POSITION_RESERVE_BOTTOM,
         ]);
     }
 
