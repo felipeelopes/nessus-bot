@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property UserGamertag $gamertag                 Gamertag reference.
  *
  * @method orderByGridRanking()
+ * @method orderByGridRule()
+ * @method orderByGamertag()
  */
 class GridSubscription extends Model
 {
@@ -60,12 +63,37 @@ class GridSubscription extends Model
     }
 
     /**
+     * Returns if subscriver is a manager.
+     * @return bool
+     */
+    public function isManager(): bool
+    {
+        return $this->subscription_rule === self::RULE_MANAGER;
+    }
+
+    /**
      * Returns if subscription is titular.
      * @return bool
      */
     public function isTitular(): bool
     {
         return $this->subscription_position === self::POSITION_TITULAR;
+    }
+
+    /**
+     * Order subscribers by gamertag.
+     * @param Builder $builder Builder instance.
+     */
+    public function scopeOrderByGamertag(Builder $builder): void
+    {
+        $gamertagsTable = (new UserGamertag)->getTable();
+        $selfTable      = DB::getTablePrefix() . (new self)->getTable();
+
+        $gamertagsQuery = UserGamertag::query();
+        $gamertagsQuery->select("{$gamertagsTable}.gamertag_value");
+        $gamertagsQuery->where("{$gamertagsTable}.id", DB::raw("`{$selfTable}`.`gamertag_id`"));
+
+        $builder->orderByRaw('(' . $gamertagsQuery->toSql() . ')');
     }
 
     /**
@@ -103,6 +131,17 @@ class GridSubscription extends Model
             self::POSITION_TITULAR,
             implode(',', [ self::POSITION_RESERVE_TOP, self::POSITION_RESERVE_BOTTOM ]),
             self::POSITION_TITULAR,
+        ]);
+    }
+
+    /**
+     * Order subscribers by rule: owner, managers, then users.
+     * @param Builder $builder Builder instance.
+     */
+    public function scopeOrderByGridRule(Builder $builder): void
+    {
+        $builder->orderByRaw('FIND_IN_SET(`subscription_rule`, ?)', [
+            implode(',', [ self::RULE_OWNER, self::RULE_MANAGER, self::RULE_USER ]),
         ]);
     }
 }

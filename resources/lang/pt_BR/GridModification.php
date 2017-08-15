@@ -102,4 +102,17 @@ return [
     'errorTransferOwnerUnavailable' => "*Err... participante não encontrado.*\n" .
                                        "Vamos tentar novamente...\n\n" .
                                        "*\xE2\x9E\x9C Selecione o novo organizador da grade:*",
+
+    'modifyManagersOption'      => 'Gerenciar moderadores...',
+    'modifyManagersIsEmpty'     => "*Err... não há outro participante nesta grade além de você.*\n" .
+                                   'Para gerenciar os moderadores é necessário que haja mais inscritos.',
+    'modifyManagersWizard'      => "*\xE2\x9E\x9C Selecione a operação que será realizada:*",
+    'modifyManagerAdd'          => "Definir moderador \xE2\x86\x92 *:gamertag*",
+    'modifyManagerAddUpdate'    => "*Definido como moderador:* :value\n\n",
+    'modifyManagerRevoke'       => "Revogar moderador \xE2\x86\x92 *:gamertag*",
+    'modifyManagerRevokeUpdate' => "*Revogado as permissões de moderador:* :value\n\n",
+
+    'errorModifyManagerUnavailable' => "*Err... participante não encontrado.*\n" .
+                                       "Vamos tentar novamente...\n\n" .
+                                       "*\xE2\x9E\x9C Selecione a operação que será realizada:*",
 ];

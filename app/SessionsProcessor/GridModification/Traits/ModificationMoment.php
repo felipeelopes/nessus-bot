@@ -64,6 +64,11 @@ trait ModificationMoment
                 'description' => trans('GridModification.transferOwnerOption'),
                 'conditional' => $isOwner,
             ],
+            [
+                'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
+                'description' => trans('GridModification.modifyManagersOption'),
+                'conditional' => $isOwner,
+            ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
                    $availableOption['conditional'] !== false;
