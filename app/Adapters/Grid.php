@@ -141,7 +141,7 @@ class Grid extends BaseFluent
             $resultReserves = [];
 
             /** @var GridSubscription $gridSubscriber */
-            foreach ($grid->subscribers as $gridSubscriber) {
+            foreach ($grid->subscribers_sorted as $gridSubscriber) {
                 $gridSubscriberMask = [
                     'gamertag' => $gridSubscriber->gamertag->gamertag_value,
                     'icon'     => implode(' ', $gridSubscriber->getIcons()),

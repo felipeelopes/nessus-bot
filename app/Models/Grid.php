@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 
 /**
  * @property Collection|GridSubscription[] $subscribers         Grid subscribers.
+ * @property Collection|GridSubscription[] $subscribers_sorted  Grid subscribers (sorted).
  * @property UserGamertag                  $gamertag            Owner Gamertag instance.
  * @property int                           $gamertag_id         Owner Gamertag id.
  * @property string                        $grid_title          Grid title.
@@ -237,5 +238,17 @@ class Grid extends Model
     public function subscribers(): HasMany
     {
         return $this->hasMany(GridSubscription::class);
+    }
+
+    /**
+     * Returns all subscribers of list sorted by rule and position.
+     * @return HasMany
+     */
+    public function subscribers_sorted(): HasMany
+    {
+        /** @var GridSubscription $hasMany */
+        $hasMany = $this->hasMany(GridSubscription::class);
+
+        return $hasMany->orderByGridRanking();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string       $subscription_position    Subscription position (POSITION consts).
  * @property string|null  $reserve_type             Reserve type (RESERVE_TYPE consts).
  * @property UserGamertag $gamertag                 Gamertag reference.
+ *
+ * @method orderByGridRanking()
  */
 class GridSubscription extends Model
 {
@@ -63,5 +66,43 @@ class GridSubscription extends Model
     public function isTitular(): bool
     {
         return $this->subscription_position === self::POSITION_TITULAR;
+    }
+
+    /**
+     * Order subscribers by ranking: rule and position on grid.
+     * @param Builder $builder Builder instance.
+     */
+    public function scopeOrderByGridRanking(Builder $builder): void
+    {
+        // For titulars, keep rule ordered: owner, managers, then users.
+        $builder->orderByRaw('
+            IF(
+                `subscription_position` = ?,
+                FIND_IN_SET(`subscription_rule`, ?),
+                NULL
+            )
+        ', [
+            self::POSITION_TITULAR,
+            implode(',', [ self::RULE_OWNER, self::RULE_MANAGER, self::RULE_USER ]),
+        ]);
+
+        // For reserves, keep position ordered: reserveTops, then reserveBottoms.
+        // Then order by subscription timestamp.
+        $builder->orderByRaw('
+            IF(
+                `subscription_position` <> ?,
+                FIND_IN_SET(`subscription_position`, ?),
+                NULL
+            ),
+            IF(
+                `subscription_position` <> ?,
+                `created_at`,
+                NULL
+            )
+        ', [
+            self::POSITION_TITULAR,
+            implode(',', [ self::POSITION_RESERVE_TOP, self::POSITION_RESERVE_BOTTOM ]),
+            self::POSITION_TITULAR,
+        ]);
     }
 }
