@@ -11,7 +11,6 @@ use Application\Services\CommandService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
-use Application\SessionsProcessor\GridModification\TransferOwner\TransferOwnerMoment;
 use Application\Types\Process;
 use Illuminate\Database\Eloquent\Builder;
 

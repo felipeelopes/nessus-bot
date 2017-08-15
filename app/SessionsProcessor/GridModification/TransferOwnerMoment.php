@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace Application\SessionsProcessor\GridModification\TransferOwner;
+namespace Application\SessionsProcessor\GridModification;
 
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
@@ -12,7 +12,6 @@ use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
-use Application\SessionsProcessor\GridModification\InitializationMoment;
 use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 use Illuminate\Database\Eloquent\Builder;
