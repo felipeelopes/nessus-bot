@@ -35,6 +35,7 @@ return [
     'statusPlaying'     => 'em andamento',
     'statusFinished'    => 'concluído',
     'statusCanceled'    => 'cancelado',
+    'statusUnreported'  => 'não reportado',
 
     // Timing properties.
     'timingToday'       => 'hoje, às :timing',

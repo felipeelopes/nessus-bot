@@ -30,11 +30,12 @@ use Illuminate\Support\Collection;
  */
 class Grid extends Model
 {
-    public const STATUS_CANCELED  = 'canceled';
-    public const STATUS_FINISHED  = 'finished';
-    public const STATUS_GATHERING = 'gathering';
-    public const STATUS_PLAYING   = 'playing';
-    public const STATUS_WAITING   = 'waiting';
+    public const STATUS_CANCELED   = 'canceled';
+    public const STATUS_FINISHED   = 'finished';
+    public const STATUS_GATHERING  = 'gathering';
+    public const STATUS_PLAYING    = 'playing';
+    public const STATUS_UNREPORTED = 'unreported';
+    public const STATUS_WAITING    = 'waiting';
 
     /**
      * Model casts.
@@ -128,20 +129,23 @@ class Grid extends Model
     public function getStatusCode(): int
     {
         switch ($this->grid_status) {
-            case self::STATUS_PLAYING:
+            case self::STATUS_UNREPORTED:
                 return 1;
                 break;
-            case self::STATUS_GATHERING:
+            case self::STATUS_PLAYING:
                 return 2;
                 break;
-            case self::STATUS_WAITING:
+            case self::STATUS_GATHERING:
                 return 3;
                 break;
-            case self::STATUS_FINISHED:
+            case self::STATUS_WAITING:
                 return 4;
                 break;
-            case self::STATUS_CANCELED:
+            case self::STATUS_FINISHED:
                 return 5;
+                break;
+            case self::STATUS_CANCELED:
+                return 6;
                 break;
         }
 
