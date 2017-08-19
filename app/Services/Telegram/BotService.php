@@ -7,6 +7,7 @@ namespace Application\Services\Telegram;
 use Application\Adapters\BaseFluent;
 use Application\Adapters\Predefinition\OptionItem;
 use Application\Adapters\Telegram\Chat;
+use Application\Adapters\Telegram\ChatMember;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\User;
 use Application\Services\CommandService;
@@ -77,6 +78,16 @@ class BotService implements ServiceContract
         $response = $this->requester->request(Chat::class, 'getChat', [ 'chat_id' => $chatId ], RequesterService::CACHE_HOUR);
 
         return $response;
+    }
+
+    /**
+     * Get the Chat administrators.
+     * @param string|int $chatId Chat id.
+     * @return ChatMember[]
+     */
+    public function getChatAdministrators($chatId): array
+    {
+        return $this->requester->requestArray(ChatMember::class, 'getChatAdministrators', [ 'chat_id' => $chatId ], RequesterService::CACHE_DAY);
     }
 
     /**

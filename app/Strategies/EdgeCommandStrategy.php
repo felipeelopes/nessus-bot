@@ -45,9 +45,29 @@ class EdgeCommandStrategy implements UserStrategyContract
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_RULES)) {
+            $chatMembers = $botService->getChatAdministrators(env('NBOT_GROUP_ID'));
+            $admins      = [];
+
+            foreach ($chatMembers as $chatMember) {
+                if ($chatMember->user->id === (int) env('NBOT_WEBHOOK_ID')) {
+                    continue;
+                }
+
+                $admins[] = $chatMember->user->getMention();
+            }
+
+            sort($admins);
+
             $botService->sendMessage(
                 $update->message->chat->id,
-                trans('UserRules.followIt')
+                trans('UserRules.followIt') .
+                trans('UserRules.adminHeader', [
+                    'admins' => implode(array_map(function ($userMention) {
+                        return trans('UserRules.adminItem', [
+                            'username' => $userMention,
+                        ]);
+                    }, $admins)),
+                ])
             );
 
             return true;

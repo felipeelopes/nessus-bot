@@ -28,6 +28,19 @@ class User extends BaseFluent
     }
 
     /**
+     * Return the user mention or fullname.
+     * @return string
+     */
+    public function getMention(): string
+    {
+        if ($this->username) {
+            return '@' . $this->username;
+        }
+
+        return $this->getFullname();
+    }
+
+    /**
      * Returns the user register.
      * @return UserModel|null
      */

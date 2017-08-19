@@ -50,36 +50,34 @@ class RequesterService
      */
     public function request(?string $class, string $action, ?array $params = null, int $cacheMinutes = null): ?BaseFluent
     {
-        try {
-            $requestRaw = $this->requestRaw('POST', $action, [ 'query' => $params ?? [] ], $cacheMinutes);
-        }
-        catch (ClientException $clientException) {
-            if ($clientException->getCode() === 403) {
-                $response        = $clientException->getResponse();
-                $requestResponse = new RequestResponse(json_decode($response->getBody()->getContents(), true));
+        $requestResponse = $this->requestBase($action, $params, $cacheMinutes);
 
-                if ($requestResponse->description === 'Forbidden: bot was blocked by the user') {
-                    return null;
-                }
-
-                throw new RequestException($requestResponse);
-            }
-
+        if ($requestResponse === null) {
             return null;
         }
 
-        if ($requestRaw === null ||
-            $class === null) {
+        return new $class($requestResponse->result);
+    }
+
+    /**
+     * Request a Bot action that returns an array.
+     * @param string|null $class        Fluent class.
+     * @param string      $action       Action name.
+     * @param array|null  $params       Action params.
+     * @param int|null    $cacheMinutes Request cache (in minutes).
+     * @return mixed[]|null
+     */
+    public function requestArray(?string $class, string $action, ?array $params = null, int $cacheMinutes = null): ?array
+    {
+        $requestResponse = $this->requestBase($action, $params, $cacheMinutes);
+
+        if ($requestResponse === null) {
             return null;
         }
 
-        $contents = new RequestResponse(json_decode($requestRaw, true));
-
-        if (!$contents->ok) {
-            throw new RequestException($contents);
-        }
-
-        return new $class($contents->result);
+        return array_map(function ($responseItem) use ($class) {
+            return new $class($responseItem);
+        }, $requestResponse->result);
     }
 
     /**
@@ -125,5 +123,45 @@ class RequesterService
     private function getCacheKey(string $method, string $action, ?array $params = null): string
     {
         return $this->classCacheBaseKey . $method . '@' . $action . ($params ? ':' . md5(json_encode($params)) : null);
+    }
+
+    /**
+     * Request a base Bot action.
+     * @param string     $action       Action name.
+     * @param array|null $params       Action params.
+     * @param int|null   $cacheMinutes Request cache (in minutes).
+     * @return RequestResponse|null
+     */
+    private function requestBase(string $action, ?array $params = null, ?int $cacheMinutes = null): ?RequestResponse
+    {
+        try {
+            $requestRaw = $this->requestRaw('POST', $action, [ 'query' => $params ?? [] ], $cacheMinutes);
+        }
+        catch (ClientException $clientException) {
+            if ($clientException->getCode() === 403) {
+                $response        = $clientException->getResponse();
+                $requestResponse = new RequestResponse(json_decode($response->getBody()->getContents(), true));
+
+                if ($requestResponse->description === 'Forbidden: bot was blocked by the user') {
+                    return null;
+                }
+
+                throw new RequestException($requestResponse);
+            }
+
+            return null;
+        }
+
+        if ($requestRaw === null) {
+            return null;
+        }
+
+        $contents = new RequestResponse(json_decode($requestRaw, true));
+
+        if (!$contents->ok) {
+            throw new RequestException($contents);
+        }
+
+        return $contents;
     }
 }

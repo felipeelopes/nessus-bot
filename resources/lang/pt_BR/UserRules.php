@@ -14,5 +14,10 @@ return [
                   "\xE2\x9E\x9C É proibido conteúdos pornográficos e não relacionados;\n" .
                   "\xE2\x9E\x9C Somente adultos ou com ótimas recomendações;\n" .
                   "\xE2\x9E\x9C Usuários não participativos são removidos automaticamente;\n" .
-                  "\xE2\x9E\x9C Fale com a administração em caso de problema;\n",
+                  "\xE2\x9E\x9C Não faça publicação de outros clãs ou grupos;\n" .
+                  "\xE2\x9E\x9C Fale com a administração em caso de problema;\n\n",
+
+    'adminHeader' => "*Administradores do clã*:\n\n" .
+                     ':admins',
+    'adminItem'   => "\xE2\x9E\x9C :username\n",
 ];

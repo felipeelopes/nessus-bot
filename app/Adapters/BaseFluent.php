@@ -55,5 +55,4 @@ class BaseFluent extends Fluent
             }));
         }
     }
-
 }
