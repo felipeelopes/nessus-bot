@@ -7,10 +7,8 @@ namespace Application\SessionsProcessor\GridModification\Traits;
 use Application\Adapters\Grid as GridAdapter;
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
-use Application\Models\GridSubscription;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
-use Application\Services\UserService;
 use Application\SessionsProcessor\GridModification\InitializationMoment;
 use Application\Types\Process;
 use Illuminate\Support\Collection;
@@ -25,39 +23,42 @@ trait ModificationMoment
      */
     public static function notifyMessage(Update $update, Process $process, string $message): void
     {
-        $user = UserService::getInstance()->get($update->message->from->id);
-
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
-        /** @var GridSubscription $subscriberOwner */
-        $subscriberOwner = $grid->subscribers->where('subscription_rule', GridSubscription::RULE_OWNER)->first();
-        $isOwner         = $subscriberOwner->gamertag->id === $user->gamertag->id;
+        $isOwner   = $grid->isOwner($update->message->from->id);
+        $isManager = $isOwner || $grid->isManager($update->message->from->id);
 
         $availableOptions = (new Collection([
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
                 'description' => trans('GridModification.modifyTitleOption'),
+                'conditional' => $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_SUBTITLE,
                 'description' => trans('GridModification.modifySubtitleOption'),
+                'conditional' => $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_REQUIREMENTS,
                 'description' => trans('GridModification.modifyRequirementsOption'),
+                'conditional' => $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TIMING,
                 'description' => trans('GridModification.modifyTimingOption'),
+                'conditional' => $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_DURATION,
                 'description' => trans('GridModification.modifyDurationOption'),
+                'conditional' => $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_PLAYERS,
                 'description' => trans('GridModification.modifyPlayersOption'),
+                'conditional' => $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
@@ -67,7 +68,7 @@ trait ModificationMoment
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
                 'description' => trans('GridModification.modifyManagersOption'),
-                'conditional' => $isOwner,
+                'conditional' => $isManager,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||

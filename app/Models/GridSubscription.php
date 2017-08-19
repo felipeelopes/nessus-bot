@@ -63,7 +63,7 @@ class GridSubscription extends Model
     }
 
     /**
-     * Returns if subscriver is a manager.
+     * Returns if subscriber is a manager.
      * @return bool
      */
     public function isManager(): bool

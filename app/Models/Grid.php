@@ -153,6 +153,34 @@ class Grid extends Model
     }
 
     /**
+     * Check if an user is the manager (or owner) of this Grid.
+     * @param int $userId User id.
+     * @return bool
+     */
+    public function isManager(int $userId): bool
+    {
+        if ($this->isOwner($userId)) {
+            return true;
+        }
+
+        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $userId)->first();
+
+        return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_MANAGER;
+    }
+
+    /**
+     * Check if an user is the owner of this Grid.
+     * @param int $userId User id.
+     * @return bool
+     */
+    public function isOwner(int $userId): bool
+    {
+        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $userId)->first();
+
+        return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_OWNER;
+    }
+
+    /**
      * Identify if grid is playing.
      * @return bool
      */

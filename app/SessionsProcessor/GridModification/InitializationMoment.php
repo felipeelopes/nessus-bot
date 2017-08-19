@@ -76,31 +76,41 @@ class InitializationMoment extends SessionMoment
      */
     public function validateInput(?string $input, Update $update, Process $process): ?string
     {
-        switch ($update->message->text) {
-            case self::REPLY_MODIFY_TITLE:
-                throw new ForceMomentException(ModifyTitleMoment::class);
-                break;
-            case self::REPLY_MODIFY_SUBTITLE:
-                throw new ForceMomentException(ModifySubtitleMoment::class);
-                break;
-            case self::REPLY_MODIFY_REQUIREMENTS:
-                throw new ForceMomentException(ModifyRequirementsMoment::class);
-                break;
-            case self::REPLY_MODIFY_TIMING:
-                throw new ForceMomentException(ModifyTimingMoment::class);
-                break;
-            case self::REPLY_MODIFY_DURATION:
-                throw new ForceMomentException(ModifyDurationMoment::class);
-                break;
-            case self::REPLY_MODIFY_PLAYERS:
-                throw new ForceMomentException(ModifyPlayersMoment::class);
-                break;
-            case self::REPLY_TRANSFER_OWNER:
-                throw new ForceMomentException(TransferOwnerMoment::class);
-                break;
-            case self::REPLY_MODIFY_MANAGERS:
-                throw new ForceMomentException(ModifyManagersMoment::class);
-                break;
+        /** @var Grid $grid */
+        $grid = (new Grid)->find($process->get(self::PROCESS_GRID_ID));
+
+        if ($grid->isOwner($update->message->from->id)) {
+            switch ($update->message->text) {
+                case self::REPLY_TRANSFER_OWNER:
+                    throw new ForceMomentException(TransferOwnerMoment::class);
+                    break;
+            }
+        }
+
+        if ($grid->isManager($update->message->from->id)) {
+            switch ($update->message->text) {
+                case self::REPLY_MODIFY_TITLE:
+                    throw new ForceMomentException(ModifyTitleMoment::class);
+                    break;
+                case self::REPLY_MODIFY_SUBTITLE:
+                    throw new ForceMomentException(ModifySubtitleMoment::class);
+                    break;
+                case self::REPLY_MODIFY_REQUIREMENTS:
+                    throw new ForceMomentException(ModifyRequirementsMoment::class);
+                    break;
+                case self::REPLY_MODIFY_TIMING:
+                    throw new ForceMomentException(ModifyTimingMoment::class);
+                    break;
+                case self::REPLY_MODIFY_DURATION:
+                    throw new ForceMomentException(ModifyDurationMoment::class);
+                    break;
+                case self::REPLY_MODIFY_PLAYERS:
+                    throw new ForceMomentException(ModifyPlayersMoment::class);
+                    break;
+                case self::REPLY_MODIFY_MANAGERS:
+                    throw new ForceMomentException(ModifyManagersMoment::class);
+                    break;
+            }
         }
 
         return null;
