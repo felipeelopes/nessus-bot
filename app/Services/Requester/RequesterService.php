@@ -52,7 +52,8 @@ class RequesterService
     {
         $requestResponse = $this->requestBase($action, $params, $cacheMinutes);
 
-        if ($requestResponse === null) {
+        if ($requestResponse === null ||
+            $requestResponse->result === null) {
             return null;
         }
 
