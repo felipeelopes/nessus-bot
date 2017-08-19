@@ -94,6 +94,7 @@ class BotController extends Controller implements RouterRegisterContract
         if ($update->message->text === '') {
             $update->message->text = null;
         }
+
         /** @var UserRegistrationStrategy $userRegistration */
         $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
         if ($userRegistration->process($user, $update)) {

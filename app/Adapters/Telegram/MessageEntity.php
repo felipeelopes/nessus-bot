@@ -39,10 +39,8 @@ class MessageEntity extends BaseFluent
 
         $this->instantiate('user', User::class);
 
-        if ($this->type === static::TYPE_BOT_COMMAND) {
-            /** @var Message $parentMessage */
-            $parentMessage  = $this->parent;
-            $commandMessage = substr($parentMessage->text, $this->offset, $this->length);
+        if ($this->isType(static::TYPE_BOT_COMMAND)) {
+            $commandMessage = $this->getContent();
 
             [ $botCommand, $botName ] = array_pad(explode('@', $commandMessage), 2, null);
 
@@ -60,11 +58,40 @@ class MessageEntity extends BaseFluent
                 $botCommand   = substr($botCommand, 0, strpos($botCommand, array_get($botArguments, 0)));
             }
 
+            /** @var Message $message */
+            $message = $this->parent;
+
             $this->bot_command = new MessageEntityBotCommand([
                 'bot'       => '@' . $botName,
                 'command'   => strtolower($botCommand),
                 'arguments' => $botArguments,
+                'text'      => $message->text,
+                'entities'  => array_filter($message->entities, function ($entity) {
+                    return $entity['type'] !== self::TYPE_BOT_COMMAND;
+                }),
             ]);
         }
+    }
+
+    /**
+     * Returns the entity content.
+     * @return string
+     */
+    public function getContent(): string
+    {
+        /** @var Message $message */
+        $message = $this->parent;
+
+        return substr($message->text, $this->offset, $this->length);
+    }
+
+    /**
+     * Check if type match.
+     * @param string $type Type.
+     * @return bool
+     */
+    public function isType(string $type): bool
+    {
+        return $this->type === $type;
     }
 }
