@@ -79,7 +79,7 @@ class InitializationMoment extends SessionMoment
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(self::PROCESS_GRID_ID));
 
-        if ($grid->isOwner($update->message->from->id)) {
+        if ($grid->isOwner($update->message->from)) {
             switch ($update->message->text) {
                 case self::REPLY_TRANSFER_OWNER:
                     throw new ForceMomentException(TransferOwnerMoment::class);
@@ -87,7 +87,7 @@ class InitializationMoment extends SessionMoment
             }
         }
 
-        if ($grid->isManager($update->message->from->id)) {
+        if ($grid->isManager($update->message->from)) {
             switch ($update->message->text) {
                 case self::REPLY_MODIFY_TITLE:
                     throw new ForceMomentException(ModifyTitleMoment::class);

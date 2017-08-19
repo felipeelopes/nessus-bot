@@ -82,12 +82,11 @@ class BotService implements ServiceContract
 
     /**
      * Get the Chat administrators.
-     * @param string|int $chatId Chat id.
      * @return ChatMember[]
      */
-    public function getChatAdministrators($chatId): array
+    public function getChatAdministrators(): array
     {
-        return $this->requester->requestArray(ChatMember::class, 'getChatAdministrators', [ 'chat_id' => $chatId ], RequesterService::CACHE_DAY);
+        return $this->requester->requestArray(ChatMember::class, 'getChatAdministrators', [ 'chat_id' => env('NBOT_GROUP_ID') ], RequesterService::CACHE_DAY);
     }
 
     /**

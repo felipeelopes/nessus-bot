@@ -7,6 +7,7 @@ namespace Application\Adapters\Telegram;
 use Application\Adapters\BaseFluent;
 use Application\Models\User as UserModel;
 use Application\Services\MockupService;
+use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 
 /**
@@ -50,5 +51,17 @@ class User extends BaseFluent
         $userService = MockupService::getInstance()->instance(UserService::class);
 
         return $userService->get($this->id);
+    }
+
+    /**
+     * Check if this user is a group administrator.
+     * @return bool
+     */
+    public function isAdminstrator(): bool
+    {
+        $botService        = BotService::getInstance();
+        $administratorsIds = array_pluck($botService->getChatAdministrators(), 'user.id');
+
+        return in_array($this->id, $administratorsIds, true);
     }
 }

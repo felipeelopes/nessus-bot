@@ -45,7 +45,7 @@ class EdgeCommandStrategy implements UserStrategyContract
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_RULES)) {
-            $chatMembers = $botService->getChatAdministrators(env('NBOT_GROUP_ID'));
+            $chatMembers = $botService->getChatAdministrators();
             $admins      = [];
 
             foreach ($chatMembers as $chatMember) {

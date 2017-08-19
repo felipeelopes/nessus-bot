@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Adapters\Telegram\User as TelegramUser;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -154,28 +155,32 @@ class Grid extends Model
 
     /**
      * Check if an user is the manager (or owner) of this Grid.
-     * @param int $userId User id.
+     * @param TelegramUser $user User instance.
      * @return bool
      */
-    public function isManager(int $userId): bool
+    public function isManager(TelegramUser $user): bool
     {
-        if ($this->isOwner($userId)) {
+        if ($this->isOwner($user)) {
             return true;
         }
 
-        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $userId)->first();
+        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $user->id)->first();
 
         return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_MANAGER;
     }
 
     /**
      * Check if an user is the owner of this Grid.
-     * @param int $userId User id.
+     * @param TelegramUser $user User instance.
      * @return bool
      */
-    public function isOwner(int $userId): bool
+    public function isOwner(TelegramUser $user): bool
     {
-        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $userId)->first();
+        if ($user->isAdminstrator()) {
+            return true;
+        }
+
+        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $user->id)->first();
 
         return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_OWNER;
     }

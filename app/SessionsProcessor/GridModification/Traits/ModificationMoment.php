@@ -26,8 +26,8 @@ trait ModificationMoment
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
-        $isOwner   = $grid->isOwner($update->message->from->id);
-        $isManager = $isOwner || $grid->isManager($update->message->from->id);
+        $isOwner   = $grid->isOwner($update->message->from);
+        $isManager = $isOwner || $grid->isManager($update->message->from);
 
         $availableOptions = (new Collection([
             [
