@@ -69,6 +69,14 @@ class BotController extends Controller implements RouterRegisterContract
         $userService = MockupService::getInstance()->instance(UserService::class);
         $user        = $userService->get($update->message->from->id);
 
+        if ($user && $update->message->from) {
+            $user->user_username  = $update->message->from->username;
+            $user->user_firstname = $update->message->from->first_name;
+            $user->user_lastname  = $update->message->from->last_name;
+            $user->user_language  = $update->message->from->language_code;
+            $user->save();
+        }
+
         /** @var PredefinitionStrategy $predefinition */
         $predefinition = $mockupService->instance(PredefinitionStrategy::class);
         if ($predefinition->process($user, $update)) {

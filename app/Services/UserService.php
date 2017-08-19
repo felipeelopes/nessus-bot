@@ -27,13 +27,11 @@ class UserService implements ServiceContract
      */
     public function get($userId): ?User
     {
-        return Cache::remember(__CLASS__ . '@get:' . $userId, 60, function () use ($userId) {
-            /** @var User|Builder $userQuery */
-            $userQuery = User::query();
-            $userQuery->whereUserNumber($userId);
+        /** @var User|Builder $userQuery */
+        $userQuery = User::query();
+        $userQuery->whereUserNumber($userId);
 
-            return $userQuery->first();
-        });
+        return $userQuery->first();
     }
 
     /**
