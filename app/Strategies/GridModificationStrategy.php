@@ -19,8 +19,6 @@ class GridModificationStrategy implements UserStrategyContract
 {
     use GridMessage;
 
-    private const MODE_OWNEDS = 'myGridShow';
-
     /**
      * @inheritdoc
      */
@@ -43,7 +41,7 @@ class GridModificationStrategy implements UserStrategyContract
                     ?: $gridA->grid_timing->gte($gridB->grid_timing);
             });
 
-            $this->sendGridListing($update, $botService, $grids, self::MODE_OWNEDS);
+            $this->sendGridListing($update, $botService, $grids);
 
             return true;
         }

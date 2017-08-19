@@ -224,7 +224,11 @@ class Grid extends Model
      */
     public function scopeFilterOwneds(Builder $builder, User $user): void
     {
-        $builder->where('gamertag_id', $user->gamertag->id);
+        $builder->whereIn('id', function (BuilderQuery $builder) use ($user) {
+            $builder->select('grid_id');
+            $builder->from('grid_subscriptions');
+            $builder->where('gamertag_id', $user->gamertag->id);
+        });
     }
 
     /**

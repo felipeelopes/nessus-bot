@@ -28,11 +28,9 @@ return [
         'registerCommand'     => 'Registrar',
         'registerDescription' => 'Primeiro passo para fazer parte do clã',
 
-        'rulesCommand'           => 'Regras',
-        'rulesDescription'       => 'Regras do clã',
+        'rulesCommand'     => 'Regras',
+        'rulesDescription' => 'Regras do clã',
 
-        // Short commands.
-        'gridShowShortCommand'   => 'G',
-        'myGridShowShortCommand' => 'M',
+        'gridShowShortCommand' => 'G',
     ],
 ];

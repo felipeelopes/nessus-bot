@@ -12,7 +12,6 @@ use Application\Services\CommandService;
 use Application\Services\FormattingService;
 use Application\Services\Requester\RequesterService;
 use Application\Services\Telegram\BotService;
-use Application\Strategies\GridListingStrategy;
 use Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -51,32 +50,13 @@ trait GridMessage
     }
 
     /**
-     * Returns the grid title, based on some conditions.
-     * @param Grid $grid Grid instance.
-     * @return string
-     */
-    private function getGridTitle(Grid $grid): string
-    {
-        if ($grid->isPlaying()) {
-            return trans('GridListing.titlePlaying');
-        }
-
-        if ($grid->isToday()) {
-            return trans('GridListing.titleToday');
-        }
-
-        return trans('GridListing.titleTomorrow');
-    }
-
-    /**
      * Send grid listing to chat.
      * @param Update            $update     Update instace.
      * @param BotService        $botService Bot Service instance.
      * @param Collection|Grid[] $grids      Grids.
-     * @param string            $mode       Grid mode (MODE consts).
      * @return bool|null
      */
-    private function sendGridListing(Update $update, BotService $botService, Collection $grids, string $mode): ?bool
+    private function sendGridListing(Update $update, BotService $botService, Collection $grids): ?bool
     {
         $cacheListKey = __CLASS__ . '@listing';
 
@@ -100,11 +80,9 @@ trait GridMessage
 
         /** @var Grid $grid */
         foreach ($grids as $grid) {
-            $gridTitle = $mode === GridListingStrategy::MODE_GENERAL
-                ? $this->getGridTitle($grid)
-                : trans('GridListing.titleBase', [
-                    'title' => Str::ucfirst($this->getGridStatusText($grid)),
-                ]);
+            $gridTitle = trans('GridListing.titleBase', [
+                'title' => Str::ucfirst($this->getGridStatusText($grid)),
+            ]);
 
             if ($currentTitle !== $gridTitle) {
                 if ($currentTitle !== null) {
@@ -125,7 +103,7 @@ trait GridMessage
 
             $result .= trans('GridListing.item', [
                 'timing'     => $grid->grid_timing->format('H:i'),
-                'command'    => '/' . trans('Command.commands.' . $mode . 'ShortCommand') . $grid->id,
+                'command'    => '/' . trans('Command.commands.gridShowShortCommand') . $grid->id,
                 'players'    => $grid->countPlayers(),
                 'maxPlayers' => $grid->grid_players,
                 'reserves'   => FormattingService::toSuperscript((string) $grid->countReserves()),

@@ -39,7 +39,7 @@ class InitializationMoment extends SessionMoment
             return true;
         }
 
-        if ($update->message->isCommand(CommandService::COMMAND_MY_GRID_SHOW_SHORT)) {
+        if ($update->message->isCommand(CommandService::COMMAND_GRID_SHOW_SHORT)) {
             $commandArguments = $update->message->getCommand()->arguments;
 
             if (count($commandArguments) < 1) {
