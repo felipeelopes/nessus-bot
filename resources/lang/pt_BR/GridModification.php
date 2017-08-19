@@ -115,4 +115,7 @@ return [
     'errorModifyManagerUnavailable' => "*Err... participante não encontrado.*\n" .
                                        "Vamos tentar novamente...\n\n" .
                                        "*\xE2\x9E\x9C Selecione a operação que será realizada:*",
+
+    'unsubscribeYouOption' => 'Sair',
+    'unsubscribeYouUpdate' => "Você *saiu* desta grade.\n\n",
 ];

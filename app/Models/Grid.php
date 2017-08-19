@@ -154,33 +154,45 @@ class Grid extends Model
     }
 
     /**
-     * Check if an user is the manager (or owner) of this Grid.
+     * Return an User subscription from grid, if it exists.
      * @param TelegramUser $user User instance.
+     * @return GridSubscription|null
+     */
+    public function getUserSubscription(TelegramUser $user): ?GridSubscription
+    {
+        return $this->subscribers->where('gamertag.user.user_number', $user->id)->first();
+    }
+
+    /**
+     * Check if an user is the manager (or owner) of this Grid.
+     * @param TelegramUser $user       User instance.
+     * @param bool|null    $explicitly If is explicitly the owner (not an administrator).
      * @return bool
      */
-    public function isManager(TelegramUser $user): bool
+    public function isManager(TelegramUser $user, ?bool $explicitly = null): bool
     {
-        if ($this->isOwner($user)) {
+        if ($explicitly !== false && $this->isOwner($user)) {
             return true;
         }
 
-        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $user->id)->first();
+        $gridSubscriber = $this->getUserSubscription($user);
 
         return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_MANAGER;
     }
 
     /**
      * Check if an user is the owner of this Grid.
-     * @param TelegramUser $user User instance.
+     * @param TelegramUser $user       User instance.
+     * @param bool|null    $explicitly If is explicitly the owner (not an administrator).
      * @return bool
      */
-    public function isOwner(TelegramUser $user): bool
+    public function isOwner(TelegramUser $user, ?bool $explicitly = null): bool
     {
-        if ($user->isAdminstrator()) {
+        if ($explicitly !== false && $user->isAdminstrator()) {
             return true;
         }
 
-        $gridSubscriber = $this->subscribers->where('gamertag.user.user_number', $user->id)->first();
+        $gridSubscriber = $this->getUserSubscription($user);
 
         return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_OWNER;
     }
@@ -195,12 +207,39 @@ class Grid extends Model
     }
 
     /**
+     * Check if an user is in fact subscribed on grid.
+     * @param TelegramUser $user User instance.
+     * @return bool
+     */
+    public function isSubscriber(TelegramUser $user): bool
+    {
+        return $this->getUserSubscription($user) !== null;
+    }
+
+    /**
      * Identify if grid is for today.
      * @return bool
      */
     public function isToday(): bool
     {
         return $this->grid_timing->isToday();
+    }
+
+    /**
+     * Check if an user is registered with user permission on grid.
+     * @param TelegramUser $user       User instance.
+     * @param bool|null    $explicitly If is explicitly the owner (not an administrator).
+     * @return bool
+     */
+    public function isUser(TelegramUser $user, ?bool $explicitly = null): bool
+    {
+        if ($explicitly !== false && $this->isManager($user)) {
+            return true;
+        }
+
+        $gridSubscriber = $this->getUserSubscription($user);
+
+        return $gridSubscriber && $gridSubscriber->subscription_rule === GridSubscription::RULE_USER;
     }
 
     /**

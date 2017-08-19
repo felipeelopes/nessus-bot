@@ -29,6 +29,7 @@ class InitializationMoment extends SessionMoment
     const REPLY_MODIFY_TIMING       = 'ModifyTiming';
     const REPLY_MODIFY_TITLE        = 'ModifyTitle';
     const REPLY_TRANSFER_OWNER      = 'TransferOwner';
+    const REPLY_UNSUBSCRIBE         = 'Unsubscribe';
 
     /**
      * @inheritdoc
@@ -109,6 +110,14 @@ class InitializationMoment extends SessionMoment
                     break;
                 case self::REPLY_MODIFY_MANAGERS:
                     throw new ForceMomentException(ModifyManagersMoment::class);
+                    break;
+            }
+        }
+
+        if ($grid->isSubscriber($update->message->from)) {
+            switch ($update->message->text) {
+                case self::REPLY_UNSUBSCRIBE:
+                    throw new ForceMomentException(UnsubscribeMoment::class);
                     break;
             }
         }

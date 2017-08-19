@@ -26,8 +26,9 @@ trait ModificationMoment
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
-        $isOwner   = $grid->isOwner($update->message->from);
-        $isManager = $isOwner || $grid->isManager($update->message->from);
+        $isOwner      = $grid->isOwner($update->message->from);
+        $isManager    = $isOwner || $grid->isManager($update->message->from);
+        $isSubscriber = $grid->isSubscriber($update->message->from);
 
         $availableOptions = (new Collection([
             [
@@ -69,6 +70,11 @@ trait ModificationMoment
                 'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
                 'description' => trans('GridModification.modifyManagersOption'),
                 'conditional' => $isManager,
+            ],
+            [
+                'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
+                'description' => trans('GridModification.unsubscribeYouOption'),
+                'conditional' => $isSubscriber,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
