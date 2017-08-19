@@ -15,6 +15,33 @@ use Carbon\Carbon;
 class EdgeCommandStrategy implements UserStrategyContract
 {
     /**
+     * Returns the list of administrators.
+     * @param BotService $botService BotService instance.
+     * @return string[]
+     */
+    public static function getAdministratorsList($botService): array
+    {
+        $chatMembers = $botService->getChatAdministrators();
+        $admins      = [];
+
+        foreach ($chatMembers as $chatMember) {
+            if ($chatMember->user->id === (int) env('NBOT_WEBHOOK_ID')) {
+                continue;
+            }
+
+            $admins[] = $chatMember->user->getMention();
+        }
+
+        sort($admins);
+
+        return array_map(function ($userMention) {
+            return trans('UserRules.adminItem', [
+                'username' => $userMention,
+            ]);
+        }, $admins);
+    }
+
+    /**
      * @inheritdoc
      */
     public function process(?User $user, Update $update): ?bool
@@ -105,28 +132,18 @@ class EdgeCommandStrategy implements UserStrategyContract
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_RULES)) {
-            $chatMembers = $botService->getChatAdministrators();
-            $admins      = [];
-
-            foreach ($chatMembers as $chatMember) {
-                if ($chatMember->user->id === (int) env('NBOT_WEBHOOK_ID')) {
-                    continue;
-                }
-
-                $admins[] = $chatMember->user->getMention();
-            }
-
-            sort($admins);
-
             $botService->createMessage($update->message)
-                ->appendMessage(trans('UserRules.followIt') .
-                                trans('UserRules.adminHeader', [
-                                    'admins' => implode(array_map(function ($userMention) {
-                                        return trans('UserRules.adminItem', [
-                                            'username' => $userMention,
-                                        ]);
-                                    }, $admins)),
-                                ]))
+                ->appendMessage(trans('UserRules.followIt'))
+                ->publish();
+
+            return true;
+        }
+
+        if ($update->message->isCommand(CommandService::COMMAND_ADMINS)) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('UserRules.adminHeader', [
+                    'admins' => implode(self::getAdministratorsList($botService)),
+                ]))
                 ->publish();
 
             return true;

@@ -17,7 +17,7 @@ return [
                   "\xE2\x9E\x9C Não faça publicação de outros clãs ou grupos;\n" .
                   "\xE2\x9E\x9C Fale com a administração em caso de problema;\n\n",
 
-    'adminHeader' => "*Administradores do clã*:\n\n" .
+    'adminHeader' => "*Administradores do grupo*:\n\n" .
                      ':admins',
     'adminItem'   => "\xE2\x9E\x9C :username\n",
 ];

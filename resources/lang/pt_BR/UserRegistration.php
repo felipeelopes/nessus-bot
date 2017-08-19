@@ -31,7 +31,7 @@ return [
                                ':whichGamertag',
     'checkingSuccess'       => "*Está anotado, guardião*!\n" .
                                "Agora você já pode enviar mensagens no grupo.\n\n" .
-                               ':rules',
+                               ':rules:admins',
 
     // Already registered.
     'alreadyRegistered'     => "*Calma lá, guardião!*\n\n" .

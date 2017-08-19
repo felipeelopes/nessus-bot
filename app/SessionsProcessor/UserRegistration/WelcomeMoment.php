@@ -15,6 +15,7 @@ use Application\Services\Live\LiveService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
+use Application\Strategies\EdgeCommandStrategy;
 use Application\Types\Process;
 
 /**
@@ -84,6 +85,9 @@ class WelcomeMoment extends SessionMoment
             ->setPrivate()
             ->appendMessage(trans('UserRegistration.checkingSuccess', [
                 'rules'  => trans('UserRules.followIt'),
+                'admins' => trans('UserRules.adminHeader', [
+                    'admins' => implode(EdgeCommandStrategy::getAdministratorsList($botService)),
+                ]),
             ]))
             ->publish();
 

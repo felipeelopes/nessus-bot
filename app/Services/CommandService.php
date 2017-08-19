@@ -8,6 +8,7 @@ use Application\Models\User;
 
 class CommandService
 {
+    public const COMMAND_ADMINS          = 'admins';
     public const COMMAND_CANCEL          = 'cancel';
     public const COMMAND_COMMANDS        = 'commands';
     public const COMMAND_GRID_SHOW_SHORT = 'gridShowShort';
@@ -58,6 +59,7 @@ class CommandService
             $commands[] = static::COMMAND_REGISTER;
         }
 
+        $commands[] = static::COMMAND_ADMINS;
         $commands[] = static::COMMAND_RULES;
 
         $result .= $this->buildCommandsList(trans('Command.additionalCommands'), $commands);

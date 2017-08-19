@@ -20,7 +20,7 @@ return [
         'newGridDescription' => 'Criar uma nova grade',
 
         'newsCommand'     => 'NoticiasDestiny',
-        'newsDescription' => 'Exibe as últimas notícias relacionadas',
+        'newsDescription' => 'Exibe notícias relacionadas ao Destiny',
 
         'listGridsCommand'     => 'ListarGrades',
         'listGridsDescription' => 'Listar as grades disponíveis',
@@ -31,8 +31,11 @@ return [
         'registerCommand'     => 'Registrar',
         'registerDescription' => 'Primeiro passo para fazer parte do clã',
 
+        'adminsCommand'     => 'Administradores',
+        'adminsDescription' => 'Lista os administradores do grupo',
+
         'rulesCommand'     => 'Regras',
-        'rulesDescription' => 'Regras do clã',
+        'rulesDescription' => 'Lista as regras do clã',
 
         'gridShowShortCommand' => 'G',
     ],

@@ -43,6 +43,15 @@ class RequesterServiceMockup extends RequesterServiceMockupBase
             return $request->toJson();
         }
 
+        if ($action === 'getChatAdministrators') {
+            $request = new RequestResponse([
+                'ok'     => true,
+                'result' => [],
+            ]);
+
+            return $request->toJson();
+        }
+
         if ($action === 'sendMessage') {
             return MockupService::getInstance()->callProvider(static::class, func_get_args());
         }
