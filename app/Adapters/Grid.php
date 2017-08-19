@@ -80,14 +80,8 @@ class Grid extends BaseFluent
      */
     public function getStructure(string $structureType): string
     {
-        $result = trans('Grid.header', [
-            'title'    => $this->title,
-            'subtitle' => $this->subtitle
-                ? trans('Grid.headerSubtitle', [ 'subtitle' => $this->subtitle ])
-                : null,
-        ]);
-
-        $grid = null;
+        $grid     = null;
+        $gridIcon = 'default';
 
         if ($this->grid_id) {
             /** @var Builder $gridQuery */
@@ -95,7 +89,19 @@ class Grid extends BaseFluent
             $gridQuery = GridModel::query();
             $gridQuery->with('subscribers.gamertag');
             $grid = $gridQuery->find($this->grid_id);
+
+            if ($grid->isCanceled()) {
+                $gridIcon = 'canceled';
+            }
         }
+
+        $result = trans('Grid.header', [
+            'icon'     => trans('Grid.statusIcon' . Str::ucfirst($gridIcon)),
+            'title'    => $this->title,
+            'subtitle' => $this->subtitle
+                ? trans('Grid.headerSubtitle', [ 'subtitle' => $this->subtitle ])
+                : null,
+        ]);
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             /** @var UserService $userService */
@@ -109,6 +115,10 @@ class Grid extends BaseFluent
             $gridStatusDetail = $grid->grid_status_details;
 
             if ($gridStatusDetail !== null) {
+                if ($grid->isCanceled()) {
+                    $gridStatusDetail = $grid->getCancelReason();
+                }
+
                 $gridStatusDetail = trans('Grid.gridStatusDetails', [
                     'details' => $gridStatusDetail,
                 ]);
@@ -124,9 +134,11 @@ class Grid extends BaseFluent
             'value' => $this->getTimingFormatted(),
         ]);
 
-        $result .= trans('Grid.gridDuration', [
-            'value' => $this->getDurationFormatted(),
-        ]);
+        if (!$grid->isCanceled()) {
+            $result .= trans('Grid.gridDuration', [
+                'value' => $this->getDurationFormatted(),
+            ]);
+        }
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);
@@ -136,7 +148,7 @@ class Grid extends BaseFluent
             $result .= trans('Grid.gridRequirements', [ 'value' => $this->requirements ]);
         }
 
-        if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {
+        if ($grid && $structureType === self::STRUCTURE_TYPE_FULL && !$grid->isCanceled()) {
             $resultTitulars = [];
             $resultReserves = [];
 

@@ -5,11 +5,13 @@ declare(strict_types = 1);
 namespace Application\Models;
 
 use Application\Adapters\Telegram\User as TelegramUser;
+use Application\SessionsProcessor\GridModification\UnsubscribeMoment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as BuilderQuery;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * @property Collection|GridSubscription[] $subscribers         Grid subscribers.
@@ -76,6 +78,26 @@ class Grid extends Model
             GridSubscription::POSITION_RESERVE_TOP,
             GridSubscription::POSITION_RESERVE_BOTTOM,
         ]);
+    }
+
+    /**
+     * Return the cancel reason.
+     * @return string|null
+     */
+    public function getCancelReason(): ?string
+    {
+        switch ($this->grid_status_details) {
+            case UnsubscribeMoment::CANCEL_ACCESS_ISSUE:
+            case UnsubscribeMoment::CANCEL_LACK_INTEREST:
+            case UnsubscribeMoment::CANCEL_LACK_PLAYERS:
+            case UnsubscribeMoment::CANCEL_OTHERS:
+            case UnsubscribeMoment::CANCEL_PERSONAL_REASON:
+                $reason = trans('GridModification.unsubscribeCancel' . Str::ucfirst($this->grid_status_details));
+
+                return Str::lower(Str::substr($reason, 0, 1)) . Str::substr($reason, 1);
+        }
+
+        return $this->grid_status_details;
     }
 
     /**

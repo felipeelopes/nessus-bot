@@ -3,10 +3,9 @@
 declare(strict_types = 1);
 
 return [
-    'header'            => "\xE2\x98\xA0 *:title*:subtitle \xE2\x98\xA0\n\n",
-    'headerSubtitle'    => ' (_:subtitle_)',
+    'header'         => ":icon *:title*:subtitle :icon\n\n",
+    'headerSubtitle' => ' (_:subtitle_)',
 
-    // Grid properties.
     'gridOwner'         => "\xE2\x9E\x9C *Organizador*: :value \xF0\x9F\x94\xB9\n",
     'gridStatus'        => "\xE2\x9E\x9C *Status*: :value:details\n",
     'gridStatusDetails' => ' (_:details_)',
@@ -15,34 +14,31 @@ return [
     'gridDuration'      => "\xE2\x9E\x9C *Duração*: cerca de :value\n",
     'gridPlayers'       => "\n*Participantes*: até :value\n",
 
-    // Grid titulars.
-    'titularsHeader'    => "\n*Titulares:*\n",
-    'titularItem'       => "\xF0\x9F\x8E\xAE :gamertag :icon\n",
-    'titularItemEmpty'  => "\xF0\x9F\x8E\xAE \n",
+    'titularsHeader'   => "\n*Titulares:*\n",
+    'titularItem'      => "\xF0\x9F\x8E\xAE :gamertag :icon\n",
+    'titularItemEmpty' => "\xF0\x9F\x8E\xAE \n",
 
-    // Grid reserves.
-    'reservesHeader'    => "\n*Reservas:*\n",
-    'reserveItem'       => "\xF0\x9F\x95\xB9 :gamertag :icon\n",
+    'reservesHeader' => "\n*Reservas:*\n",
+    'reserveItem'    => "\xF0\x9F\x95\xB9 :gamertag :icon\n",
 
-    // Grid user type.
-    'typeOwner'         => "\xE2\xAD\x90",
-    'typeManager'       => "\xE2\x9A\x99",
-    'typeTop'           => "\xF0\x9F\x94\x9D",
+    'typeOwner'   => "\xE2\xAD\x90",
+    'typeManager' => "\xE2\x9A\x99",
+    'typeTop'     => "\xF0\x9F\x94\x9D",
 
-    // Grid statuses.
-    'statusWaiting'     => 'disponível',
-    'statusGathering'   => 'reunindo',
-    'statusPlaying'     => 'em andamento',
-    'statusFinished'    => 'concluído',
-    'statusCanceled'    => 'cancelado',
-    'statusUnreported'  => 'não reportado',
+    'statusWaiting'    => 'disponível',
+    'statusGathering'  => 'reunindo',
+    'statusPlaying'    => 'em andamento',
+    'statusFinished'   => 'concluído',
+    'statusCanceled'   => 'cancelado',
+    'statusUnreported' => 'não reportado',
 
-    // Timing properties.
-    'timingToday'       => 'hoje, às :timing',
-    'timingTomorrow'    => 'amanhã, dia :day, às :timing',
+    'statusIconDefault'  => "\xE2\x98\xA0",
+    'statusIconCanceled' => "\xF0\x9F\x9A\xAB",
 
-    // Duration timing.
-    'durationHours'     => ':hours hora|:hours horas',
-    'durationMinutes'   => ':minutes minuto|:minutes minutos',
-    'durationBoth'      => ':hours e :minutes',
+    'timingToday'    => 'hoje, às :timing',
+    'timingTomorrow' => 'amanhã, dia :day, às :timing',
+
+    'durationHours'   => ':hours hora|:hours horas',
+    'durationMinutes' => ':minutes minuto|:minutes minutos',
+    'durationBoth'    => ':hours e :minutes',
 ];

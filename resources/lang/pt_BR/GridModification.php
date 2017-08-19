@@ -131,7 +131,7 @@ return [
 
     'unsubscribeCancelWizard'         => "*Você é o último da grade...*\n" .
                                          'Nesse caso, vamos precisar cancelá-la. ' .
-                                         'Digite ou selecione uma dos motivos de cancelamento na lista abaixo.',
+                                         'Digite um motivo público ou selecione uma das opções disponíveis abaixo.',
     'unsubscribeCancelUpdate'         => "Você *cancelou* esta grade.\n\n",
     'unsubscribeCancelPersonalReason' => 'Motivo pessoal (_imprevisto_)',
     'unsubscribeCancelLackPlayers'    => 'Falta de jogadores',
