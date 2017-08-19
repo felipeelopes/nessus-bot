@@ -27,7 +27,7 @@ return [
             'collation' => 'utf8mb4_unicode_ci',
             'prefix'    => env('DB_PREFIX'),
             'strict'    => true,
-            'engine'    => null,
+            'engine'    => env('DB_ENGINE'),
         ],
     ],
 
