@@ -164,6 +164,15 @@ class Grid extends Model
     }
 
     /**
+     * Return if this grid was canceled.
+     * @return bool
+     */
+    public function isCanceled(): bool
+    {
+        return $this->grid_status === self::STATUS_CANCELED;
+    }
+
+    /**
      * Check if an user is the manager (or owner) of this Grid.
      * @param TelegramUser $user       User instance.
      * @param bool|null    $explicitly If is explicitly the owner (not an administrator).

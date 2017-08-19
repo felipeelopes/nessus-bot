@@ -128,4 +128,14 @@ return [
     'errorUnsubscribeUserUnavailable' => "*Err... participante não encontrado.*\n" .
                                          "Vamos tentar novamente...\n\n" .
                                          "*\xE2\x9E\x9C Selecione um organizador substituto:*",
+
+    'unsubscribeCancelWizard'         => "*Você é o último da grade...*\n" .
+                                         'Nesse caso, vamos precisar cancelá-la. ' .
+                                         'Digite ou selecione uma dos motivos de cancelamento na lista abaixo.',
+    'unsubscribeCancelUpdate'         => "Você *cancelou* esta grade.\n\n",
+    'unsubscribeCancelPersonalReason' => 'Motivo pessoal (_imprevisto_)',
+    'unsubscribeCancelLackPlayers'    => 'Falta de jogadores',
+    'unsubscribeCancelLackInterest'   => 'Falta de interesse',
+    'unsubscribeCancelAccessIssue'    => 'Problema de acesso ao jogo',
+    'unsubscribeCancelOthers'         => 'Outros',
 ];

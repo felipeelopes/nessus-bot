@@ -156,6 +156,9 @@ class SessionService implements ServiceContract
                 $session->put(self::SESSION_MOMENT_CURRENT, $this->initialMoment);
             }
         }
+        catch (ForceMomentException $forceMomentException) {
+            $session->put(self::SESSION_MOMENT_CURRENT, $forceMomentException->getMoment());
+        }
         catch (RequestException $requestException) {
             $this->clearMoment();
 

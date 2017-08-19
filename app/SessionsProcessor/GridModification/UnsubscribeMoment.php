@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\SessionsProcessor\GridModification;
 
 use Application\Adapters\Telegram\Update;
+use Application\Exceptions\SessionProcessor\ForceMomentException;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
 use Application\Services\PredefinitionService;
@@ -17,6 +18,12 @@ class UnsubscribeMoment extends SessionMoment
 {
     use ModificationMoment;
 
+    public const CANCEL_ACCESS_ISSUE    = 'accessIssue';
+    public const CANCEL_LACK_INTEREST   = 'lackInterest';
+    public const CANCEL_LACK_PLAYERS    = 'lackPlayers';
+    public const CANCEL_OTHERS          = 'others';
+    public const CANCEL_PERSONAL_REASON = 'personalReason';
+
     /**
      * @inheritdoc
      */
@@ -24,6 +31,25 @@ class UnsubscribeMoment extends SessionMoment
     {
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
+
+        if ($grid->subscribers->count() === 1) {
+            $predefinedReasons = [
+                [ 'value' => self::CANCEL_PERSONAL_REASON, 'description' => trans('GridModification.unsubscribeCancelPersonalReason') ],
+                [ 'value' => self::CANCEL_LACK_PLAYERS, 'description' => trans('GridModification.unsubscribeCancelLackPlayers') ],
+                [ 'value' => self::CANCEL_LACK_INTEREST, 'description' => trans('GridModification.unsubscribeCancelLackInterest') ],
+                [ 'value' => self::CANCEL_ACCESS_ISSUE, 'description' => trans('GridModification.unsubscribeCancelAccessIssue') ],
+                [ 'value' => self::CANCEL_OTHERS, 'description' => trans('GridModification.unsubscribeCancelOthers') ],
+            ];
+
+            $botService = BotService::getInstance();
+            $botService->sendPredefinedMessage(
+                $update->message->from->id,
+                trans('GridModification.unsubscribeCancelWizard'),
+                PredefinitionService::getInstance()->optionsFrom($predefinedReasons)
+            );
+
+            throw new ForceMomentException(UnsubscribeCancelMoment::class);
+        }
 
         if ($grid->isOwner($update->message->from)) {
             $botService = BotService::getInstance();

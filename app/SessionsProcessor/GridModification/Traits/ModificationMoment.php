@@ -26,6 +26,7 @@ trait ModificationMoment
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
+        $isCanceled   = $grid->isCanceled();
         $isOwner      = $grid->isOwner($update->message->from);
         $isManager    = $isOwner || $grid->isManager($update->message->from);
         $isSubscriber = $grid->isSubscriber($update->message->from);
@@ -34,52 +35,52 @@ trait ModificationMoment
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
                 'description' => trans('GridModification.modifyTitleOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_SUBTITLE,
                 'description' => trans('GridModification.modifySubtitleOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_REQUIREMENTS,
                 'description' => trans('GridModification.modifyRequirementsOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TIMING,
                 'description' => trans('GridModification.modifyTimingOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_DURATION,
                 'description' => trans('GridModification.modifyDurationOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_PLAYERS,
                 'description' => trans('GridModification.modifyPlayersOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
                 'description' => trans('GridModification.transferOwnerOption'),
-                'conditional' => $isOwner,
+                'conditional' => !$isCanceled && $isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
                 'description' => trans('GridModification.modifyManagersOption'),
-                'conditional' => $isManager,
+                'conditional' => !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeYouOption'),
-                'conditional' => $isSubscriber && !$isOwner,
+                'conditional' => !$isCanceled && $isSubscriber && !$isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeOwnerOption'),
-                'conditional' => $isSubscriber && $isOwner,
+                'conditional' => !$isCanceled && $isSubscriber && $isOwner,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
