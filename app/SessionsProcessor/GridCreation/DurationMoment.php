@@ -22,10 +22,10 @@ class DurationMoment extends SessionMoment
 
     /**
      * Parse duration to Carbon.
-     * @param string|null $duration Duration input.
+     * @param int|null $duration Duration input.
      * @return Carbon
      */
-    public static function parseDuration(?string $duration): Carbon
+    public static function parseDuration(?int $duration): Carbon
     {
         return Carbon::createFromTime((int) $duration, round(fmod((float) $duration, 1) * 60), 0);
     }
@@ -50,7 +50,7 @@ class DurationMoment extends SessionMoment
      */
     public function save(?string $input, Update $update, Process $process): ?string
     {
-        $process->put(self::PROCESS_DURATION, $input);
+        $process->put(self::PROCESS_DURATION, (int) $input);
 
         assert(EventService::getInstance()->register(self::EVENT_SAVE));
 
