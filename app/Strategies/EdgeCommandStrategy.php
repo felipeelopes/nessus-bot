@@ -36,9 +36,7 @@ class EdgeCommandStrategy implements UserStrategyContract
         if ($update->message->isCommand(CommandService::COMMAND_COMMANDS)) {
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
-            $botService->notifyPrivateMessage($update->message);
             $botService->createMessage($update->message)
-                ->setPrivate()
                 ->appendMessage($commandService->buildList($user))
                 ->publish();
 

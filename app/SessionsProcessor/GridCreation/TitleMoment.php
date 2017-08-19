@@ -38,8 +38,6 @@ class TitleMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-
-        $botService->notifyPrivateMessage($update->message);
         $botService->createMessage($update->message)
             ->setCancelable()
             ->appendMessage(trans('GridCreation.creationWizard'))

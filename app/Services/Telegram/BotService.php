@@ -13,7 +13,6 @@ use Application\Adapters\Telegram\User;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Telegram\RequesterService;
-use Cache;
 
 class BotService implements ServiceContract
 {
@@ -104,36 +103,6 @@ class BotService implements ServiceContract
     public function getMe(): ?User
     {
         return $this->requester->request(User::class, 'getMe', null, RequesterService::CACHE_HOUR);
-    }
-
-    /**
-     * Send a "check on private" notification.
-     * @param Message $message Message instance.
-     * @return Message|null
-     */
-    public function notifyPrivateMessage(Message $message): ?Message
-    {
-        if ($message->isPrivate()) {
-            return null;
-        }
-
-        $createdMessage = $this->createMessage($message)
-            ->appendMessage(trans('PublicMessages.letsToPrivate', [
-                'botUsername' => '@' . $this->getMe()->username,
-            ]))
-            ->publish();
-
-        $previousMessageId = __CLASS__ . '@' . __FUNCTION__ . '.messageId';
-        $previousMessage   = Cache::get($previousMessageId);
-
-        /** @var Message $previousMessage */
-        if ($previousMessage !== null) {
-            $this->deleteMessage($previousMessage->chat->id, $previousMessage->message_id);
-        }
-
-        Cache::forever($previousMessageId, $createdMessage);
-
-        return $createdMessage;
     }
 
     /**
