@@ -41,6 +41,7 @@ class MessageEntityBotCommand extends BaseFluent
 
                 $usersQuery = User::query();
                 $usersQuery->where('user_username', $username);
+                $usersQuery->has('gamertag');
 
                 $user = $usersQuery->first();
 
@@ -57,6 +58,7 @@ class MessageEntityBotCommand extends BaseFluent
             if ($entity->isType(MessageEntity::TYPE_TEXT_MENTION)) {
                 $usersQuery = User::query();
                 $usersQuery->where('user_number', $entity->user->id);
+                $usersQuery->has('gamertag');
 
                 $user = $usersQuery->first();
 

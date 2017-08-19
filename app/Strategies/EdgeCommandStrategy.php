@@ -44,6 +44,70 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
+        if ($update->message->isCommand(CommandService::COMMAND_GT)) {
+            $messageCommand = $update->message->getCommand();
+
+            if ($messageCommand->entities->isEmpty()) {
+                $botService->sendMessage(
+                    $update->message->chat->id,
+                    trans('EdgeCommand.gtEmpty', [
+                        'command' => trans('Command.commands.gtCommand'),
+                    ])
+                );
+
+                return true;
+            }
+
+            $messageMentions = $messageCommand->getMentions();
+
+            /** @var User $messageMention */
+            if (count($messageMentions) === 1) {
+                $messageMention = array_first($messageMentions);
+
+                if ($messageMention->exists) {
+                    $botService->sendMessage(
+                        $update->message->chat->id,
+                        trans('EdgeCommand.gtSingleRegistered', [
+                            'gamertag' => $messageMention->gamertag->gamertag_value,
+                        ])
+                    );
+
+                    return true;
+                }
+
+                $botService->sendMessage(
+                    $update->message->chat->id,
+                    trans('EdgeCommand.gtSingleUnregistered')
+                );
+
+                return true;
+            }
+
+            $messageBuilder = [];
+
+            foreach ($messageMentions as $messageMention) {
+                if ($messageMention->exists) {
+                    $messageBuilder[] = trans('EdgeCommand.gtItemRegistered', [
+                        'gamertag' => $messageMention->gamertag->gamertag_value,
+                        'mention'  => $messageMention->getMention(),
+                    ]);
+
+                    continue;
+                }
+
+                $messageBuilder[] = trans('EdgeCommand.gtItemUnregistered', [
+                    'mention' => $messageMention->getMention(),
+                ]);
+            }
+
+            $botService->sendMessage(
+                $update->message->chat->id,
+                implode($messageBuilder)
+            );
+
+            return true;
+        }
+
         if ($update->message->isCommand(CommandService::COMMAND_RULES)) {
             $chatMembers = $botService->getChatAdministrators();
             $admins      = [];

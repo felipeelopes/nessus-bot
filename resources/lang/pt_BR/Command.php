@@ -13,6 +13,9 @@ return [
         'commandsCommand'     => 'Comandos',
         'commandsDescription' => 'Esta listagem dos comandos disponíveis',
 
+        'gtCommand'     => 'GT',
+        'gtDescription' => 'Exibe a Gamertag de um usuário',
+
         'newGridCommand'     => 'NovaGrade',
         'newGridDescription' => 'Criar uma nova grade',
 

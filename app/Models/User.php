@@ -25,4 +25,17 @@ class User extends Model
     {
         return $this->hasOne(UserGamertag::class);
     }
+
+    /**
+     * Return the user mention (or first name) string.
+     * @return null|string
+     */
+    public function getMention(): ?string
+    {
+        if ($this->user_username) {
+            return '@' . $this->user_username;
+        }
+
+        return $this->user_firstname;
+    }
 }
