@@ -24,11 +24,10 @@ class ModifyManagersMoment extends SessionMoment
 
     /**
      * Returns the subscribers from grid except you.
-     * @param Update  $update  Update instance.
      * @param Process $process Process instance.
      * @return GridSubscription[]|Collection
      */
-    private static function getSubscribers(Update $update, Process $process): Collection
+    private static function getSubscribers(Process $process): Collection
     {
         /** @var Grid|Builder $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
@@ -56,7 +55,7 @@ class ModifyManagersMoment extends SessionMoment
 
         $gridSubscribersGamertags = [];
 
-        foreach (self::getSubscribers($update, $process) as $subscriber) {
+        foreach (self::getSubscribers($process) as $subscriber) {
             $subscriberGamertag = $subscriber->gamertag;
 
             if ($subscriberGamertag->id === $user->gamertag->id) {
@@ -81,7 +80,7 @@ class ModifyManagersMoment extends SessionMoment
 
         $gridSubscribersGamertags = [];
 
-        foreach (self::getSubscribers($update, $process) as $subscriber) {
+        foreach (self::getSubscribers($process) as $subscriber) {
             $subscriberGamertag = $subscriber->gamertag;
 
             if ($subscriberGamertag->id === $user->gamertag->id) {
