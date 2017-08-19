@@ -49,7 +49,21 @@ class BotMessageService
         $this->message->parse_mode               = SendMessage::PARSE_MODE_MARKDOWN;
         $this->message->disable_web_page_preview = true;
 
+        if (self::isPublicMessage($updateMessage)) {
+            $this->setReplica();
+        }
+
         $this->setReceiver($updateMessage->chat->id);
+    }
+
+    /**
+     *
+     * @param Message $updateMessage
+     * @return bool
+     */
+    private static function isPublicMessage(Message $updateMessage): bool
+    {
+        return $updateMessage->chat->id === (int) env('NBOT_GROUP_ID');
     }
 
     /**
@@ -71,6 +85,7 @@ class BotMessageService
     public function forcePublic(): BotMessageService
     {
         $this->setReceiver(env('NBOT_GROUP_ID'));
+        $this->setReplica(false);
 
         return $this;
     }
@@ -134,6 +149,10 @@ class BotMessageService
     {
         $this->setReceiver($this->updateMessage->from->id);
 
+        if (self::isPublicMessage($this->updateMessage)) {
+            $this->setReplica(false);
+        }
+
         return $this;
     }
 
@@ -145,6 +164,20 @@ class BotMessageService
     public function setReceiver($chatId): BotMessageService
     {
         $this->message->chat_id = $chatId;
+
+        return $this;
+    }
+
+    /**
+     * Set this message as replica for another message.
+     * @param bool|null $enabled Controls replica status.
+     * @return BotMessageService
+     */
+    public function setReplica(?bool $enabled = null): BotMessageService
+    {
+        $this->message->reply_to_message_id = $enabled !== false
+            ? $this->updateMessage->message_id
+            : null;
 
         return $this;
     }
