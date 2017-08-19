@@ -9,6 +9,8 @@ use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\SendMessage;
 use Application\Services\CommandService;
 use Application\Services\PredefinitionService;
+use Application\Services\Requester\RequesterService;
+use Cache;
 
 class BotMessageService
 {
@@ -31,6 +33,11 @@ class BotMessageService
      * @var bool|null
      */
     private $optionsSpecifics;
+
+    /**
+     * @var string
+     */
+    private $unduplicateIdentifier;
 
     /**
      * @var Message
@@ -113,7 +120,21 @@ class BotMessageService
             $this->appendMessage(trans($optionsTemplate, [ 'options' => $optionsMessage ]));
         }
 
-        return BotService::getInstance()->publishMessage($this->message);
+        $botService = BotService::getInstance();
+        $message    = $botService->publishMessage($this->message);
+
+        if ($this->unduplicateIdentifier && $message) {
+            /** @var Message $previousMessageId */
+            $previousMessageId = Cache::get($this->unduplicateIdentifier);
+
+            if ($previousMessageId) {
+                $botService->deleteMessage($previousMessageId);
+            }
+
+            Cache::put($this->unduplicateIdentifier, $message->onlyReference(), RequesterService::CACHE_DAY);
+        }
+
+        return $message;
     }
 
     /**
@@ -189,6 +210,19 @@ class BotMessageService
     public function specificOptions(): BotMessageService
     {
         $this->optionsSpecifics = true;
+
+        return $this;
+    }
+
+    /**
+     * Unduplicate message by deleting the previous one.
+     * This only happen on public chat.
+     * @param string $identifier Unduplicate identifier.
+     * @return BotMessageService
+     */
+    public function unduplicate(string $identifier): BotMessageService
+    {
+        $this->unduplicateIdentifier = $identifier;
 
         return $this;
     }

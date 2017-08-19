@@ -51,14 +51,13 @@ class BotService implements ServiceContract
 
     /**
      * Delete a message from group.
-     * @param string|int $chatID    Chat id.
-     * @param int        $messageId Message id.
+     * @param Message $message Message instace.
      */
-    public function deleteMessage($chatID, int $messageId): void
+    public function deleteMessage(Message $message): void
     {
         $this->requester->request(null, 'deleteMessage', [
-            'chat_id'    => $chatID,
-            'message_id' => $messageId,
+            'chat_id'    => $message->chat->id,
+            'message_id' => $message->message_id,
         ]);
     }
 

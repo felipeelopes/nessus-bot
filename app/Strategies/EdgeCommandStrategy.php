@@ -38,6 +38,7 @@ class EdgeCommandStrategy implements UserStrategyContract
             $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->createMessage($update->message)
                 ->appendMessage($commandService->buildList($user))
+                ->unduplicate(__CLASS__ . '@' . CommandService::COMMAND_COMMANDS)
                 ->publish();
 
             return true;

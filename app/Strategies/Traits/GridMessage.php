@@ -5,36 +5,16 @@ declare(strict_types = 1);
 namespace Application\Strategies\Traits;
 
 use Application\Adapters\Predefinition\OptionItem;
-use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
 use Application\Services\CommandService;
 use Application\Services\FormattingService;
-use Application\Services\Requester\RequesterService;
 use Application\Services\Telegram\BotService;
-use Cache;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait GridMessage
 {
-    /**
-     * Delete previous listing message.
-     * @param string     $cacheKey   Cache key to delete.
-     * @param BotService $botService Bot Service instance.
-     */
-    private function deletePrevious(string $cacheKey, BotService $botService): void
-    {
-        /** @var Message $messageLast */
-        $messageLast = Cache::get($cacheKey);
-
-        if ($messageLast) {
-            $botService->deleteMessage($messageLast->chat->id, $messageLast->message_id);
-
-            Cache::forget($cacheKey);
-        }
-    }
-
     /**
      * Returns the grid status, based on some conditions.
      * @param Grid $grid Grid instance.
@@ -58,17 +38,12 @@ trait GridMessage
      */
     private function sendGridListing(Update $update, BotService $botService, Collection $grids): ?bool
     {
-        $cacheListKey = __CLASS__ . '@listing';
-
         if ($grids->isEmpty()) {
             $botService->createMessage($update->message)
                 ->appendMessage(trans('GridListing.isEmpty'))
                 ->setOptions([ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ])
+                ->unduplicate(__CLASS__ . '@' . __FUNCTION__)
                 ->publish();
-
-            if (!$update->message->isPrivate()) {
-                $this->deletePrevious($cacheListKey, $botService);
-            }
 
             return true;
         }
@@ -113,12 +88,8 @@ trait GridMessage
         $message = $botService->createMessage($update->message)
             ->appendMessage($result)
             ->setOptions([ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ])
+            ->unduplicate(__CLASS__ . '@' . __FUNCTION__)
             ->publish();
-
-        if (!$update->message->isPrivate()) {
-            $this->deletePrevious($cacheListKey, $botService);
-            Cache::put($cacheListKey, $message, RequesterService::CACHE_DAY);
-        }
 
         return null;
     }

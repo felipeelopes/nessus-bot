@@ -41,7 +41,7 @@ class WelcomeMoment extends SessionMoment
         assert(EventService::getInstance()->register(self::EVENT_DELETE_MESSAGE));
 
         $botService = BotService::getInstance();
-        $botService->deleteMessage($update->message->chat->id, $update->message->message_id);
+        $botService->deleteMessage($update->message->onlyReference());
 
         try {
             $botService->createMessage($update->message)
@@ -61,6 +61,7 @@ class WelcomeMoment extends SessionMoment
                     'fullname'    => $update->message->from->getFullname(),
                     'botUsername' => '@' . $botService->getMe()->username,
                 ]))
+                ->unduplicate(__CLASS__ . '@' . __FUNCTION__ . '@' . $update->message->from->id)
                 ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_WELCOME_PUBLIC));
@@ -82,7 +83,7 @@ class WelcomeMoment extends SessionMoment
         $botService->createMessage($update->message)
             ->setPrivate()
             ->appendMessage(trans('UserRegistration.checkingSuccess', [
-                'rules' => trans('UserRules.followIt'),
+                'rules'  => trans('UserRules.followIt'),
             ]))
             ->publish();
 

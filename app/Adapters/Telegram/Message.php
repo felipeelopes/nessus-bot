@@ -93,4 +93,16 @@ class Message extends BaseFluent
     {
         return $this->chat->type === Chat::TYPE_PRIVATE;
     }
+
+    /**
+     * Return the message reference (useful for deleteMessage API).
+     * @return Message
+     */
+    public function onlyReference(): Message
+    {
+        return new self([
+            'message_id' => $this->message_id,
+            'chat'       => [ 'id' => $this->chat->id ],
+        ]);
+    }
 }
