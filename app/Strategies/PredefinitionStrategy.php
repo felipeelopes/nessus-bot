@@ -35,11 +35,9 @@ class PredefinitionStrategy implements UserStrategyContract
                 }
             }
 
-            $botService = BotService::getInstance();
-            $botService->sendMessage(
-                $update->message->chat->id,
-                trans('Predefinition.errorNotFound')
-            );
+            BotService::getInstance()->createMessage($update->message)
+                ->appendMessage(trans('Predefinition.errorNotFound'))
+                ->publish();
 
             return true;
         }

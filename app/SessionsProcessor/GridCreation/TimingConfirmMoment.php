@@ -23,13 +23,13 @@ class TimingConfirmMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardTimingConfirm', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardTimingConfirm', [
                 'timing' => $process->get(TimingMoment::PROCESS_TIMING_TEXT),
-            ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardTimingConfirmOptions'))
-        );
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardTimingConfirmOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }

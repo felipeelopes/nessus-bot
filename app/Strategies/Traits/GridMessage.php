@@ -61,12 +61,10 @@ trait GridMessage
         $cacheListKey = __CLASS__ . '@listing';
 
         if ($grids->isEmpty()) {
-            $botService->sendPredefinedMessage(
-                $update->message->chat->id,
-                trans('GridListing.isEmpty'),
-                [ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ],
-                false
-            );
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridListing.isEmpty'))
+                ->setOptions([ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ])
+                ->publish();
 
             if (!$update->message->isPrivate()) {
                 $this->deletePrevious($cacheListKey, $botService);
@@ -112,12 +110,10 @@ trait GridMessage
             ]);
         }
 
-        $message = $botService->sendPredefinedMessage(
-            $update->message->chat->id,
-            $result,
-            [ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ],
-            false
-        );
+        $message = $botService->createMessage($update->message)
+            ->appendMessage($result)
+            ->setOptions([ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ])
+            ->publish();
 
         if (!$update->message->isPrivate()) {
             $this->deletePrevious($cacheListKey, $botService);

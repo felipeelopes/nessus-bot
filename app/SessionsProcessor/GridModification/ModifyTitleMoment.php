@@ -26,13 +26,13 @@ class ModifyTitleMoment extends SessionMoment
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridModification.modifyTitleWizard', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.modifyTitleWizard', [
                 'current' => $grid->grid_title,
-            ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions'))
-        );
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions')))
+            ->publish();
     }
 
     /**
@@ -59,11 +59,13 @@ class ModifyTitleMoment extends SessionMoment
     {
         if (TitleMoment::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridModification.errorTitleTooLong', [ 'max' => TitleMoment::MAX_TITLE ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorTitleTooLong', [
+                    'max' => TitleMoment::MAX_TITLE,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions')))
+                ->publish();
 
             return self::class;
         }

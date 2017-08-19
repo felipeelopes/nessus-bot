@@ -29,13 +29,13 @@ class ModifyDurationMoment extends SessionMoment
         $gridAdapter = GridAdapter::fromModel($grid);
 
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridModification.modifyDurationWizard', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.modifyDurationWizard', [
                 'current' => $gridAdapter->getDurationFormatted(),
-            ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
-        );
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions')))
+            ->publish();
     }
 
     /**
@@ -64,11 +64,11 @@ class ModifyDurationMoment extends SessionMoment
     {
         if (!is_numeric($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridModification.errorDurationInvalid'),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorDurationInvalid'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions')))
+                ->publish();
 
             return self::class;
         }

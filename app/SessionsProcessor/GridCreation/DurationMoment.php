@@ -36,11 +36,11 @@ class DurationMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardDuration'),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardDuration'))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -64,11 +64,11 @@ class DurationMoment extends SessionMoment
     {
         if (!is_numeric($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorDurationInvalid'),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorDurationInvalid'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_INVALID));
 

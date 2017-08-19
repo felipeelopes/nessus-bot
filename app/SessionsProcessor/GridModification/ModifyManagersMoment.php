@@ -98,11 +98,11 @@ class ModifyManagersMoment extends SessionMoment
         }
 
         $botService = BotService::getInstance();
-        $botService->sendOptionsMessage(
-            $update->message->from->id,
-            trans('GridModification.modifyManagersWizard'),
-            PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags)
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.modifyManagersWizard'))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags), true)
+            ->publish();
     }
 
     /**
@@ -162,11 +162,11 @@ class ModifyManagersMoment extends SessionMoment
 
         if (!in_array($input, $gridSubscribersGamertagsIds, false)) {
             $botService = BotService::getInstance();
-            $botService->sendOptionsMessage(
-                $update->message->from->id,
-                trans('GridModification.errorModifyManagerUnavailable'),
-                PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags)
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorModifyManagerUnavailable'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags), true)
+                ->publish();
 
             return self::class;
         }

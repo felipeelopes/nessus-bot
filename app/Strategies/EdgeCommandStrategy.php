@@ -24,10 +24,11 @@ class EdgeCommandStrategy implements UserStrategyContract
         if ($update->message->isCommand(CommandService::COMMAND_START)) {
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
-            $botService->sendMessage(
-                $update->message->chat->id,
-                trans('UserHome.homeWelcomeBack', [ 'homeCommands' => $commandService->buildList($user) ])
-            );
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('UserHome.homeWelcomeBack', [
+                    'homeCommands' => $commandService->buildList($user),
+                ]))
+                ->publish();
 
             return true;
         }
@@ -36,10 +37,10 @@ class EdgeCommandStrategy implements UserStrategyContract
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->notifyPrivateMessage($update->message);
-            $botService->sendMessage(
-                $update->message->from->id,
-                $commandService->buildList($user)
-            );
+            $botService->createMessage($update->message)
+                ->setPrivate()
+                ->appendMessage($commandService->buildList($user))
+                ->publish();
 
             return true;
         }
@@ -48,12 +49,11 @@ class EdgeCommandStrategy implements UserStrategyContract
             $messageCommand = $update->message->getCommand();
 
             if ($messageCommand->entities->isEmpty()) {
-                $botService->sendMessage(
-                    $update->message->chat->id,
-                    trans('EdgeCommand.gtEmpty', [
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('EdgeCommand.gtEmpty', [
                         'command' => trans('Command.commands.gtCommand'),
-                    ])
-                );
+                    ]))
+                    ->publish();
 
                 return true;
             }
@@ -65,20 +65,18 @@ class EdgeCommandStrategy implements UserStrategyContract
                 $messageMention = array_first($messageMentions);
 
                 if ($messageMention->exists) {
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('EdgeCommand.gtSingleRegistered', [
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.gtSingleRegistered', [
                             'gamertag' => $messageMention->gamertag->gamertag_value,
-                        ])
-                    );
+                        ]))
+                        ->publish();
 
                     return true;
                 }
 
-                $botService->sendMessage(
-                    $update->message->chat->id,
-                    trans('EdgeCommand.gtSingleUnregistered')
-                );
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('EdgeCommand.gtSingleUnregistered'))
+                    ->publish();
 
                 return true;
             }
@@ -100,10 +98,9 @@ class EdgeCommandStrategy implements UserStrategyContract
                 ]);
             }
 
-            $botService->sendMessage(
-                $update->message->chat->id,
-                implode($messageBuilder)
-            );
+            $botService->createMessage($update->message)
+                ->appendMessage(implode($messageBuilder))
+                ->publish();
 
             return true;
         }
@@ -122,17 +119,16 @@ class EdgeCommandStrategy implements UserStrategyContract
 
             sort($admins);
 
-            $botService->sendMessage(
-                $update->message->chat->id,
-                trans('UserRules.followIt') .
-                trans('UserRules.adminHeader', [
-                    'admins' => implode(array_map(function ($userMention) {
-                        return trans('UserRules.adminItem', [
-                            'username' => $userMention,
-                        ]);
-                    }, $admins)),
-                ])
-            );
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('UserRules.followIt') .
+                                trans('UserRules.adminHeader', [
+                                    'admins' => implode(array_map(function ($userMention) {
+                                        return trans('UserRules.adminItem', [
+                                            'username' => $userMention,
+                                        ]);
+                                    }, $admins)),
+                                ]))
+                ->publish();
 
             return true;
         }
@@ -143,13 +139,12 @@ class EdgeCommandStrategy implements UserStrategyContract
             $diffDays   = $carbonNow->diffInDays($launchDate, false);
 
             if ($diffDays >= 2) {
-                $botService->sendMessage(
-                    $update->message->chat->id,
-                    trans('EdgeCommand.launchDays', [
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('EdgeCommand.launchDays', [
                         'date' => $launchDate->format('d/m/Y'),
                         'days' => $diffDays,
-                    ])
-                );
+                    ]))
+                    ->publish();
             }
             else {
                 $diffHours = Carbon::now()->diffInHours($launchDate, false);
@@ -158,33 +153,29 @@ class EdgeCommandStrategy implements UserStrategyContract
                 if ($isSoon && $launchDate->isToday()) {
                     $diffHours = Carbon::now()->diffInHours($launchDate, false);
 
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('EdgeCommand.launchToday', [
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.launchToday', [
                             'hours' => $diffHours,
-                        ])
-                    );
+                        ]))
+                        ->publish();
                 }
                 else if ($isSoon) {
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('EdgeCommand.launchHours', [
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.launchHours', [
                             'date'  => $launchDate->format('d/m/Y'),
                             'hours' => $diffHours,
-                        ])
-                    );
+                        ]))
+                        ->publish();
                 }
                 else if ($diffHours >= 0) {
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('EdgeCommand.launchSoon')
-                    );
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.launchSoon'))
+                        ->publish();
                 }
                 else {
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('EdgeCommand.launched')
-                    );
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.launched'))
+                        ->publish();
                 }
             }
 
@@ -195,10 +186,9 @@ class EdgeCommandStrategy implements UserStrategyContract
             $update->message->isPrivate()) {
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
-            $botService->sendMessage(
-                $update->message->chat->id,
-                trans('UserHome.commandNotSupported', [ 'homeCommands' => $commandService->buildList($user) ])
-            );
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('UserHome.commandNotSupported', [ 'homeCommands' => $commandService->buildList($user) ]))
+                ->publish();
 
             return true;
         }

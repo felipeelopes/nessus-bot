@@ -86,10 +86,10 @@ class TimingMoment extends SessionMoment
         switch ($inputParsed) {
             case self::ERROR_INVALID_FORMAT:
                 $botService = BotService::getInstance();
-                $botService->sendCancelableMessage(
-                    $update->message->from->id,
-                    trans('GridCreation.errorTimingInvalid')
-                );
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('GridCreation.errorTimingInvalid'))
+                    ->publish();
 
                 assert(EventService::getInstance()->register(self::EVENT_INVALID_FORMAT));
 
@@ -97,10 +97,10 @@ class TimingMoment extends SessionMoment
                 break;
             case self::ERROR_INVALID_TIMING:
                 $botService = BotService::getInstance();
-                $botService->sendCancelableMessage(
-                    $update->message->from->id,
-                    trans('GridCreation.errorTimingInvalid')
-                );
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('GridCreation.errorTimingInvalid'))
+                    ->publish();
 
                 assert(EventService::getInstance()->register(self::EVENT_INVALID_TIMING));
 
@@ -108,10 +108,10 @@ class TimingMoment extends SessionMoment
                 break;
             case self::ERROR_TOO_CLOSEST:
                 $botService = BotService::getInstance();
-                $botService->sendCancelableMessage(
-                    $update->message->from->id,
-                    trans('GridCreation.errorTimingTooShort')
-                );
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('GridCreation.errorTimingTooShort'))
+                    ->publish();
 
                 assert(EventService::getInstance()->register(self::EVENT_INVALID_TOO_CLOSEST));
 
@@ -148,10 +148,10 @@ class TimingMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-        $botService->sendCancelableMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardTiming')
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardTiming'))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }

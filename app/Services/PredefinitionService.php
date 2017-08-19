@@ -35,10 +35,9 @@ class PredefinitionService implements ServiceContract
 
     /**
      * Build the predefined options list to be printed.
-     * @param null|string $alternativeTemplate Alternative template translation.
      * @return null|string
      */
-    public function buildOptions(?string $alternativeTemplate = null): ?string
+    public function buildOptions(): ?string
     {
         $options = $this->getOptions();
 
@@ -63,11 +62,7 @@ class PredefinitionService implements ServiceContract
             ]);
         }
 
-        if ($alternativeTemplate === null) {
-            $alternativeTemplate = 'Predefinition.listOptions';
-        }
-
-        return trans($alternativeTemplate, [ 'options' => $commands ]);
+        return $commands;
     }
 
     /**

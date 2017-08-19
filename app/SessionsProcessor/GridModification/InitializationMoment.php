@@ -56,7 +56,9 @@ class InitializationMoment extends SessionMoment
             $grid = $gridQuery->find($commandArguments[0]);
 
             if (!$grid) {
-                $botService->sendMessage($update->message->chat->id, trans('GridListing.errorGridNotFound'));
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('GridListing.errorGridNotFound'))
+                    ->publish();
 
                 return true;
             }

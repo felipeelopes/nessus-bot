@@ -37,11 +37,13 @@ class RequirementsMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardRequirements', [ 'max' => self::MAX_REQUIREMENTS ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions'))
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardRequirements', [
+                'max' => self::MAX_REQUIREMENTS,
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -65,11 +67,13 @@ class RequirementsMoment extends SessionMoment
     {
         if (self::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorRequirementsTooLong', [ 'max' => self::MAX_REQUIREMENTS ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorRequirementsTooLong', [
+                    'max' => self::MAX_REQUIREMENTS,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_LONG_RESPONSE));
 

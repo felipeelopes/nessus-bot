@@ -29,12 +29,12 @@ class ModifyTimingMoment extends SessionMoment
         $gridAdapter = GridAdapter::fromModel($grid);
 
         $botService = BotService::getInstance();
-        $botService->sendCancelableMessage(
-            $update->message->from->id,
-            trans('GridModification.modifyTimingWizard', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.modifyTimingWizard', [
                 'current' => $gridAdapter->getTimingFormatted(),
-            ])
-        );
+            ]))
+            ->publish();
     }
 
     /**
@@ -67,28 +67,28 @@ class ModifyTimingMoment extends SessionMoment
         switch ($inputParsed) {
             case TimingMoment::ERROR_INVALID_FORMAT:
                 $botService = BotService::getInstance();
-                $botService->sendCancelableMessage(
-                    $update->message->from->id,
-                    trans('GridModification.errorTimingInvalid')
-                );
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('GridModification.errorTimingInvalid'))
+                    ->publish();
 
                 return self::class;
                 break;
             case TimingMoment::ERROR_INVALID_TIMING:
                 $botService = BotService::getInstance();
-                $botService->sendCancelableMessage(
-                    $update->message->from->id,
-                    trans('GridModification.errorTimingInvalid')
-                );
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('GridModification.errorTimingInvalid'))
+                    ->publish();
 
                 return self::class;
                 break;
             case TimingMoment::ERROR_TOO_CLOSEST:
                 $botService = BotService::getInstance();
-                $botService->sendCancelableMessage(
-                    $update->message->from->id,
-                    trans('GridModification.errorTimingTooShort')
-                );
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('GridModification.errorTimingTooShort'))
+                    ->publish();
 
                 return self::class;
                 break;

@@ -40,11 +40,11 @@ class TitleMoment extends SessionMoment
         $botService = BotService::getInstance();
 
         $botService->notifyPrivateMessage($update->message);
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizard'),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions'))
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizard'))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -76,11 +76,11 @@ class TitleMoment extends SessionMoment
     {
         if (self::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorTitleTooLong', [ 'max' => self::MAX_TITLE ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorTitleTooLong', [ 'max' => self::MAX_TITLE ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_LONG_RESPONSE));
 

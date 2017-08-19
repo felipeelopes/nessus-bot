@@ -37,11 +37,11 @@ class SubtitleMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardSubtitle'),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions'))
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardSubtitle'))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -65,11 +65,13 @@ class SubtitleMoment extends SessionMoment
     {
         if (self::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorSubtitleTooLong', [ 'max' => self::MAX_SUBTITLE ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorSubtitleTooLong', [
+                    'max' => self::MAX_SUBTITLE,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_LONG_RESPONSE));
 

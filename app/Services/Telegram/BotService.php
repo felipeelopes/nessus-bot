@@ -5,15 +5,13 @@ declare(strict_types = 1);
 namespace Application\Services\Telegram;
 
 use Application\Adapters\BaseFluent;
-use Application\Adapters\Predefinition\OptionItem;
 use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\ChatMember;
 use Application\Adapters\Telegram\Message;
+use Application\Adapters\Telegram\SendMessage;
 use Application\Adapters\Telegram\User;
-use Application\Services\CommandService;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
-use Application\Services\PredefinitionService;
 use Application\Services\Requester\Telegram\RequesterService;
 use Cache;
 
@@ -40,6 +38,16 @@ class BotService implements ServiceContract
     public static function getInstance(): BotService
     {
         return MockupService::getInstance()->instance(static::class);
+    }
+
+    /**
+     * Creates a new message service.
+     * @param Message $message Message instance from Update.
+     * @return BotMessageService
+     */
+    public function createMessage($message): BotMessageService
+    {
+        return new BotMessageService($message);
     }
 
     /**
@@ -109,12 +117,11 @@ class BotService implements ServiceContract
             return null;
         }
 
-        $createdMessage = $this->sendMessage(
-            $message->chat->id,
-            trans('PublicMessages.letsToPrivate', [
+        $createdMessage = $this->createMessage($message)
+            ->appendMessage(trans('PublicMessages.letsToPrivate', [
                 'botUsername' => '@' . $this->getMe()->username,
-            ])
-        );
+            ]))
+            ->publish();
 
         $previousMessageId = __CLASS__ . '@' . __FUNCTION__ . '.messageId';
         $previousMessage   = Cache::get($previousMessageId);
@@ -130,76 +137,13 @@ class BotService implements ServiceContract
     }
 
     /**
-     * Send a message to an User with the cancel option.
-     * @param string|int $chatId Chat id (eg. user identifier).
-     * @param string     $text   Message text.
+     * Publish a message based on message service.
+     * @param SendMessage $message Message to send.
      * @return Message|null
      */
-    public function sendCancelableMessage($chatId, string $text): ?Message
+    public function publishMessage(SendMessage $message): ?Message
     {
-        return $this->sendMessage($chatId, trans('CancelCommand.textPlaceholder', [
-            'text'    => $text,
-            'command' => '/' . trans('Command.commands.' . CommandService::COMMAND_CANCEL . 'Command'),
-        ]));
-    }
-
-    /**
-     * Send a message to an user.
-     * @param string|int $chatId      Chat id (eg. user identifier).
-     * @param string     $text        Message text.
-     * @param array|null $replyMarkup Reply markup.
-     * @return Message|null
-     */
-    public function sendMessage($chatId, string $text, ?array $replyMarkup = null): ?Message
-    {
-        /** @var Message $response */
-        $response = $this->requester->request(Message::class, 'sendMessage', array_filter([
-            'chat_id'                  => $chatId,
-            'text'                     => preg_replace('/(\r?\n){3,}/', "\n\n", $text),
-            'parse_mode'               => 'Markdown',
-            'disable_web_page_preview' => true,
-            'reply_markup'             => $replyMarkup !== null
-                ? json_encode($replyMarkup)
-                : null,
-        ]));
-
-        return $response;
-    }
-
-    /**
-     * Send a message with specific options.
-     * @param string|int  $chatId       Chat id.
-     * @param string|null $text         Message text.
-     * @param array       $options      Specific options.
-     * @param bool|null   $isCancelable Show the cancel command (default: true).
-     * @return Message|null
-     */
-    public function sendOptionsMessage($chatId, ?string $text, array $options, ?bool $isCancelable = null): ?Message
-    {
-        return $this->sendPredefinedMessageWithTemplate($chatId, $text, $options, 'Predefinition.specificOptions', $isCancelable);
-    }
-
-    /**
-     * Send a message with predefined options.
-     * @param string|int  $chatId       Chat id.
-     * @param string|null $text         Message text.
-     * @param array       $options      Predefined options.
-     * @param bool|null   $isCancelable Show the cancel command (default: true).
-     * @return Message|null
-     */
-    public function sendPredefinedMessage($chatId, ?string $text, array $options, ?bool $isCancelable = null): ?Message
-    {
-        return $this->sendPredefinedMessageWithTemplate($chatId, $text, $options, null, $isCancelable);
-    }
-
-    /**
-     * Send a public message.
-     * @param string $message Message to public.
-     * @return Message|null
-     */
-    public function sendPublicMessage(string $message): ?Message
-    {
-        return $this->sendMessage(env('NBOT_GROUP_ID'), $message);
+        return $this->requester->request(Message::class, 'sendMessage', $message->toArray());
     }
 
     /**
@@ -225,28 +169,5 @@ class BotService implements ServiceContract
             'sticker'              => $sticker,
             'disable_notification' => true,
         ]);
-    }
-
-    /**
-     * Send a predefined message with a specific template.
-     * @param string|int  $chatId       Chat id.
-     * @param string|null $text         Message text.
-     * @param array       $options      Options list.
-     * @param null|string $template     Template.
-     * @param bool|null   $isCancelable Show the cancel command (default: true).
-     * @return Message|null
-     */
-    private function sendPredefinedMessageWithTemplate($chatId, ?string $text, array $options, ?string $template = null, ?bool $isCancelable = null): ?Message
-    {
-        if ($isCancelable !== false) {
-            $options[] = new OptionItem([ 'command' => CommandService::COMMAND_CANCEL ]);
-        }
-
-        $predefinitionService = PredefinitionService::getInstance();
-        $predefinitionService->setOptions($options);
-
-        $text .= $predefinitionService->buildOptions($template);
-
-        return $this->sendMessage($chatId, $text);
     }
 }

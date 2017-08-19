@@ -27,14 +27,14 @@ class ModifyRequirementsMoment extends SessionMoment
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridModification.modifyRequirementsWizard', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.modifyRequirementsWizard', [
                 'max'     => RequirementsMoment::MAX_REQUIREMENTS,
                 'current' => $grid->grid_requirements ?: trans('GridModification.modifyRequirementsNone'),
-            ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions'))
-        );
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions')))
+            ->publish();
     }
 
     /**
@@ -61,11 +61,13 @@ class ModifyRequirementsMoment extends SessionMoment
     {
         if (RequirementsMoment::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridModification.errorRequirementsTooLong', [ 'max' => SubtitleMoment::MAX_SUBTITLE ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorRequirementsTooLong', [
+                    'max' => SubtitleMoment::MAX_SUBTITLE,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardRequirementsOptions')))
+                ->publish();
 
             return self::class;
         }

@@ -60,11 +60,11 @@ class TransferOwnerMoment extends SessionMoment
         $gridSubscribersGamertags = self::getSubscribers($update, $process);
 
         $botService = BotService::getInstance();
-        $botService->sendOptionsMessage(
-            $update->message->from->id,
-            trans('GridModification.transferOwnerWizard'),
-            PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags)
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.transferOwnerWizard'))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags), true)
+            ->publish();
     }
 
     /**
@@ -123,11 +123,11 @@ class TransferOwnerMoment extends SessionMoment
 
         if (!in_array($input, $gridSubscribersGamertagIds, false)) {
             $botService = BotService::getInstance();
-            $botService->sendOptionsMessage(
-                $update->message->from->id,
-                trans('GridModification.errorTransferOwnerUnavailable'),
-                PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags)
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorTransferOwnerUnavailable'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags), true)
+                ->publish();
 
             return self::class;
         }

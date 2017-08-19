@@ -29,11 +29,13 @@ class PlayersMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardPlayers', [ 'max' => self::MAX_PLAYERS ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions'))
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardPlayers', [
+                'max' => self::MAX_PLAYERS,
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -59,11 +61,13 @@ class PlayersMoment extends SessionMoment
 
         if (!$playersCount) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorPlayersInvalid', [ 'max' => self::MAX_PLAYERS ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorPlayersInvalid', [
+                    'max' => self::MAX_PLAYERS,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_INVALID_COUNT));
 
@@ -72,11 +76,13 @@ class PlayersMoment extends SessionMoment
 
         if ($playersCount < 2) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorPlayersTooFew', [ 'max' => self::MAX_PLAYERS ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorPlayersTooFew', [
+                    'max' => self::MAX_PLAYERS,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_INVALID_FEW_PLAYERS));
 
@@ -85,11 +91,13 @@ class PlayersMoment extends SessionMoment
 
         if ($playersCount > self::MAX_PLAYERS) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorPlayersTooMuch', [ 'max' => self::MAX_PLAYERS ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorPlayersTooMuch', [
+                    'max' => self::MAX_PLAYERS,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardPlayersOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_INVALID_MUCH_PLAYERS));
 

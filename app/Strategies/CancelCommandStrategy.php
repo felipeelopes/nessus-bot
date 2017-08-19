@@ -25,10 +25,12 @@ class CancelCommandStrategy implements UserStrategyContract
             if ($update->message->isCommand(CommandService::COMMAND_CANCEL)) {
                 /** @var CommandService $commandService */
                 $commandService = MockupService::getInstance()->instance(CommandService::class);
-                BotService::getInstance()->sendMessage(
-                    $update->message->chat->id,
-                    trans('UserHome.cancelHeader', [ 'homeCommands' => $commandService->buildList($user) ])
-                );
+                BotService::getInstance()->createMessage($update->message)
+                    ->setPrivate()
+                    ->appendMessage(trans('UserHome.cancelHeader', [
+                        'homeCommands' => $commandService->buildList($user),
+                    ]))
+                    ->publish();
 
                 return true;
             }

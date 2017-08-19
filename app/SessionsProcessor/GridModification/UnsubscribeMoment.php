@@ -42,22 +42,22 @@ class UnsubscribeMoment extends SessionMoment
             ];
 
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridModification.unsubscribeCancelWizard'),
-                PredefinitionService::getInstance()->optionsFrom($predefinedReasons)
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.unsubscribeCancelWizard'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom($predefinedReasons))
+                ->publish();
 
             throw new ForceMomentException(UnsubscribeCancelMoment::class);
         }
 
         if ($grid->isOwner($update->message->from)) {
             $botService = BotService::getInstance();
-            $botService->sendOptionsMessage(
-                $update->message->from->id,
-                trans('GridModification.unsubscribeOwnerWizard'),
-                PredefinitionService::getInstance()->optionsFrom(TransferOwnerMoment::getSubscribers($update, $process))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.unsubscribeOwnerWizard'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(TransferOwnerMoment::getSubscribers($update, $process)), true)
+                ->publish();
 
             return;
         }
@@ -106,11 +106,11 @@ class UnsubscribeMoment extends SessionMoment
 
         if (!in_array($input, $gridSubscribersGamertagIds, false)) {
             $botService = BotService::getInstance();
-            $botService->sendOptionsMessage(
-                $update->message->from->id,
-                trans('GridModification.errorUnsubscribeUserUnavailable'),
-                PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags)
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorUnsubscribeUserUnavailable'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom($gridSubscribersGamertags), true)
+                ->publish();
 
             return self::class;
         }

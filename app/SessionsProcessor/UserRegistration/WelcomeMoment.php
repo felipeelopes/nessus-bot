@@ -44,24 +44,24 @@ class WelcomeMoment extends SessionMoment
         $botService->deleteMessage($update->message->chat->id, $update->message->message_id);
 
         try {
-            $botService->sendCancelableMessage(
-                $update->message->from->id,
-                trans('UserRegistration.welcome', [
+            $botService->createMessage($update->message)
+                ->setPrivate()
+                ->setCancelable()
+                ->appendMessage(trans('UserRegistration.welcome', [
                     'groupTitle'    => $botService->getChat($groupId)->title,
                     'whichGamertag' => trans('UserRegistration.whichGamertag'),
-                ])
-            );
+                ]))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_WELCOME_PRIVATE));
         }
         catch (RequestException $requestException) {
-            $botService->sendMessage(
-                $update->message->chat->id,
-                trans('UserRegistration.toPrivate', [
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('UserRegistration.toPrivate', [
                     'fullname'    => $update->message->from->getFullname(),
                     'botUsername' => '@' . $botService->getMe()->username,
-                ])
-            );
+                ]))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_WELCOME_PUBLIC));
 
@@ -79,20 +79,21 @@ class WelcomeMoment extends SessionMoment
         $gamertag         = $gamertagInstance->value;
 
         $botService = BotService::getInstance();
-        $botService->sendMessage(
-            $update->message->from->id,
-            trans('UserRegistration.checkingSuccess', [
+        $botService->createMessage($update->message)
+            ->setPrivate()
+            ->appendMessage(trans('UserRegistration.checkingSuccess', [
                 'rules' => trans('UserRules.followIt'),
-            ])
-        );
+            ]))
+            ->publish();
 
         $botService->sendPublicSticker(trans('UserRegistration.welcomeToGroupSticker'));
-        $botService->sendPublicMessage(
-            trans('UserRegistration.welcomeToGroup', [
+        $botService->createMessage($update->message)
+            ->forcePublic()
+            ->appendMessage(trans('UserRegistration.welcomeToGroup', [
                 'fullname' => $update->message->from->getFullname(),
                 'gamertag' => $gamertag,
-            ])
-        );
+            ]))
+            ->publish();
 
         $user = UserService::getInstance()->register($update->message->from);
         GamertagService::getInstance()->register($user, $gamertagInstance);
@@ -123,9 +124,12 @@ class WelcomeMoment extends SessionMoment
         $gamertagService = GamertagService::getInstance();
 
         if (!$gamertagService->isValid($input)) {
-            $botService->sendCancelableMessage($update->message->from->id, trans('UserRegistration.checkingInvalid', [
-                'whichGamertag' => trans('UserRegistration.whichGamertag'),
-            ]));
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('UserRegistration.checkingInvalid', [
+                    'whichGamertag' => trans('UserRegistration.whichGamertag'),
+                ]))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_INVALID));
 
@@ -133,15 +137,21 @@ class WelcomeMoment extends SessionMoment
         }
 
         if (env('NBOT_OPTION_XBOX_CHECK')) {
-            $botService->sendMessage($update->message->from->id, trans('UserRegistration.checkingGamertag'));
+            $botService->createMessage($update->message)
+                ->setPrivate()
+                ->appendMessage(trans('UserRegistration.checkingGamertag'))
+                ->publish();
 
             $gamertagInstance = LiveService::getInstance()->getGamertag($input);
 
             if (!$gamertagInstance) {
-                $botService->sendCancelableMessage($update->message->from->id, trans('UserRegistration.checkingFail', [
-                    'gamertag'      => $input,
-                    'whichGamertag' => trans('UserRegistration.whichGamertag'),
-                ]));
+                $botService->createMessage($update->message)
+                    ->setCancelable()
+                    ->appendMessage(trans('UserRegistration.checkingFail', [
+                        'gamertag'      => $input,
+                        'whichGamertag' => trans('UserRegistration.whichGamertag'),
+                    ]))
+                    ->publish();
 
                 assert(EventService::getInstance()->register(self::EVENT_CHECK_GAMERTAG_NOT_FOUND));
 

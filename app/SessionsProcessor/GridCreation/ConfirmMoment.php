@@ -40,13 +40,13 @@ class ConfirmMoment extends SessionMoment
         $process->offsetSet(self::PROCESS_GRID, $processGrid);
 
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardConfirmCreationHeader', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridCreation.creationWizardConfirmCreationHeader', [
                 'structure' => $processGrid->getStructure(Grid::STRUCTURE_TYPE_EXAMPLE),
-            ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions'))
-        );
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions')))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -79,11 +79,14 @@ class ConfirmMoment extends SessionMoment
         $processGrid->grid_id = $grid->id;
 
         $botService = BotService::getInstance();
-        $botService->sendPublicMessage($processGrid->getStructure(Grid::STRUCTURE_TYPE_FULL));
-        $botService->sendMessage(
-            $update->message->from->id,
-            trans('GridCreation.creationWizardPublished')
-        );
+        $botService->createMessage($update->message)
+            ->forcePublic()
+            ->appendMessage($processGrid->getStructure(Grid::STRUCTURE_TYPE_FULL))
+            ->publish();
+        $botService->createMessage($update->message)
+            ->setPrivate()
+            ->appendMessage(trans('GridCreation.creationWizardPublished'))
+            ->publish();
 
         assert(EventService::getInstance()->register(self::EVENT_SAVE));
 
@@ -98,11 +101,11 @@ class ConfirmMoment extends SessionMoment
         $botService = BotService::getInstance();
 
         if ($input !== trans('GridCreation.creationWizardConfirmCreationYes')) {
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridCreation.errorPublishInvalid'),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.errorPublishInvalid'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardConfirmCreationOptions')))
+                ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_INVALID_CONFIRMATION));
 

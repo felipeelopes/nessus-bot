@@ -25,25 +25,23 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             $user        = $userService->get($update->message->new_chat_member->id);
 
             if ($user === null) {
-                $botService->sendMessage(
-                    $update->message->chat->id,
-                    trans('UserRegistration.toPrivate', [
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('UserRegistration.toPrivate', [
                         'fullname'    => $update->message->new_chat_member->getFullname(),
                         'botUsername' => '@' . $botService->getMe()->username,
-                    ])
-                );
+                    ]))
+                    ->publish();
             }
             else {
                 $userGamertags = $user->gamertag;
 
                 if ($userGamertags) {
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('UserRegistration.welcomeAgain', [
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('UserRegistration.welcomeAgain', [
                             'fullname' => $update->message->new_chat_member->getFullname(),
                             'gamertag' => $userGamertags->gamertag_value,
-                        ])
-                    );
+                        ]))
+                        ->publish();
                 }
             }
         }
@@ -61,44 +59,43 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 $userGamertags = $user->gamertag;
 
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBwADwvySEXi2rT98M7GIAg');
-                $botService->sendMessage(
-                    $update->message->chat->id,
-                    trans('UserSubscription.userLeftAdmin', [
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('UserSubscription.userLeftAdmin', [
                         'admin'    => $update->message->from->username
                             ? '@' . $update->message->from->username
                             : $update->message->from->getFullname(),
                         'fullname' => $update->message->left_chat_member->getFullname(),
                         'gamertag' => $userGamertags->gamertag_value,
-                    ])
-                );
+                    ]))
+                    ->publish();
             }
             else if ($user === null) {
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');
-                $botService->sendMessage(
-                    $update->message->chat->id,
-                    trans('UserSubscription.userLeftUnknown', [
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('UserSubscription.userLeftUnknown', [
                         'fullname' => $update->message->left_chat_member->getFullname(),
-                    ])
-                );
+                    ]))
+                    ->publish();
             }
             else {
                 $userGamertags = $user->gamertag;
 
                 if ($userGamertags) {
                     $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');
-                    $botService->sendMessage(
-                        $update->message->chat->id,
-                        trans('UserSubscription.userLeftKnown', [
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('UserSubscription.userLeftKnown', [
                             'fullname' => $update->message->left_chat_member->getFullname(),
                             'gamertag' => $userGamertags->gamertag_value,
-                        ])
-                    );
+                        ]))
+                        ->publish();
 
                     $bot = $botService->getMe();
-                    $botService->sendMessage(
-                        $update->message->left_chat_member->id,
-                        trans('UserSubscription.thankfulMessage', [ 'botname' => $bot->getFullname() ])
-                    );
+                    $botService->createMessage($update->message)
+                        ->setReceiver($update->message->left_chat_member->id)
+                        ->appendMessage(trans('UserSubscription.thankfulMessage', [
+                            'botname' => $bot->getFullname(),
+                        ]))
+                        ->publish();
                 }
             }
 

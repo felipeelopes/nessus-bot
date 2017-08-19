@@ -88,11 +88,11 @@ trait ModificationMoment
         });
 
         $botService = BotService::getInstance();
-        $botService->sendOptionsMessage(
-            $update->message->chat->id,
-            $message,
-            PredefinitionService::getInstance()->optionsFrom($availableOptions)
-        );
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage($message)
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom($availableOptions), true)
+            ->publish();
     }
 
     /**

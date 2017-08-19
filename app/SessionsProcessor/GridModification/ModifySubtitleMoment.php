@@ -26,13 +26,13 @@ class ModifySubtitleMoment extends SessionMoment
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         $botService = BotService::getInstance();
-        $botService->sendPredefinedMessage(
-            $update->message->from->id,
-            trans('GridModification.modifySubtitleWizard', [
+        $botService->createMessage($update->message)
+            ->setCancelable()
+            ->appendMessage(trans('GridModification.modifySubtitleWizard', [
                 'current' => $grid->grid_subtitle ?: trans('GridModification.modifySubtitleNone'),
-            ]),
-            PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions'))
-        );
+            ]))
+            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions')))
+            ->publish();
     }
 
     /**
@@ -59,11 +59,13 @@ class ModifySubtitleMoment extends SessionMoment
     {
         if (SubtitleMoment::inputMaxLengthValidation($input)) {
             $botService = BotService::getInstance();
-            $botService->sendPredefinedMessage(
-                $update->message->from->id,
-                trans('GridModification.errorSubtitleTooLong', [ 'max' => SubtitleMoment::MAX_SUBTITLE ]),
-                PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions'))
-            );
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorSubtitleTooLong', [
+                    'max' => SubtitleMoment::MAX_SUBTITLE,
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardSubtitleOptions')))
+                ->publish();
 
             return self::class;
         }
