@@ -118,4 +118,14 @@ return [
 
     'unsubscribeYouOption' => 'Sair',
     'unsubscribeYouUpdate' => "Você *saiu* desta grade.\n\n",
+
+    'unsubscribeOwnerOption' => 'Sair...',
+    'unsubscribeOwnerWizard' => "*Só mais um detalhe, guardião...*\n" .
+                                'Como você é o organizador desta grade, será necessário indicar um organizador substituto. ' .
+                                'Após selecioná-lo abaixo você estará fora desta grade.',
+    'unsubscribeOwnerUpdate' => "Você *saiu* desta grade.\n\n",
+
+    'errorUnsubscribeUserUnavailable' => "*Err... participante não encontrado.*\n" .
+                                         "Vamos tentar novamente...\n\n" .
+                                         "*\xE2\x9E\x9C Selecione um organizador substituto:*",
 ];

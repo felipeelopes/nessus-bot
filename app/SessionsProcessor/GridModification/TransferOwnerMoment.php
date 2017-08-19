@@ -26,7 +26,7 @@ class TransferOwnerMoment extends SessionMoment
      * @param Process $process Process instance.
      * @return array
      */
-    private static function getSubscribers(Update $update, Process $process): array
+    public static function getSubscribers(Update $update, Process $process): array
     {
         $user = UserService::getInstance()->get($update->message->from->id);
 

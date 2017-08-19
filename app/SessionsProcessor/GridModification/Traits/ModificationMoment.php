@@ -74,7 +74,12 @@ trait ModificationMoment
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeYouOption'),
-                'conditional' => $isSubscriber,
+                'conditional' => $isSubscriber && !$isOwner,
+            ],
+            [
+                'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
+                'description' => trans('GridModification.unsubscribeOwnerOption'),
+                'conditional' => $isSubscriber && $isOwner,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
