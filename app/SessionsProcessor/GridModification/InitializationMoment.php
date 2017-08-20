@@ -76,6 +76,11 @@ class InitializationMoment extends SessionMoment
 
                     return true;
                     break;
+                case trans('Command.commands.subscribeTitularReserveCommandLetter'):
+                    $this->subscribeAs($update, $process, $grid, GridSubscription::POSITION_TITULAR_RESERVE);
+
+                    return true;
+                    break;
             }
 
             static::notifyOptions($update, $process);
@@ -185,5 +190,29 @@ class InitializationMoment extends SessionMoment
 
             return;
         }
+
+        if ($position === GridSubscription::POSITION_TITULAR_RESERVE &&
+            $userSubscription->subscription_position === GridSubscription::POSITION_TITULAR) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.errorAlreadyTitular'))
+                ->publish();
+
+            return;
+        }
+
+        if ($position === GridSubscription::POSITION_TITULAR_RESERVE &&
+            $grid->getVacancies() > 0) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.errorVacanciesAvailable'))
+                ->publish();
+
+            return;
+        }
+
+        $userSubscription->subscription_position = $position;
+        $userSubscription->reserved_at           = Carbon::now();
+        $userSubscription->save();
+
+        static::notifyOptions($update, $process);
     }
 }

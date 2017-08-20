@@ -46,5 +46,9 @@ return [
         'subscribeTitularCommand'       => 'G:idT',
         'subscribeTitularCommandLetter' => 'T',
         'subscribeTitularDescription'   => 'Participar como *titular*',
+
+        'subscribeTitularReserveCommand'       => 'G:idR',
+        'subscribeTitularReserveCommandLetter' => 'R',
+        'subscribeTitularReserveDescription'   => 'Participar como *titular-reserva*',
     ],
 ];
