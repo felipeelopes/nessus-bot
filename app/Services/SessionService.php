@@ -187,6 +187,8 @@ class SessionService implements ServiceContract
             return null;
         }
 
+        $session->put(self::SESSION_PROCESS, $processInstance);
+
         return true;
     }
 

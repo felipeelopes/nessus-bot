@@ -46,10 +46,9 @@ class InitializationMoment extends SessionMoment
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_GRID_SHOW_SHORT)) {
-            $command          = $update->message->getCommand();
-            $commandArguments = $command->arguments;
+            $command = $update->message->getCommand();
 
-            if ($commandArguments->count() < 1) {
+            if ($command->arguments->count() < 1) {
                 return false;
             }
 
@@ -59,7 +58,7 @@ class InitializationMoment extends SessionMoment
             /** @var Grid $grid */
             $gridQuery = Grid::query();
             $gridQuery->with('subscribers.gamertag');
-            $grid = $gridQuery->find($commandArguments[0]);
+            $grid = $gridQuery->find($command->getArgument(0));
 
             if (!$grid) {
                 $botService->createMessage($update->message)
