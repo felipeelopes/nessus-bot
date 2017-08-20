@@ -32,7 +32,10 @@ trait ModificationMoment
         $isManager    = $isOwner || $grid->isManager($update->message->from);
         $isSubscriber = $grid->isSubscriber($update->message->from);
 
-        $isAdministratorOnly  = $update->message->from->isAdminstrator() && !$isSubscriber;
+        $isAdministratorOnly  = $update->message->from->isAdminstrator() && (
+                !$isSubscriber ||
+                $grid->isUser($update->message->from, true)
+            );
         $administrativePrefix = $isAdministratorOnly
             ? trans('GridModification.modifyAdministrative')
             : null;
