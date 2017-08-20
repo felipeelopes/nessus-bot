@@ -10,6 +10,7 @@ use Application\Services\CommandService;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Strategies\Contracts\UserStrategyContract;
+use Artisan;
 use Carbon\Carbon;
 
 class EdgeCommandStrategy implements UserStrategyContract
@@ -53,7 +54,7 @@ class EdgeCommandStrategy implements UserStrategyContract
             $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->createMessage($update->message)
                 ->appendMessage(trans('UserHome.homeWelcomeBack', [
-                    'homeCommands' => $commandService->buildList($user),
+                    'homeCommands' => $commandService->buildList($update),
                 ]))
                 ->publish();
 
@@ -64,7 +65,7 @@ class EdgeCommandStrategy implements UserStrategyContract
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->createMessage($update->message)
-                ->appendMessage($commandService->buildList($user))
+                ->appendMessage($commandService->buildList($update))
                 ->unduplicate(__CLASS__ . '@' . CommandService::COMMAND_COMMANDS)
                 ->publish();
 
@@ -149,6 +150,18 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
+        if ($update->message->isCommand(CommandService::COMMAND_REFRESH) &&
+            $update->message->from->isAdminstrator()) {
+            Artisan::call('cache:clear');
+
+            $botService->createMessage($update->message)
+                ->setPrivate()
+                ->appendMessage(trans('EdgeCommand.systemRefreshed'))
+                ->publish();
+
+            return true;
+        }
+
         if ($update->message->isCommand(CommandService::COMMAND_NEWS)) {
             $launchDate = new Carbon('2017-09-06 00:00:00');
             $carbonNow  = Carbon::now();
@@ -203,7 +216,7 @@ class EdgeCommandStrategy implements UserStrategyContract
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
             $botService->createMessage($update->message)
-                ->appendMessage(trans('UserHome.commandNotSupported', [ 'homeCommands' => $commandService->buildList($user) ]))
+                ->appendMessage(trans('UserHome.commandNotSupported', [ 'homeCommands' => $commandService->buildList($update) ]))
                 ->publish();
 
             return true;

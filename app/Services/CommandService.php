@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Services;
 
-use Application\Models\User;
+use Application\Adapters\Telegram\Update;
 
 class CommandService
 {
@@ -17,6 +17,7 @@ class CommandService
     public const COMMAND_MY_GRIDS        = 'myGrids';
     public const COMMAND_NEWS            = 'news';
     public const COMMAND_NEW_GRID        = 'newGrid';
+    public const COMMAND_REFRESH         = 'refresh';
     public const COMMAND_REGISTER        = 'register';
     public const COMMAND_RULES           = 'rules';
     public const COMMAND_START           = 'start';
@@ -32,18 +33,21 @@ class CommandService
 
     /**
      * Build the command list.
-     * @param User|null $user User instance.
+     * @param Update $update Update instace.
      * @return string
      */
-    public function buildList(?User $user): string
+    public function buildList(Update $update): string
     {
+        $user         = $update->message->from;
+        $userRegister = $user->getUserRegister();
+
         // Main commands.
         $commands   = [];
         $commands[] = static::COMMAND_COMMANDS;
         $commands[] = static::COMMAND_GT;
 
         if (env('NBOT_OPTION_BETA_MODULES')) {
-            if ($user !== null) {
+            if ($update !== null) {
                 $commands[] = static::COMMAND_NEW_GRID;
                 $commands[] = static::COMMAND_LIST_GRIDS;
                 $commands[] = static::COMMAND_MY_GRIDS;
@@ -55,7 +59,7 @@ class CommandService
         // Additional commands.
         $commands = [];
 
-        if ($user === null) {
+        if ($userRegister === null) {
             $commands[] = static::COMMAND_REGISTER;
         }
 
@@ -63,6 +67,15 @@ class CommandService
         $commands[] = static::COMMAND_RULES;
 
         $result .= $this->buildCommandsList(trans('Command.additionalCommands'), $commands);
+
+        // Admin commands.
+        if ($user->isAdminstrator() && $update->message->isPrivate()) {
+            $commands = [];
+
+            $commands[] = static::COMMAND_REFRESH;
+
+            $result .= $this->buildCommandsList(trans('Command.adminCommands'), $commands);
+        }
 
         return $result;
     }

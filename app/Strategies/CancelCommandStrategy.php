@@ -28,7 +28,7 @@ class CancelCommandStrategy implements UserStrategyContract
                 BotService::getInstance()->createMessage($update->message)
                     ->setPrivate()
                     ->appendMessage(trans('UserHome.cancelHeader', [
-                        'homeCommands' => $commandService->buildList($user),
+                        'homeCommands' => $commandService->buildList($update),
                     ]))
                     ->publish();
 

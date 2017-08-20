@@ -5,6 +5,7 @@ declare(strict_types = 1);
 return [
     'mainCommands'       => "*Principais comandos:*\n",
     'additionalCommands' => "\n*Comandos adicionais:*\n",
+    'adminCommands'      => "\n*Comandos administrativos:*\n",
     'command'            => ":command - :description;\n",
 
     'commands' => [
@@ -36,6 +37,9 @@ return [
 
         'rulesCommand'     => 'Regras',
         'rulesDescription' => 'Lista as regras do clã',
+
+        'refreshCommand'     => 'Atualizar',
+        'refreshDescription' => 'Atualiza os recursos de sistema',
 
         'gridShowShortCommand' => 'G',
     ],

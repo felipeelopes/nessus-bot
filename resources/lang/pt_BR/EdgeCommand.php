@@ -15,4 +15,6 @@ return [
     'gtSingleUnregistered' => '_Gamertag não registrada._',
     'gtItemRegistered'     => "*:mention*\n\xE2\x86\x92 :gamertag\n\n",
     'gtItemUnregistered'   => "*:mention*\n\xE2\x86\x92 _Gamertag não registrada._\n\n",
+
+    'systemRefreshed' => 'Recursos de sistema atualizados.',
 ];
