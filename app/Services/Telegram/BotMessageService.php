@@ -125,6 +125,18 @@ class BotMessageService
     }
 
     /**
+     * Force that this message be send to user.
+     * @return BotMessageService
+     */
+    public function forcePrivate(): BotMessageService
+    {
+        $this->setReceiver($this->updateMessage->from->id);
+        $this->setReplica(false);
+
+        return $this;
+    }
+
+    /**
      * Force that this message be send to public chat.
      * @return BotMessageService
      */

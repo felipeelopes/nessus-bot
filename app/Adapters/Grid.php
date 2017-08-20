@@ -140,12 +140,12 @@ class Grid extends BaseFluent
             ]);
         }
 
-        if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
-            $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);
-        }
-
         if ($this->requirements) {
             $result .= trans('Grid.gridRequirements', [ 'value' => $this->requirements ]);
+        }
+
+        if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
+            $result .= trans('Grid.gridPlayers', [ 'value' => $this->players ]);
         }
 
         if ($grid && $structureType === self::STRUCTURE_TYPE_FULL && !$grid->isCanceled()) {

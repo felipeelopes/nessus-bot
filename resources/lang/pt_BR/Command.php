@@ -18,7 +18,7 @@ return [
         'gtDescription' => 'Exibe a Gamertag de um usuário',
 
         'newGridCommand'     => 'NovaGrade',
-        'newGridDescription' => 'Criar uma nova grade',
+        'newGridDescription' => 'Assistente de criação de grades',
 
         'newsCommand'     => 'Noticias',
         'newsDescription' => 'Exibe as últimas notícias do jogo',
@@ -27,7 +27,7 @@ return [
         'listGridsDescription' => 'Listar as grades disponíveis',
 
         'myGridsCommand'     => 'MinhasGrades',
-        'myGridsDescription' => 'Listar suas grades em aberto',
+        'myGridsDescription' => 'Listar as grades criadas por você',
 
         'registerCommand'     => 'Registrar',
         'registerDescription' => 'Primeiro passo para fazer parte do clã',

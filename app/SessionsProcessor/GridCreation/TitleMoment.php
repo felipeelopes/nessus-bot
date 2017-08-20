@@ -39,6 +39,7 @@ class TitleMoment extends SessionMoment
     {
         $botService = BotService::getInstance();
         $botService->createMessage($update->message)
+            ->forcePrivate()
             ->setCancelable()
             ->appendMessage(trans('GridCreation.creationWizard'))
             ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardOptions')))

@@ -7,7 +7,7 @@ return [
                         ":icon *:title*:subtitle :icon\n\n",
     'headerSubtitle' => ' (_:subtitle_)',
 
-    'gridOwner'         => "\xE2\x9E\x9C *Organizador*: :value \xF0\x9F\x94\xB9\n",
+    'gridOwner'         => "\xE2\x9E\x9C *Organizador*: :value\n",
     'gridStatus'        => "\xE2\x9E\x9C *Status*: :value:details\n",
     'gridStatusDetails' => ' (_:details_)',
     'gridRequirements'  => "\xE2\x9E\x9C *Exigências*: :value\n",
