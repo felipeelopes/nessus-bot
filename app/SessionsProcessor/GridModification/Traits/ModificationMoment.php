@@ -134,7 +134,7 @@ trait ModificationMoment
      */
     public static function notifyOptions(Update $update, Process $process): void
     {
-        self::notifyUpdate($update, $process, null);
+        self::notifyUpdate($update, $process, null, false);
     }
 
     /**
@@ -142,9 +142,10 @@ trait ModificationMoment
      * @param Update      $update      Update instance.
      * @param Process     $process     Process instance.
      * @param string|null $updateTitle Update title.
+     * @param bool|null   $publish     Publish to group (default: true).
      * @throws \Exception
      */
-    public static function notifyUpdate(Update $update, Process $process, ?string $updateTitle): void
+    public static function notifyUpdate(Update $update, Process $process, ?string $updateTitle, ?bool $publish = null): void
     {
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
@@ -163,7 +164,7 @@ trait ModificationMoment
 
         self::notifyMessage($update, $process, $updateMessage);
 
-        if ($update->message->isPrivate()) {
+        if ($publish !== false && $update->message->isPrivate()) {
             $publicUpdate          = clone $update;
             $publicUpdate->message = clone $publicUpdate->message;
             $publicUpdate->message->forcePublic();
