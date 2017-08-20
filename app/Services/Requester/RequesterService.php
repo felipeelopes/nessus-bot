@@ -143,10 +143,6 @@ class RequesterService
                 $response        = $clientException->getResponse();
                 $requestResponse = new RequestResponse(json_decode($response->getBody()->getContents(), true));
 
-                if ($requestResponse->description === 'Forbidden: bot was blocked by the user') {
-                    return null;
-                }
-
                 throw new RequestException($requestResponse);
             }
 

@@ -52,12 +52,14 @@ class WelcomeMoment extends SessionMoment
                     'groupTitle'    => $botService->getChat($groupId)->title,
                     'whichGamertag' => trans('UserRegistration.whichGamertag'),
                 ]))
+                ->allowExceptions()
                 ->publish();
 
             assert(EventService::getInstance()->register(self::EVENT_WELCOME_PRIVATE));
         }
         catch (RequestException $requestException) {
             $botService->createMessage($update->message)
+                ->forcePublic()
                 ->appendMessage(trans('UserRegistration.toPrivate', [
                     'fullname'    => $update->message->from->getFullname(),
                     'botUsername' => '@' . $botService->getMe()->username,

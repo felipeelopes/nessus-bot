@@ -11,9 +11,15 @@ use Application\Services\CommandService;
 use Application\Services\PredefinitionService;
 use Application\Services\Requester\RequesterService;
 use Cache;
+use Exception;
 
 class BotMessageService
 {
+    /**
+     * @var bool|null
+     */
+    private $allowExceptions;
+
     /**
      * @var bool|null
      */
@@ -74,6 +80,17 @@ class BotMessageService
     }
 
     /**
+     * Allow that the request throw exceptions.
+     * @return BotMessageService
+     */
+    public function allowExceptions(): BotMessageService
+    {
+        $this->allowExceptions = true;
+
+        return $this;
+    }
+
+    /**
      * Append a message text.
      * @param string $message Message text.
      * @return BotMessageService
@@ -121,7 +138,17 @@ class BotMessageService
         }
 
         $botService = BotService::getInstance();
-        $message    = $botService->publishMessage($this->message);
+
+        try {
+            $message = $botService->publishMessage($this->message);
+        }
+        catch (Exception $exception) {
+            if ($this->allowExceptions) {
+                throw $exception;
+            }
+
+            return null;
+        }
 
         if ($this->unduplicateIdentifier && $message) {
             /** @var Message $previousMessageId */
