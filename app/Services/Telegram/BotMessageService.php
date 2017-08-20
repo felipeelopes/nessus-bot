@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Services\Telegram;
 
 use Application\Adapters\Predefinition\OptionItem;
+use Application\Adapters\Telegram\InlineKeyboardButton;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\SendMessage;
 use Application\Services\CommandService;
@@ -19,6 +20,11 @@ class BotMessageService
      * @var bool|null
      */
     private $allowExceptions;
+
+    /**
+     * @var InlineKeyboardButton[]|null
+     */
+    private $buttons;
 
     /**
      * @var bool|null
@@ -80,6 +86,22 @@ class BotMessageService
     }
 
     /**
+     * Add a button to message.
+     * @param string $label Button label.
+     * @param string $url   Button URL.
+     * @return BotMessageService
+     */
+    public function addLinkButton($label, $url): BotMessageService
+    {
+        $this->buttons[] = new InlineKeyboardButton([
+            'text' => $label,
+            'url'  => $url,
+        ]);
+
+        return $this;
+    }
+
+    /**
      * Allow that the request throw exceptions.
      * @return BotMessageService
      */
@@ -138,6 +160,12 @@ class BotMessageService
         }
 
         $botService = BotService::getInstance();
+
+        if ($this->buttons) {
+            $this->message->reply_markup = json_encode([
+                'inline_keyboard' => [ $this->buttons ],
+            ]);
+        }
 
         try {
             $message = $botService->publishMessage($this->message);

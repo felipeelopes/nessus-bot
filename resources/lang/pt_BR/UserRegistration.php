@@ -14,8 +14,9 @@ return [
 
     // Need to talk in private.
     'toPrivate'             => "Seja bem-vindo, *:fullname*!\n\n" .
-                               "Antes de enviar novas mensagens aqui no grupo, precisamos falar com você em privado primeiro.\n\n" .
-                               "\xE2\x9E\x9C *Fale comigo por aqui:* :botUsername",
+                               'Antes de enviar novas mensagens aqui no grupo, preciso falar com você em particular.',
+    'toPrivateButton'       => "\xE2\x97\x8F Clique aqui para iniciarmos a conversa... \xE2\x97\x8F",
+    'toPrivateLink'         => 'https://t.me/:botname',
 
     // Gamertag request.
     'whichGamertag'         => "*\xE2\x9E\x9C Qual a sua Gamertag na Xbox Live?*",

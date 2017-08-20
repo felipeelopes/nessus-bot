@@ -27,8 +27,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             if ($user === null) {
                 $botService->createMessage($update->message)
                     ->appendMessage(trans('UserRegistration.toPrivate', [
-                        'fullname'    => $update->message->new_chat_member->getFullname(),
-                        'botUsername' => '@' . $botService->getMe()->username,
+                        'fullname' => $update->message->new_chat_member->getFullname(),
                     ]))
                     ->publish();
             }
