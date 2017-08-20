@@ -32,45 +32,50 @@ trait ModificationMoment
         $isManager    = $isOwner || $grid->isManager($update->message->from);
         $isSubscriber = $grid->isSubscriber($update->message->from);
 
+        $isAdministratorOnly  = $update->message->from->isAdminstrator() && !$isSubscriber;
+        $administrativePrefix = $isAdministratorOnly
+            ? trans('GridModification.modifyAdministrative')
+            : null;
+
         $availableOptions = (new Collection([
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
-                'description' => trans('GridModification.modifyTitleOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifyTitleOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_SUBTITLE,
-                'description' => trans('GridModification.modifySubtitleOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifySubtitleOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_REQUIREMENTS,
-                'description' => trans('GridModification.modifyRequirementsOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifyRequirementsOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TIMING,
-                'description' => trans('GridModification.modifyTimingOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifyTimingOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_DURATION,
-                'description' => trans('GridModification.modifyDurationOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifyDurationOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_PLAYERS,
-                'description' => trans('GridModification.modifyPlayersOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifyPlayersOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
-                'description' => trans('GridModification.transferOwnerOption'),
+                'description' => $administrativePrefix . trans('GridModification.transferOwnerOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
-                'description' => trans('GridModification.modifyManagersOption'),
+                'description' => $administrativePrefix . trans('GridModification.modifyManagersOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [

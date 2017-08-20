@@ -8,6 +8,7 @@ use Application\Adapters\BaseFluent;
 
 /**
  * @property string|null $command     Option command.
+ * @property string[]    $arguments   Option arguments.
  * @property string      $value       Option value.
  * @property string|null $description Option description.
  */

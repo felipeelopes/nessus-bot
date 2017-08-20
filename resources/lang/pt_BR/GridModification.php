@@ -19,6 +19,8 @@ return [
         [ 'value' => InitializationMoment::REPLY_TRANSFER_OWNER, 'description' => 'Redefinir organizador...' ],
     ],
 
+    'modifyAdministrative' => "\xE2\x98\xA2 ",
+
     'modifyTitleOption'  => 'Modificar título...',
     'modifyTitleWizard'  => "*\xE2\x9E\x9C Qual será o novo título da missão?*\n" .
                             "Limite de 80 caracteres.\n\n" .

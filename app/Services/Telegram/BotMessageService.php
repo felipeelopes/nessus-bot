@@ -167,6 +167,8 @@ class BotMessageService
             ]);
         }
 
+        $this->message->text = preg_replace("/(\r?\n){3,}/", "\n\n", $this->message->text);
+
         try {
             $message = $botService->publishMessage($this->message);
         }

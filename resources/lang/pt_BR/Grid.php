@@ -21,8 +21,8 @@ return [
     'reservesHeader' => "\n*Reservas:*\n",
     'reserveItem'    => "\xF0\x9F\x95\xB9 :gamertag :icon\n",
 
-    'typeOwner'   => "\xE2\xAD\x90",
-    'typeManager' => "\xE2\x9A\x99",
+    'typeOwner'   => "\xE2\x86\x92 _organizador_",
+    'typeManager' => "\xE2\x86\x92 _moderador_",
     'typeTop'     => "\xF0\x9F\x94\x9D",
 
     'statusWaiting'    => 'disponível',
