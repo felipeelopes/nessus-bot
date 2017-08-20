@@ -224,6 +224,10 @@ class InitializationMoment extends SessionMoment
         $userSubscription->reserved_at           = Carbon::now();
         $userSubscription->save();
 
+        if ($position === GridSubscription::POSITION_RESERVE) {
+            $grid->acceptTitularReserve();
+        }
+
         static::notifyOptions($update, $process);
     }
 
@@ -261,6 +265,8 @@ class InitializationMoment extends SessionMoment
         }
 
         $userSubscription->delete();
+
+        $grid->acceptTitularReserve();
 
         static::notifyOptions($update, $process);
     }

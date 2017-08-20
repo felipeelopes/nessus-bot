@@ -91,6 +91,8 @@ class UnsubscribeMoment extends SessionMoment
         $subscriberHim->subscription_rule = GridSubscription::RULE_OWNER;
         $subscriberHim->save();
 
+        $grid->acceptTitularReserve();
+
         static::notifyUpdate($update, $process, trans('GridModification.unsubscribeOwnerUpdate'));
 
         return InitializationMoment::class;

@@ -50,6 +50,22 @@ class Grid extends Model
     ];
 
     /**
+     * Accept a new titular-reserve, if have vacancy.
+     */
+    public function acceptTitularReserve()
+    {
+        if ($this->getVacancies() > 0) {
+            /** @var GridSubscription $titularReserve */
+            $titularReserve = $this->subscribers_sorted->whereIn('subscription_position', GridSubscription::POSITION_TITULAR_RESERVE)->first();
+
+            if ($titularReserve) {
+                $titularReserve->subscription_position = GridSubscription::POSITION_TITULAR;
+                $titularReserve->save();
+            }
+        }
+    }
+
+    /**
      * Count ocurrences by rule.
      * @param string[] $positions Positions to count.
      * @return int
