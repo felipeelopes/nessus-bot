@@ -58,7 +58,12 @@ class ModifyManagersMoment extends SessionMoment
         foreach (self::getSubscribers($process) as $subscriber) {
             $subscriberGamertag = $subscriber->gamertag;
 
-            if ($subscriberGamertag->id === $user->gamertag->id) {
+            if ($subscriberGamertag->id === $user->gamertag->id &&
+                !$update->message->from->isAdminstrator()) {
+                continue;
+            }
+
+            if ($subscriber->isOwner()) {
                 continue;
             }
 
@@ -83,7 +88,12 @@ class ModifyManagersMoment extends SessionMoment
         foreach (self::getSubscribers($process) as $subscriber) {
             $subscriberGamertag = $subscriber->gamertag;
 
-            if ($subscriberGamertag->id === $user->gamertag->id) {
+            if ($subscriberGamertag->id === $user->gamertag->id &&
+                !$update->message->from->isAdminstrator()) {
+                continue;
+            }
+
+            if ($subscriber->isOwner()) {
                 continue;
             }
 
