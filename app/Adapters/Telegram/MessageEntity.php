@@ -52,10 +52,12 @@ class MessageEntity extends BaseFluent
 
             $botArguments = [];
 
-            if (!preg_match('/\/\d/', $botCommand) &&
-                preg_match_all('/(?:(\d+)+_?)+?/', $botCommand, $matches, PREG_SET_ORDER)) {
-                $botArguments = array_pluck($matches, '1');
-                $botCommand   = substr($botCommand, 0, strpos($botCommand, array_get($botArguments, 0)));
+            if (preg_match('/(?<command>\/[a-z]+)(?<arguments>(?:\S+)?)/i', $botCommand, $botArgumentMatch)) {
+                $botCommand = $botArgumentMatch['command'];
+
+                if (preg_match_all('/(?<argument>\d+(?=$|_|\B)|[a-z]+)/i', $botArgumentMatch['arguments'], $botArgumentsMatch, PREG_SET_ORDER)) {
+                    $botArguments = array_pluck($botArgumentsMatch, 'argument');
+                }
             }
 
             /** @var Message $message */
