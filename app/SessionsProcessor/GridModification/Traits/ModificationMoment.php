@@ -26,6 +26,7 @@ trait ModificationMoment
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
+        $isPrivate    = $update->message->isPrivate();
         $isCanceled   = $grid->isCanceled();
         $isOwner      = $grid->isOwner($update->message->from);
         $isManager    = $isOwner || $grid->isManager($update->message->from);
@@ -35,52 +36,52 @@ trait ModificationMoment
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
                 'description' => trans('GridModification.modifyTitleOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_SUBTITLE,
                 'description' => trans('GridModification.modifySubtitleOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_REQUIREMENTS,
                 'description' => trans('GridModification.modifyRequirementsOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TIMING,
                 'description' => trans('GridModification.modifyTimingOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_DURATION,
                 'description' => trans('GridModification.modifyDurationOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_PLAYERS,
                 'description' => trans('GridModification.modifyPlayersOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
                 'description' => trans('GridModification.transferOwnerOption'),
-                'conditional' => !$isCanceled && $isOwner,
+                'conditional' => $isPrivate && !$isCanceled && $isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
                 'description' => trans('GridModification.modifyManagersOption'),
-                'conditional' => !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isCanceled && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeYouOption'),
-                'conditional' => !$isCanceled && $isSubscriber && !$isOwner,
+                'conditional' => $isPrivate && !$isCanceled && $isSubscriber && !$isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeOwnerOption'),
-                'conditional' => !$isCanceled && $isSubscriber && $isOwner,
+                'conditional' => $isPrivate && !$isCanceled && $isSubscriber && $isOwner,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
@@ -88,11 +89,17 @@ trait ModificationMoment
         });
 
         $botService = BotService::getInstance();
-        $botService->createMessage($update->message)
-            ->setCancelable()
+        $botMessage = $botService->createMessage($update->message)
+            ->setReplica(false)
             ->appendMessage($message)
             ->setOptions(PredefinitionService::getInstance()->optionsFrom($availableOptions), true)
-            ->publish();
+            ->unduplicate(__CLASS__ . '@' . __FUNCTION__ . '@grid:' . $grid->id);
+
+        if ($isPrivate) {
+            $botMessage->setCancelable();
+        }
+
+        $botMessage->publish();
     }
 
     /**

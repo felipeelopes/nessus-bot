@@ -3,10 +3,10 @@
 declare(strict_types = 1);
 
 return [
-    'listOptions' => "\n\n*Opções predefinidas:*\n:options",
+    'listOptions' => "\n*Opções predefinidas:*\n:options",
     'listOption'  => ":command:description\n",
 
-    'specificOptions' => "\n\n*Opções disponíveis:*\n:options",
+    'specificOptions' => "\n*Opções disponíveis:*\n:options",
 
     'errorNotFound' => "*Err...*\n" .
                        'Desculpa, guardião, mas não reconheci essa opção.',
