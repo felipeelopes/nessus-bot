@@ -26,9 +26,9 @@ use Illuminate\Support\Str;
  */
 class GridSubscription extends Model
 {
-    public const POSITION_RESERVE_BOTTOM = 'reserveBottom';
-    public const POSITION_RESERVE_TOP    = 'reserveTop';
-    public const POSITION_TITULAR        = 'titular';
+    public const POSITION_RESERVE         = 'reserve';
+    public const POSITION_TITULAR         = 'titular';
+    public const POSITION_TITULAR_RESERVE = 'titularReserve';
 
     public const RULE_MANAGER = 'manager';
     public const RULE_OWNER   = 'owner';
@@ -61,7 +61,7 @@ class GridSubscription extends Model
     {
         $icons = [];
 
-        if ($this->subscription_position === self::POSITION_RESERVE_TOP) {
+        if ($this->subscription_position === self::POSITION_TITULAR_RESERVE) {
             $icons[] = trans('Grid.typeTop');
         }
 
@@ -127,7 +127,7 @@ class GridSubscription extends Model
             implode(',', [ self::RULE_OWNER, self::RULE_MANAGER, self::RULE_USER ]),
         ]);
 
-        // For reserves, keep position ordered: reserveTops, then reserveBottoms.
+        // For reserves, keep position ordered: titularReserve, then reserve.
         // Then order by subscription reserve timestamp.
         $builder->orderByRaw('
             IF(
@@ -142,7 +142,7 @@ class GridSubscription extends Model
             )
         ', [
             self::POSITION_TITULAR,
-            implode(',', [ self::POSITION_RESERVE_TOP, self::POSITION_RESERVE_BOTTOM ]),
+            implode(',', [ self::POSITION_TITULAR_RESERVE, self::POSITION_RESERVE ]),
             self::POSITION_TITULAR,
         ]);
     }

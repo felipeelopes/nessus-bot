@@ -3,9 +3,9 @@
 declare(strict_types = 1);
 
 return [
-    'positionTitular'       => 'titular',
-    'positionReserveTop'    => 'titular-reserva',
-    'positionReserveBottom' => 'reserva',
+    'positionTitular'        => 'titular',
+    'positionTitularReserve' => 'titular-reserva',
+    'positionReserve'        => 'reserva',
 
     'alreadySubscribed' => 'Você já está registrado nesta grade como *:position*.',
 

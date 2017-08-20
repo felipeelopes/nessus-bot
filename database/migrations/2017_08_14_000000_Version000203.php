@@ -23,8 +23,8 @@ class Version000203 extends Migration
             ALTER TABLE {$gridSubscriptionsTable}
                 ADD COLUMN `subscription_position` 
                     ENUM('" . GridSubscription::POSITION_TITULAR . "', 
-                         '" . GridSubscription::POSITION_RESERVE_TOP . "', 
-                         '" . GridSubscription::POSITION_RESERVE_BOTTOM . "') 
+                         'reserveTop', 
+                         'reserveBottom') 
                     NOT NULL 
                     DEFAULT '" . GridSubscription::POSITION_TITULAR . "' 
                     AFTER `subscription_rule`;

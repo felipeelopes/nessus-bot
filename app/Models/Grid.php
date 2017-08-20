@@ -75,8 +75,8 @@ class Grid extends Model
     public function countReserves(): int
     {
         return $this->countByPosition([
-            GridSubscription::POSITION_RESERVE_TOP,
-            GridSubscription::POSITION_RESERVE_BOTTOM,
+            GridSubscription::POSITION_TITULAR_RESERVE,
+            GridSubscription::POSITION_RESERVE,
         ]);
     }
 
