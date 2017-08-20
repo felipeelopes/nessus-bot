@@ -45,7 +45,7 @@ class ModifyDurationMoment extends SessionMoment
     {
         /** @var Grid $grid */
         $grid                = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
-        $grid->grid_duration = DurationMoment::parseDuration($input);
+        $grid->grid_duration = DurationMoment::parseDuration((int) $input);
         $grid->save();
 
         $gridAdapter = GridAdapter::fromModel($grid);
