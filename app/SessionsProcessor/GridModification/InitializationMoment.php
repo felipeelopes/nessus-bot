@@ -81,6 +81,11 @@ class InitializationMoment extends SessionMoment
 
                     return true;
                     break;
+                case trans('Command.commands.subscribeReserveCommandLetter'):
+                    $this->subscribeAs($update, $process, $grid, GridSubscription::POSITION_RESERVE);
+
+                    return true;
+                    break;
             }
 
             static::notifyOptions($update, $process);

@@ -98,6 +98,11 @@ trait ModificationMoment
                 'arguments'   => [ 'id' => $grid->id ],
                 'conditional' => !$isPrivate && !$isCanceled,
             ],
+            [
+                'command'     => 'subscribeReserve',
+                'arguments'   => [ 'id' => $grid->id ],
+                'conditional' => !$isPrivate && !$isCanceled,
+            ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
                    $availableOption['conditional'] !== false;
