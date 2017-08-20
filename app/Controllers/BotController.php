@@ -109,24 +109,22 @@ class BotController extends Controller implements RouterRegisterContract
             return;
         }
 
-        if (env('NBOT_OPTION_BETA_MODULES')) {
-            /** @var GridListingStrategy $gridListing */
-            $gridListing = $mockupService->instance(GridListingStrategy::class);
-            if ($gridListing->process($user, $update)) {
-                return;
-            }
+        /** @var GridListingStrategy $gridListing */
+        $gridListing = $mockupService->instance(GridListingStrategy::class);
+        if ($gridListing->process($user, $update)) {
+            return;
+        }
 
-            /** @var GridModificationStrategy $gridModification */
-            $gridModification = $mockupService->instance(GridModificationStrategy::class);
-            if ($gridModification->process($user, $update)) {
-                return;
-            }
+        /** @var GridModificationStrategy $gridModification */
+        $gridModification = $mockupService->instance(GridModificationStrategy::class);
+        if ($gridModification->process($user, $update)) {
+            return;
+        }
 
-            /** @var GridCreationStrategy $gridCreation */
-            $gridCreation = $mockupService->instance(GridCreationStrategy::class);
-            if ($gridCreation->process($user, $update)) {
-                return;
-            }
+        /** @var GridCreationStrategy $gridCreation */
+        $gridCreation = $mockupService->instance(GridCreationStrategy::class);
+        if ($gridCreation->process($user, $update)) {
+            return;
         }
 
         /** @var EdgeCommandStrategy $userRegistration */

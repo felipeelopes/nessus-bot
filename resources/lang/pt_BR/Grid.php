@@ -3,7 +3,8 @@
 declare(strict_types = 1);
 
 return [
-    'header'         => ":icon *:title*:subtitle :icon\n\n",
+    'header'         => "\xE2\x9A\xA0 *ATENÇÃO: SISTEMA EM FASE DE DESENVOLVIMENTO.*\nPODERÁ APRESENTAR ALGUNS ERROS E FALTA DE RECURSOS.\n\n" .
+                        ":icon *:title*:subtitle :icon\n\n",
     'headerSubtitle' => ' (_:subtitle_)',
 
     'gridOwner'         => "\xE2\x9E\x9C *Organizador*: :value \xF0\x9F\x94\xB9\n",

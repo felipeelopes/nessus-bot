@@ -45,12 +45,10 @@ class CommandService
         $commands   = [];
         $commands[] = static::COMMAND_COMMANDS;
 
-        if (env('NBOT_OPTION_BETA_MODULES')) {
-            if ($userRegister !== null) {
-                $commands[] = static::COMMAND_NEW_GRID;
-                $commands[] = static::COMMAND_LIST_GRIDS;
-                $commands[] = static::COMMAND_MY_GRIDS;
-            }
+        if ($userRegister !== null) {
+            $commands[] = static::COMMAND_NEW_GRID;
+            $commands[] = static::COMMAND_LIST_GRIDS;
+            $commands[] = static::COMMAND_MY_GRIDS;
         }
 
         $commands[] = static::COMMAND_NEWS;

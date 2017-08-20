@@ -25,10 +25,6 @@ class GridCreationTest extends CommandBase
 {
     public function testGridCreation(): void
     {
-        if (!env('NBOT_OPTION_BETA_MODULES')) {
-            $this->markTestSkipped('beta-modules disabled');
-        }
-
         $this->createFakeUser();
 
         // Initialize: Title.
