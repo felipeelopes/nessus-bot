@@ -96,7 +96,7 @@ trait ModificationMoment
             [
                 'command'     => 'subscribeTitularReserve',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled,
+                'conditional' => !$isPrivate && !$isCanceled && $grid->getVacancies() === 0,
             ],
             [
                 'command'     => 'subscribeReserve',
