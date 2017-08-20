@@ -37,8 +37,6 @@ class WelcomeMoment extends SessionMoment
      */
     public function request(Update $update, Process $process): void
     {
-        $groupId = env('NBOT_GROUP_ID');
-
         assert(EventService::getInstance()->register(self::EVENT_DELETE_MESSAGE));
 
         $botService = BotService::getInstance();
@@ -49,7 +47,7 @@ class WelcomeMoment extends SessionMoment
                 ->setPrivate()
                 ->setCancelable()
                 ->appendMessage(trans('UserRegistration.welcome', [
-                    'groupTitle'    => $botService->getChat($groupId)->title,
+                    'groupTitle'    => $botService->getChat()->title,
                     'whichGamertag' => trans('UserRegistration.whichGamertag'),
                 ]))
                 ->allowExceptions()

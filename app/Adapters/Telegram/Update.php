@@ -8,7 +8,7 @@ use Application\Adapters\BaseFluent;
 
 /**
  * @property-read int                $update_id        Update id.
- * @property-read Message|null       $message          Message object.
+ * @property Message|null            $message          Message object.
  * @property-read CallbackQuery|null $callback_query   Query object.
  */
 class Update extends BaseFluent

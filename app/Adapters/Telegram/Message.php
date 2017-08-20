@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Adapters\Telegram;
 
 use Application\Adapters\BaseFluent;
+use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -38,6 +39,32 @@ class Message extends BaseFluent
         }
 
         $this->date = Carbon::createFromTimestamp((int) $this->date);
+    }
+
+    /**
+     * Treats this message as Private.
+     */
+    public function forcePrivate()
+    {
+        $this->chat = new Chat([
+            'id'         => $this->from->id,
+            'first_name' => $this->from->first_name,
+            'last_name'  => $this->from->last_name,
+            'username'   => $this->from->username,
+            'type'       => Chat::TYPE_PRIVATE,
+        ]);
+    }
+
+    /**
+     * Treats this message as Public.
+     */
+    public function forcePublic()
+    {
+        $this->chat = new Chat([
+            'id'    => env('NBOT_GROUP_ID'),
+            'title' => BotService::getInstance()->getChat()->title,
+            'type'  => Chat::TYPE_SUPERGROUP,
+        ]);
     }
 
     /**

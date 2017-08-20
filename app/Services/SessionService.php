@@ -7,6 +7,7 @@ namespace Application\Services;
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
 use Application\Exceptions\SessionProcessor\RequestException;
+use Application\Exceptions\SessionProcessor\SkipParentMomentException;
 use Application\Services\Contracts\ServiceContract;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\Types\Process;
@@ -19,10 +20,20 @@ class SessionService implements ServiceContract
     private const SESSION_PROCESS            = __CLASS__ . '@process';
 
     /**
+     * @var string
+     */
+    private $currentMoment;
+
+    /**
      * Initial moment class.
      * @var string
      */
     private $initialMoment;
+
+    /**
+     * @var Process
+     */
+    private $process;
 
     /**
      * SessionService constructor.
@@ -88,59 +99,67 @@ class SessionService implements ServiceContract
         }
 
         /** @var SessionMoment $momentInstance */
-        $momentCurrent   = $session->get(self::SESSION_MOMENT_CURRENT);
-        $processInstance = $session->get(self::SESSION_PROCESS) ?? new Process;
+        $momentCurrent   = $this->currentMoment ?? $session->get(self::SESSION_MOMENT_CURRENT);
+        $processInstance = $this->process ?? $session->get(self::SESSION_PROCESS) ?? new Process;
         $momentNull      = $momentCurrent === null;
 
-        if ($momentNull || $update->message->isPrivate()) {
-            if ($momentNull) {
-                $momentCurrent = $this->initialMoment;
+        if ($this->currentMoment === null) {
+            if ($momentNull || $update->message->isPrivate()) {
+                if ($momentNull) {
+                    $momentCurrent = $this->initialMoment;
 
-                $processInstance->clear();
-            }
-            else {
-                $momentInstance = new $momentCurrent;
-                $forcedMoment   = false;
-
-                try {
-                    $momentReturned = $momentInstance->validateInput($update->message->text, $update, $processInstance);
-                }
-                catch (ForceMomentException $momentException) {
-                    $momentReturned = $momentException->getMoment();
-                    $forcedMoment   = true;
-                }
-
-                if ($momentReturned !== null) {
-                    $session->put(self::SESSION_MOMENT_CURRENT, $momentReturned);
-
-                    if ($momentReturned === $momentCurrent && $forcedMoment !== true) {
-                        return true;
+                    if (!$this->process) {
+                        $processInstance->clear();
                     }
                 }
                 else {
-                    $momentReturned = $momentInstance->save($update->message->text, $update, $processInstance);
+                    $momentInstance = new $momentCurrent;
+                    $forcedMoment   = false;
 
-                    if ($momentReturned === null) {
-                        $this->clearMoment();
-
-                        return true;
+                    try {
+                        $momentReturned = $momentInstance->validateInput($update->message->text, $update, $processInstance);
+                    }
+                    catch (ForceMomentException $momentException) {
+                        $momentReturned = $momentException->getMoment();
+                        $forcedMoment   = true;
                     }
 
-                    $session->put(self::SESSION_MOMENT_CURRENT, $momentReturned);
-                    $session->put(self::SESSION_PROCESS, $processInstance);
-                }
+                    if ($momentReturned !== null) {
+                        $session->put(self::SESSION_MOMENT_CURRENT, $momentReturned);
 
-                $momentCurrent = $momentReturned;
+                        if ($momentReturned === $momentCurrent && $forcedMoment !== true) {
+                            return true;
+                        }
+                    }
+                    else {
+                        $momentReturned = $momentInstance->save($update->message->text, $update, $processInstance);
+
+                        if ($momentReturned === null) {
+                            $this->clearMoment();
+
+                            return true;
+                        }
+
+                        $session->put(self::SESSION_MOMENT_CURRENT, $momentReturned);
+                        $session->put(self::SESSION_PROCESS, $processInstance);
+                    }
+
+                    $momentCurrent = $momentReturned;
+                }
             }
         }
 
         $momentInstance = new $momentCurrent;
 
-        // Check if initial validation pass.
         try {
             if ($momentInstance->validateInitialization($update, $processInstance) === false) {
                 return null;
             }
+        }
+        catch (SkipParentMomentException $ignore) {
+            $session->put(self::SESSION_PROCESS, $processInstance);
+
+            return true;
         }
         catch (ForceMomentException $forceMomentException) {
             $session->put(self::SESSION_MOMENT_CURRENT, $forceMomentException->getMoment());
@@ -151,8 +170,11 @@ class SessionService implements ServiceContract
         try {
             $momentInstance->request($update, $processInstance);
 
-            if ($momentCurrent === $this->initialMoment) {
+            if ($momentInitializer === null) {
                 $session->put(self::SESSION_MOMENT_INITIALIZER, $this->initialMoment);
+            }
+
+            if ($momentCurrent === $this->initialMoment) {
                 $session->put(self::SESSION_MOMENT_CURRENT, $this->initialMoment);
             }
         }
@@ -177,5 +199,29 @@ class SessionService implements ServiceContract
         assert(is_subclass_of($initialMomentClass, SessionMoment::class));
 
         $this->initialMoment = $initialMomentClass;
+    }
+
+    /**
+     * Set the current moment.
+     * @param string $currentMomentClass Current moment class.
+     */
+    public function setMoment(string $currentMomentClass): void
+    {
+        assert(is_subclass_of($currentMomentClass, SessionMoment::class));
+
+        $this->currentMoment = $currentMomentClass;
+
+        /** @var Session $session */
+        $session = app(Session::class);
+        $session->put(self::SESSION_MOMENT_CURRENT, $currentMomentClass);
+    }
+
+    /**
+     * Reuse a previous instantiated Process.
+     * @param Process $process Process instance.
+     */
+    public function withProcess(Process $process): void
+    {
+        $this->process = $process;
     }
 }

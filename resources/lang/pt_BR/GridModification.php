@@ -124,7 +124,7 @@ return [
     'unsubscribeOwnerOption' => 'Sair...',
     'unsubscribeOwnerWizard' => "*Só mais um detalhe, guardião...*\n" .
                                 'Como você é o organizador desta grade, será necessário indicar um organizador substituto. ' .
-                                'Após selecioná-lo abaixo você estará fora desta grade.',
+                                'Após selecioná-lo abaixo, você deixará de estar inscrito nesta grade.',
     'unsubscribeOwnerUpdate' => "Você *saiu* desta grade.\n\n",
 
     'errorUnsubscribeUserUnavailable' => "*Err... participante não encontrado.*\n" .

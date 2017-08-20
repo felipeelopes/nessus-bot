@@ -74,14 +74,15 @@ class BotService implements ServiceContract
     }
 
     /**
-     * Get the Chat instance from id.
-     * @param string|int $chatId Chat id.
+     * Get the Chat instance.
      * @return Chat
      */
-    public function getChat($chatId): Chat
+    public function getChat(): Chat
     {
         /** @var Chat $response */
-        $response = $this->requester->request(Chat::class, 'getChat', [ 'chat_id' => $chatId ], RequesterService::CACHE_HOUR);
+        $response = $this->requester->request(Chat::class, 'getChat', [
+            'chat_id' => env('NBOT_GROUP_ID'),
+        ], RequesterService::CACHE_HOUR);
 
         return $response;
     }

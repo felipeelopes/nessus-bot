@@ -6,9 +6,11 @@ namespace Application\SessionsProcessor\GridModification;
 
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
+use Application\Exceptions\SessionProcessor\SkipParentMomentException;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
 use Application\Services\CommandService;
+use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
@@ -242,6 +244,20 @@ class InitializationMoment extends SessionMoment
                 ->publish();
 
             return;
+        }
+
+        if ($userSubscription->isOwner()) {
+            $update->message->forcePrivate();
+            $update->message->text = null;
+
+            $sessionService = SessionService::getInstance();
+            $sessionService->setInitialMoment(__CLASS__);
+            $sessionService->setMoment(UnsubscribeMoment::class);
+            $sessionService->withProcess($process);
+
+            $sessionService->run($update);
+
+            throw new SkipParentMomentException;
         }
 
         $userSubscription->delete();

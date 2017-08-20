@@ -118,7 +118,7 @@ trait ModificationMoment
             ->setReplica(false)
             ->appendMessage($message)
             ->setOptions(PredefinitionService::getInstance()->optionsFrom($availableOptions), true)
-            ->unduplicate(__CLASS__ . '@' . __FUNCTION__ . '@grid:' . $grid->id);
+            ->unduplicate('ModificationMoment@' . __FUNCTION__ . '@grid:' . $grid->id . '@chat:' . $update->message->chat->id);
 
         if ($isPrivate) {
             $botMessage->setCancelable();
@@ -142,6 +142,7 @@ trait ModificationMoment
      * @param Update      $update      Update instance.
      * @param Process     $process     Process instance.
      * @param string|null $updateTitle Update title.
+     * @throws \Exception
      */
     public static function notifyUpdate(Update $update, Process $process, ?string $updateTitle): void
     {
@@ -150,7 +151,8 @@ trait ModificationMoment
 
         $gridAdapter = GridAdapter::fromModel($grid);
 
-        $updateMessage = $gridAdapter->getStructure(GridAdapter::STRUCTURE_TYPE_FULL);
+        $gridStructure = $gridAdapter->getStructure(GridAdapter::STRUCTURE_TYPE_FULL);
+        $updateMessage = $gridStructure;
 
         if ($updateTitle !== null) {
             $updateMessage = trans('GridModification.modificationUpdateNotify', [
@@ -160,5 +162,13 @@ trait ModificationMoment
         }
 
         self::notifyMessage($update, $process, $updateMessage);
+
+        if ($update->message->isPrivate()) {
+            $publicUpdate          = clone $update;
+            $publicUpdate->message = clone $publicUpdate->message;
+            $publicUpdate->message->forcePublic();
+
+            self::notifyMessage($publicUpdate, $process, $gridStructure);
+        }
     }
 }

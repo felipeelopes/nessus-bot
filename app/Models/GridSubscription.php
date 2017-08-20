@@ -85,6 +85,15 @@ class GridSubscription extends Model
     }
 
     /**
+     * Returns if subscriber is the grid owner.
+     * @return bool
+     */
+    public function isOwner(): bool
+    {
+        return $this->subscription_rule === self::RULE_OWNER;
+    }
+
+    /**
      * Returns if subscription is titular.
      * @return bool
      */
