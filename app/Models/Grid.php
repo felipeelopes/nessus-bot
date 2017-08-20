@@ -186,6 +186,15 @@ class Grid extends Model
     }
 
     /**
+     * Return the vacancies as titular.
+     * @return int
+     */
+    public function getVacancies(): int
+    {
+        return $this->grid_players - $this->countPlayers();
+    }
+
+    /**
      * Return if this grid was canceled.
      * @return bool
      */

@@ -42,5 +42,9 @@ return [
         'refreshDescription' => 'Atualiza os recursos de sistema',
 
         'gridShowShortCommand' => 'G',
+
+        'subscribeTitularCommand'       => 'G:idT',
+        'subscribeTitularCommandLetter' => 'T',
+        'subscribeTitularDescription'   => 'Participar como *titular*',
     ],
 ];

@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
  * @property-read string                     $bot       Bot name.
  * @property-read string                     $command   Bot command.
  * @property-read string                     $text      Bot command full text.
- * @property-read string[]                   $arguments Bot command arguments.
+ * @property-read string[]|Collection        $arguments Bot command arguments.
  * @property-read MessageEntity[]|Collection $entities  Bot additional entities.
  */
 class MessageEntityBotCommand extends BaseFluent
@@ -25,6 +25,19 @@ class MessageEntityBotCommand extends BaseFluent
         parent::__construct($attributes);
 
         $this->instantiateCollection('entities', MessageEntity::class);
+        $this->instantiate('arguments', Collection::class);
+
+        $this->arguments->offsetUnset('parent');
+    }
+
+    /**
+     * Returns an argument stored on an index.
+     * @param int $index Argument index.
+     * @return null|string
+     */
+    public function getArgument(int $index): ?string
+    {
+        return $this->arguments->get($index);
     }
 
     /**

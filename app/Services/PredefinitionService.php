@@ -7,6 +7,7 @@ namespace Application\Services;
 use Application\Adapters\Predefinition\OptionItem;
 use Application\Services\Contracts\ServiceContract;
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Translation\Translator;
 
 class PredefinitionService implements ServiceContract
 {
@@ -52,8 +53,18 @@ class PredefinitionService implements ServiceContract
             $commandName        = $optionCommandIndex + 1;
             $commandDescription = $optionDescription->getDescription();
 
+            if (!$commandDescription) {
+                /** @var Translator $trans */
+                $trans    = app('translator');
+                $transKey = 'Command.commands.' . $optionDescription->command . 'Description';
+
+                if ($trans->has($transKey)) {
+                    $commandDescription = trans($transKey);
+                }
+            }
+
             if ($optionDescription->command && !ctype_digit($optionDescription->command)) {
-                $commandName = trans('Command.commands.' . $optionDescription->command . 'Command');
+                $commandName = trans('Command.commands.' . $optionDescription->command . 'Command', $optionDescription->arguments ?? []);
             }
 
             $commands .= trans('Predefinition.listOption', [

@@ -88,6 +88,11 @@ trait ModificationMoment
                 'description' => trans('GridModification.unsubscribeOwnerOption'),
                 'conditional' => $isPrivate && !$isCanceled && $isSubscriber && $isOwner,
             ],
+            [
+                'command'     => 'subscribeTitular',
+                'arguments'   => [ 'id' => $grid->id ],
+                'conditional' => !$isPrivate && !$isCanceled,
+            ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||
                    $availableOption['conditional'] !== false;

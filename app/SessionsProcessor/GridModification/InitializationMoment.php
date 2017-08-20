@@ -7,12 +7,15 @@ namespace Application\SessionsProcessor\GridModification;
 use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
 use Application\Models\Grid;
+use Application\Models\GridSubscription;
 use Application\Services\CommandService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class InitializationMoment extends SessionMoment
 {
@@ -41,9 +44,10 @@ class InitializationMoment extends SessionMoment
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_GRID_SHOW_SHORT)) {
-            $commandArguments = $update->message->getCommand()->arguments;
+            $command          = $update->message->getCommand();
+            $commandArguments = $command->arguments;
 
-            if (count($commandArguments) < 1) {
+            if ($commandArguments->count() < 1) {
                 return false;
             }
 
@@ -65,6 +69,14 @@ class InitializationMoment extends SessionMoment
 
             $process->offsetSet(self::PROCESS_CONTINUE, true);
             $process->offsetSet(self::PROCESS_GRID_ID, $grid->id);
+
+            switch (Str::upper($command->getArgument(1))) {
+                case trans('Command.commands.subscribeTitularCommandLetter'):
+                    $this->subscribeAs($update, $process, $grid, GridSubscription::POSITION_TITULAR);
+
+                    return true;
+                    break;
+            }
 
             static::notifyOptions($update, $process);
 
@@ -125,5 +137,53 @@ class InitializationMoment extends SessionMoment
         }
 
         return null;
+    }
+
+    /**
+     * Subscribe no grid with a specific rule.
+     * @param Update  $update   Update instance.
+     * @param Process $process  Process instance.
+     * @param Grid    $grid     Grid instance.
+     * @param string  $position Subscription position.
+     * @throws \Exception
+     */
+    private function subscribeAs(Update $update, Process $process, Grid $grid, string $position)
+    {
+        $botService       = BotService::getInstance();
+        $userSubscription = $grid->getUserSubscription($update->message->from);
+
+        if ($userSubscription && $userSubscription->subscription_position === $position) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.alreadySubscribed', [
+                    'position' => GridSubscription::getPositionText($userSubscription->subscription_position),
+                ]))
+                ->publish();
+
+            return;
+        }
+
+        if (!$userSubscription) {
+            switch ($position) {
+                case GridSubscription::POSITION_TITULAR:
+                    if ($grid->getVacancies() === 0) {
+                        $botService->createMessage($update->message)
+                            ->appendMessage(trans('GridSubscription.errorNoVacancies'))
+                            ->publish();
+                    }
+                    break;
+            }
+
+            $userSubscription                        = new GridSubscription;
+            $userSubscription->grid_id               = $grid->id;
+            $userSubscription->gamertag_id           = $update->message->from->getUserRegister()->gamertag->id;
+            $userSubscription->subscription_rule     = GridSubscription::RULE_USER;
+            $userSubscription->subscription_position = $position;
+            $userSubscription->reserved_at           = Carbon::now();
+            $userSubscription->save();
+
+            static::notifyOptions($update, $process);
+
+            return;
+        }
     }
 }

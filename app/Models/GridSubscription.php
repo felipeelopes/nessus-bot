@@ -4,9 +4,11 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 /**
  * @property int          $grid_id                  Grid id reference.
@@ -16,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string       $subscription_position    Subscription position (POSITION consts).
  * @property string|null  $reserve_type             Reserve type (RESERVE_TYPE consts).
  * @property UserGamertag $gamertag                 Gamertag reference.
+ * @property Carbon       $reserved_at              Reserved timestamp.
  *
  * @method orderByGridRanking()
  * @method orderByGridRule()
@@ -30,6 +33,16 @@ class GridSubscription extends Model
     public const RULE_MANAGER = 'manager';
     public const RULE_OWNER   = 'owner';
     public const RULE_USER    = 'user';
+
+    /**
+     * Return the position text.
+     * @param string $position Position value.
+     * @return null|string
+     */
+    public static function getPositionText($position): ?string
+    {
+        return trans('GridSubscription.position' . Str::ucfirst($position));
+    }
 
     /**
      * Returns the gamertag subscribed.
