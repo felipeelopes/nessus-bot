@@ -55,6 +55,11 @@ class Grid extends Model
     public function acceptTitularReserve()
     {
         if ($this->getVacancies() > 0) {
+            $this->load([
+                'subscribers',
+                'subscribers_sorted',
+            ]);
+
             /** @var GridSubscription $titularReserve */
             $titularReserve = $this->subscribers_sorted->whereIn('subscription_position', GridSubscription::POSITION_TITULAR_RESERVE)->first();
 

@@ -68,6 +68,8 @@ class UnsubscribeMoment extends SessionMoment
             $userSubscription->delete();
         }
 
+        $grid->acceptTitularReserve();
+
         static::notifyUpdate($update, $process, trans('GridModification.unsubscribeYouUpdate'));
     }
 
