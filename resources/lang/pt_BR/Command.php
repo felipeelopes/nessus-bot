@@ -54,5 +54,9 @@ return [
         'subscribeReserveCommand'       => 'G:idV',
         'subscribeReserveCommandLetter' => 'V',
         'subscribeReserveDescription'   => 'Participar como *reserva*',
+
+        'subscribeUnsubscribeCommand'       => 'G:idS',
+        'subscribeUnsubscribeCommandLetter' => 'S',
+        'subscribeUnsubscribeDescription'   => 'Sair',
     ],
 ];

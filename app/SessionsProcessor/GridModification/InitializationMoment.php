@@ -86,6 +86,11 @@ class InitializationMoment extends SessionMoment
 
                     return true;
                     break;
+                case trans('Command.commands.subscribeUnsubscribeCommandLetter'):
+                    $this->unsubscribeFrom($update, $process, $grid);
+
+                    return true;
+                    break;
             }
 
             static::notifyOptions($update, $process);
@@ -155,7 +160,6 @@ class InitializationMoment extends SessionMoment
      * @param Process $process  Process instance.
      * @param Grid    $grid     Grid instance.
      * @param string  $position Subscription position.
-     * @throws \Exception
      */
     private function subscribeAs(Update $update, Process $process, Grid $grid, string $position)
     {
@@ -217,6 +221,30 @@ class InitializationMoment extends SessionMoment
         $userSubscription->subscription_position = $position;
         $userSubscription->reserved_at           = Carbon::now();
         $userSubscription->save();
+
+        static::notifyOptions($update, $process);
+    }
+
+    /**
+     * Unsubscribe from grid.
+     * @param Update  $update  Update instance.
+     * @param Process $process Process instance.
+     * @param Grid    $grid    Grid instance.
+     */
+    private function unsubscribeFrom(Update $update, Process $process, Grid $grid)
+    {
+        $botService       = BotService::getInstance();
+        $userSubscription = $grid->getUserSubscription($update->message->from);
+
+        if (!$userSubscription) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.alreadyUnsubscribed'))
+                ->publish();
+
+            return;
+        }
+
+        $userSubscription->delete();
 
         static::notifyOptions($update, $process);
     }

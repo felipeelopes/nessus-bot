@@ -7,7 +7,8 @@ return [
     'positionTitularReserve' => 'titular-reserva',
     'positionReserve'        => 'reserva',
 
-    'alreadySubscribed' => 'Você já está registrado nesta grade como *:position*.',
+    'alreadySubscribed'   => 'Você já está registrado nesta grade como *:position*.',
+    'alreadyUnsubscribed' => 'Você não faz parte desta grade.',
 
     'errorNoVacancies'        => "*Desculpe, guardião...*\n" .
                                  'Não há mais vagas para titulares nesta grade.',
