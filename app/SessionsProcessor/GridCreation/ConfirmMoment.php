@@ -13,10 +13,14 @@ use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
+use Application\SessionsProcessor\GridModification\InitializationMoment;
+use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 
 class ConfirmMoment extends SessionMoment
 {
+    use ModificationMoment;
+
     public const EVENT_INVALID_CONFIRMATION = 'invalidConfirmation';
     public const EVENT_REQUEST              = 'request';
     public const EVENT_SAVE                 = 'save';
@@ -80,13 +84,15 @@ class ConfirmMoment extends SessionMoment
 
         $botService = BotService::getInstance();
         $botService->createMessage($update->message)
-            ->forcePublic()
-            ->appendMessage($processGrid->getStructure(Grid::STRUCTURE_TYPE_FULL))
-            ->publish();
-        $botService->createMessage($update->message)
             ->setPrivate()
             ->appendMessage(trans('GridCreation.creationWizardPublished'))
             ->publish();
+
+        $process->put(InitializationMoment::PROCESS_GRID_ID, $grid->id);
+
+        $update->message->forcePublic();
+
+        self::notifyOptions($update, $process);
 
         assert(EventService::getInstance()->register(self::EVENT_SAVE));
 
