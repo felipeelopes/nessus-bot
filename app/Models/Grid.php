@@ -318,8 +318,9 @@ class Grid extends Model
      */
     public function scopeFilterOpeneds(Builder $builder): void
     {
-        $this->filterAvailables();
-        $builder->whereRaw("grid_timing >= TIMESTAMP(NOW(), '-00:15:00')");
+        /** @var Grid $builder */
+        $builder->filterAvailables();
+        $builder->whereRaw("grid_timing >= TIMESTAMP(NOW(), '-00:30:00')");
     }
 
     /**

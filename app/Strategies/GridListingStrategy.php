@@ -34,7 +34,7 @@ class GridListingStrategy implements UserStrategyContract
             $gridsQuery->with('subscribers');
             $gridsQuery->filterOpeneds();
             $grids = $gridsQuery->get()->sort(function (Grid $gridA, Grid $gridB) {
-                return $gridB->isPlaying() <=> $gridA->isPlaying()
+                return ($gridA->getStatusCode() <=> $gridB->getStatusCode())
                     ?: $gridB->isToday() <=> $gridA->isToday()
                         ?: $gridB->grid_timing->lt($gridA->grid_timing);
             });
