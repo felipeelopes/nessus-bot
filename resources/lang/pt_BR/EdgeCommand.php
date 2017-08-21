@@ -2,11 +2,13 @@
 
 declare(strict_types = 1);
 
+$preDownload = "\n\n\xE2\x9E\x9C Download prévio já está disponível na *Xbox Live*.";
+
 return [
-    'launchDays'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date*.\nFaltam apenas :days dias!",
-    'launchHours' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date*.\nFaltam menos de :hours horas!",
-    'launchToday' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam menos de :hours horas!",
-    'launchSoon'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam apenas alguns instantes!",
+    'launchDays'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date*.\nFaltam apenas :days dias!{$preDownload}",
+    'launchHours' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date*.\nFaltam menos de :hours horas!{$preDownload}",
+    'launchToday' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam menos de :hours horas!{$preDownload}",
+    'launchSoon'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam apenas alguns instantes!{$preDownload}",
     'launched'    => "\xE2\x9E\x9C O *Destiny 2* já deve estar a todo vapor!\nVamos recuperar nossa Luz, guardião!",
 
     'gtEmpty'              => "Para usar este comando, especifique os usuários via menção.\n" .
