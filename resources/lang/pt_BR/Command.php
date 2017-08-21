@@ -8,6 +8,8 @@ return [
     'adminCommands'      => "\n*Comandos administrativos:*\n",
     'command'            => ":command - :description;\n",
 
+    'callPrivate' => 'Guardião... resolveremos esse assunto no privado.',
+
     'commands' => [
         'cancelCommand' => 'Cancelar',
 

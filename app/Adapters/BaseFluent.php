@@ -24,6 +24,18 @@ class BaseFluent extends Fluent
     }
 
     /**
+     * Clone all Fluent attributes.
+     */
+    public function __clone()
+    {
+        foreach ($this->attributes as $attributeKey => $attributeValue) {
+            if ($attributeValue instanceof self) {
+                $this->attributes[$attributeKey] = clone $attributeValue;
+            }
+        }
+    }
+
+    /**
      * Process Fluent data if it is declared and instantiate a new class with this.
      * @param string $key   Data key.
      * @param string $class Data class type.

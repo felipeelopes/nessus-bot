@@ -17,6 +17,11 @@ use Exception;
 class BotMessageService
 {
     /**
+     * @var callable[]
+     */
+    private $afterCallbacks = [];
+
+    /**
      * @var bool|null
      */
     private $allowExceptions;
@@ -130,6 +135,15 @@ class BotMessageService
      */
     public function forcePrivate(): BotMessageService
     {
+        if (!$this->updateMessage->isPrivate()) {
+            $this->after(function () {
+                (new self($this->updateMessage))
+                    ->appendMessage(trans('Command.callPrivate'))
+                    ->unduplicate(self::class . '@' . __FUNCTION__ . '@from:' . $this->updateMessage->from->id)
+                    ->publish();
+            });
+        }
+
         $this->setReceiver($this->updateMessage->from->id);
         $this->setReplica(false);
 
@@ -201,6 +215,10 @@ class BotMessageService
             }
 
             Cache::put($this->unduplicateIdentifier, $message->onlyReference(), RequesterService::CACHE_DAY);
+        }
+
+        foreach ($this->afterCallbacks as $afterCallback) {
+            $afterCallback();
         }
 
         return $message;
@@ -294,5 +312,14 @@ class BotMessageService
         $this->unduplicateIdentifier = $identifier;
 
         return $this;
+    }
+
+    /**
+     * Add a callback to be run after the publish.
+     * @param callable $callable Callable.
+     */
+    private function after(callable $callable): void
+    {
+        $this->afterCallbacks[] = $callable;
     }
 }
