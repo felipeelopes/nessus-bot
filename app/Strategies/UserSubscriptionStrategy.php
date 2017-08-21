@@ -8,6 +8,7 @@ use Application\Adapters\Telegram\Update;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
+use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
 use Application\Strategies\Contracts\UpdateStrategyContract;
 
 class UserSubscriptionStrategy implements UpdateStrategyContract
@@ -29,6 +30,13 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                     ->appendMessage(trans('UserRegistration.toPrivate', [
                         'fullname' => $update->message->new_chat_member->getFullname(),
                     ]))
+                    ->unduplicate(WelcomeMoment::class . '@' . __FUNCTION__ . '@' . $update->message->new_chat_member->id)
+                    ->addLinkButton(
+                        trans('UserRegistration.toPrivateButton'),
+                        trans('UserRegistration.toPrivateLink', [
+                            'botname' => $botService->getMe()->username,
+                        ])
+                    )
                     ->publish();
             }
             else {
