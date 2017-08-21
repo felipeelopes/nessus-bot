@@ -203,6 +203,13 @@ class BotMessageService
                 throw $exception;
             }
 
+            (new self($this->updateMessage))
+                ->forcePublic()
+                ->setReplica()
+                ->allowExceptions()
+                ->appendMessage(trans('Command.cantContact'))
+                ->publish();
+
             return null;
         }
 
