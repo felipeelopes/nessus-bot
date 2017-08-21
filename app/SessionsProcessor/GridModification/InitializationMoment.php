@@ -184,6 +184,8 @@ class InitializationMoment extends SessionMoment
                         $botService->createMessage($update->message)
                             ->appendMessage(trans('GridSubscription.errorNoVacancies'))
                             ->publish();
+
+                        return;
                     }
                     break;
             }
