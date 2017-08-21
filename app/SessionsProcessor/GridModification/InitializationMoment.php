@@ -203,6 +203,15 @@ class InitializationMoment extends SessionMoment
             return;
         }
 
+        if ($position === GridSubscription::POSITION_TITULAR &&
+            $grid->getVacancies() === 0) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.errorNoVacancies'))
+                ->publish();
+
+            return;
+        }
+
         if ($position === GridSubscription::POSITION_TITULAR_RESERVE &&
             $userSubscription->subscription_position === GridSubscription::POSITION_TITULAR) {
             $botService->createMessage($update->message)
