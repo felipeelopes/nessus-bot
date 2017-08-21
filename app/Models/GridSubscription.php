@@ -154,6 +154,17 @@ class GridSubscription extends Model
             implode(',', [ self::POSITION_TITULAR_RESERVE, self::POSITION_RESERVE ]),
             self::POSITION_TITULAR,
         ]);
+
+        $thisTable         = DB::getTablePrefix() . $this->getTable();
+        $userGamertagTable = DB::getTablePrefix() . (new UserGamertag)->getTable();
+
+        // Then sort by alphabetical ordering.
+        $builder->orderByRaw("(
+            SELECT `{$userGamertagTable}`.`gamertag_value`
+            FROM   `{$userGamertagTable}`
+            WHERE  `{$userGamertagTable}`.`id` = `{$thisTable}`.`gamertag_id`
+            LIMIT  1
+        )");
     }
 
     /**
