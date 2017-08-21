@@ -10,7 +10,7 @@ return [
     'gridOwner'         => "\xE2\x9E\x9C *Organizador*: :value\n",
     'gridStatus'        => "\xE2\x9E\x9C *Status*: :value:details\n",
     'gridStatusDetails' => ' (_:details_)',
-    'gridRequirements'  => "\xE2\x9E\x9C *Exigências*: :value\n",
+    'gridRequirements'  => "\xE2\x9E\x9C *Observações*: :value\n",
     'gridTiming'        => "\xE2\x9E\x9C *Horário*: :value\n",
     'gridDuration'      => "\xE2\x9E\x9C *Duração*: cerca de :value\n",
     'gridPlayers'       => "\n*Participantes*: até :value\n",

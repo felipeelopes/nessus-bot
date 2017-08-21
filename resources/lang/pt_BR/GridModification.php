@@ -12,7 +12,7 @@ return [
     'modificationOptions' => [
         [ 'value' => InitializationMoment::REPLY_MODIFY_TITLE, 'description' => 'Modificar título...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_SUBTITLE, 'description' => 'Modificar subtítulo...' ],
-        [ 'value' => InitializationMoment::REPLY_MODIFY_REQUIREMENTS, 'description' => 'Modificar exigências...' ],
+        [ 'value' => InitializationMoment::REPLY_MODIFY_REQUIREMENTS, 'description' => 'Modificar observações...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_TIMING, 'description' => 'Modificar horário...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_DURATION, 'description' => 'Modificar duração...' ],
         [ 'value' => InitializationMoment::REPLY_MODIFY_PLAYERS, 'description' => 'Modificar número de titulares...' ],
@@ -42,16 +42,16 @@ return [
                               "Tente não ultrapassar :max caracteres.\n\n" .
                               "*\xE2\x9E\x9C Qual será o novo subtítulo da missão?*",
 
-    'modifyRequirementsOption'  => 'Modificar exigências...',
-    'modifyRequirementsWizard'  => "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
+    'modifyRequirementsOption'  => 'Modificar observações...',
+    'modifyRequirementsWizard'  => "*\xE2\x9E\x9C Quais serão as novas observações da missão?*\n" .
                                    "Limite de :max caracteres.\n\n" .
-                                   '*Exigências atual*: :current',
+                                   '*Observações atuais*: :current',
     'modifyRequirementsNone'    => '_(nenhuma)_',
-    'modifyRequirementsUpdated' => "*Exigências atualizada:* :value\n\n",
+    'modifyRequirementsUpdated' => "*Observações atualizada:* :value\n\n",
 
-    'errorRequirementsTooLong' => "*São exigências demais!*\n" .
+    'errorRequirementsTooLong' => "*São observações demais!*\n" .
                                   "Tente não ultrapassar :max caracteres.\n\n" .
-                                  "*\xE2\x9E\x9C Quais serão as novas exigências da missão?*\n" .
+                                  "*\xE2\x9E\x9C Quais serão as novas observações da missão?*\n" .
                                   'Limite de :max caracteres.',
 
     'modifyTimingOption'  => 'Modificar horário...',

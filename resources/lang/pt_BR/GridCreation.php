@@ -27,7 +27,7 @@ return [
         [ 'value' => 'Heróico com Desafio' ],
     ],
 
-    'creationWizardRequirements'        => "*\xE2\x9E\x9C Quais serão as exigências da missão?*\n" .
+    'creationWizardRequirements'        => "*\xE2\x9E\x9C Quais serão as observações da missão?*\n" .
                                            'Opcional (até :max caracteres).',
     'creationWizardRequirementsOptions' => [
         [ 'description' => 'Nenhuma' ],
@@ -82,9 +82,9 @@ return [
     'errorSubtitleTooLong'     => "*O subtítulo ficou grande demais!*\n" .
                                   "Tente não ultrapassar :max caracteres.\n\n" .
                                   "*\xE2\x9E\x9C Qual será o subtítulo da missão?*",
-    'errorRequirementsTooLong' => "*São exigências demais!*\n" .
+    'errorRequirementsTooLong' => "*São observações demais!*\n" .
                                   "Tente não ultrapassar :max caracteres.\n\n" .
-                                  "*\xE2\x9E\x9C Quais serão as exigências da missão?*\n" .
+                                  "*\xE2\x9E\x9C Quais serão as observações da missão?*\n" .
                                   'Opcional (até :max caracteres).',
     'errorTimingInvalid'       => "*O formato informado não é válido!*\n" .
                                   "Digite no formato HH:MM (ex. 10:30).\n\n" .
