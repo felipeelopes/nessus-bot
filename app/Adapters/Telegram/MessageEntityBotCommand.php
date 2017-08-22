@@ -89,4 +89,17 @@ class MessageEntityBotCommand extends BaseFluent
 
         return $users;
     }
+
+    /**
+     * Returns the text argument.
+     * @return null|string
+     */
+    public function getTextArgument(): ?string
+    {
+        $text = trim(substr($this->text, strpos($this->text, ' ')));
+
+        return $text !== ''
+            ? $text
+            : null;
+    }
 }

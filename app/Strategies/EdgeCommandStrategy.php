@@ -6,6 +6,7 @@ namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
 use Application\Models\User;
+use Application\Models\UserGamertag;
 use Application\Services\CommandService;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
@@ -43,6 +44,136 @@ class EdgeCommandStrategy implements UserStrategyContract
     }
 
     /**
+     * Process the Gamertag command.
+     * @param Update $update Update instance.
+     */
+    private static function commandGamertag(Update $update): void
+    {
+        $botService     = BotService::getInstance();
+        $messageCommand = $update->message->getCommand();
+
+        if ($messageCommand->entities->isEmpty()) {
+            $commandText = $messageCommand->getTextArgument();
+
+            if ($commandText !== null) {
+                /** @var UserGamertag $gamertagSingle */
+                $gamertagSingleQuery = UserGamertag::query();
+                $gamertagSingleQuery->where('gamertag_value', $commandText);
+                $gamertagSingle = $gamertagSingleQuery->first();
+
+                if ($gamertagSingle) {
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.searchGtSingle', [
+                            'mention' => $gamertagSingle->user->getMention(),
+                        ]))
+                        ->publish();
+
+                    return;
+                }
+
+                /** @var UserGamertag $gamertagSimilarsQuery */
+                $gamertagSimilarsQuery = UserGamertag::query();
+                $gamertagSimilarsQuery->filterBySimilarity($commandText);
+                $gamertagSimilarsQuery->orderBySimilarity($commandText);
+                $gamertagSimilarsQuery->limit(5);
+                $gamertagSimilars = $gamertagSimilarsQuery->get();
+
+                if ($gamertagSimilars->count() === 1) {
+                    /** @var UserGamertag $gamertagSimilar */
+                    $gamertagSimilar = $gamertagSimilars->first();
+
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.searchGtSimilaritySingle', [
+                            'gamertag' => $gamertagSimilar->gamertag_value,
+                            'mention'  => $gamertagSimilar->user->getMention(),
+                        ]))
+                        ->publish();
+
+                    return;
+                }
+
+                if ($gamertagSimilars->count() > 1) {
+                    $gamertagSimilarItems = [];
+
+                    /** @var UserGamertag $gamertagSimilar */
+                    foreach ($gamertagSimilars as $gamertagSimilar) {
+                        $gamertagSimilarItems[] = trans('EdgeCommand.searchGtSimilarityMultipleItem', [
+                            'gamertag' => $gamertagSimilar->gamertag_value,
+                            'mention'  => $gamertagSimilar->user->getMention(),
+                        ]);
+                    }
+
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.searchGtSimilarityMultipleHeader', [
+                            'items' => implode($gamertagSimilarItems),
+                        ]))
+                        ->publish();
+
+                    return;
+                }
+
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('EdgeCommand.searchGtEmpty'))
+                    ->publish();
+
+                return;
+            }
+
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('EdgeCommand.gtEmpty', [
+                    'command' => trans('Command.commands.gtCommand'),
+                ]))
+                ->publish();
+
+            return;
+        }
+
+        $messageMentions = $messageCommand->getMentions();
+
+        /** @var User $messageMention */
+        if (count($messageMentions) === 1) {
+            $messageMention = array_first($messageMentions);
+
+            if ($messageMention->exists) {
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('EdgeCommand.gtSingleRegistered', [
+                        'gamertag' => $messageMention->gamertag->gamertag_value,
+                    ]))
+                    ->publish();
+
+                return;
+            }
+
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('EdgeCommand.gtSingleUnregistered'))
+                ->publish();
+
+            return;
+        }
+
+        $messageBuilder = [];
+
+        foreach ($messageMentions as $messageMention) {
+            if ($messageMention->exists) {
+                $messageBuilder[] = trans('EdgeCommand.gtItemRegistered', [
+                    'gamertag' => $messageMention->gamertag->gamertag_value,
+                    'mention'  => $messageMention->getMention(),
+                ]);
+
+                continue;
+            }
+
+            $messageBuilder[] = trans('EdgeCommand.gtItemUnregistered', [
+                'mention' => $messageMention->getMention(),
+            ]);
+        }
+
+        $botService->createMessage($update->message)
+            ->appendMessage(implode($messageBuilder))
+            ->publish();
+    }
+
+    /**
      * @inheritdoc
      */
     public function process(?User $user, Update $update): ?bool
@@ -73,61 +204,7 @@ class EdgeCommandStrategy implements UserStrategyContract
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_GT)) {
-            $messageCommand = $update->message->getCommand();
-
-            if ($messageCommand->entities->isEmpty()) {
-                $botService->createMessage($update->message)
-                    ->appendMessage(trans('EdgeCommand.gtEmpty', [
-                        'command' => trans('Command.commands.gtCommand'),
-                    ]))
-                    ->publish();
-
-                return true;
-            }
-
-            $messageMentions = $messageCommand->getMentions();
-
-            /** @var User $messageMention */
-            if (count($messageMentions) === 1) {
-                $messageMention = array_first($messageMentions);
-
-                if ($messageMention->exists) {
-                    $botService->createMessage($update->message)
-                        ->appendMessage(trans('EdgeCommand.gtSingleRegistered', [
-                            'gamertag' => $messageMention->gamertag->gamertag_value,
-                        ]))
-                        ->publish();
-
-                    return true;
-                }
-
-                $botService->createMessage($update->message)
-                    ->appendMessage(trans('EdgeCommand.gtSingleUnregistered'))
-                    ->publish();
-
-                return true;
-            }
-
-            $messageBuilder = [];
-
-            foreach ($messageMentions as $messageMention) {
-                if ($messageMention->exists) {
-                    $messageBuilder[] = trans('EdgeCommand.gtItemRegistered', [
-                        'gamertag' => $messageMention->gamertag->gamertag_value,
-                        'mention'  => $messageMention->getMention(),
-                    ]);
-
-                    continue;
-                }
-
-                $messageBuilder[] = trans('EdgeCommand.gtItemUnregistered', [
-                    'mention' => $messageMention->getMention(),
-                ]);
-            }
-
-            $botService->createMessage($update->message)
-                ->appendMessage(implode($messageBuilder))
-                ->publish();
+            self::commandGamertag($update);
 
             return true;
         }
