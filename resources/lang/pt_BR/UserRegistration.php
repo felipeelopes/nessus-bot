@@ -15,7 +15,7 @@ return [
     // Need to talk in private.
     'toPrivate'             => "Seja bem-vindo, *:fullname*!\n\n" .
                                'Antes de enviar novas mensagens aqui no grupo, preciso falar com você em particular.',
-    'toPrivateButton'       => "\xE2\x97\x8F Clique aqui para iniciarmos a conversa... \xE2\x97\x8F",
+    'toPrivateButton'       => "\xC2\xAB Clique aqui para iniciarmos a conversa... \xC2\xBB",
     'toPrivateLink'         => 'https://t.me/:botname',
 
     // Gamertag request.

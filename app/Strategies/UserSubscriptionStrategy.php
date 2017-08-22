@@ -5,11 +5,14 @@ declare(strict_types = 1);
 namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
+use Application\Models\User;
+use Application\Models\UserGamertag;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\UserRegistration\WelcomeMoment;
 use Application\Strategies\Contracts\UpdateStrategyContract;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserSubscriptionStrategy implements UpdateStrategyContract
 {
@@ -24,6 +27,12 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             /** @var UserService $userService */
             $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($update->message->new_chat_member->id);
+
+            /** @var User|Builder|mixed $userQuery */
+            $userQuery = User::query();
+            $userQuery->whereUserNumber($update->message->new_chat_member->id);
+            $userQuery->withTrashed();
+            $user = $userQuery->first();
 
             if ($user === null) {
                 $botService->createMessage($update->message)
@@ -40,6 +49,14 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                     ->publish();
             }
             else {
+                $user->restore();
+
+                /** @var UserGamertag|mixed $userGamertagRelation */
+                $userGamertagRelation = $user->gamertag();
+                $userGamertagRelation->withTrashed()
+                    ->first()
+                    ->restore();
+
                 $userGamertags = $user->gamertag;
 
                 if ($userGamertags) {
@@ -59,6 +76,18 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             $user        = $userService->get($update->message->left_chat_member->id);
 
             if ($user === null) {
+                if ($update->message->left_chat_member->id !== $update->message->from->id) {
+                    $botService->sendSticker($update->message->chat->id, 'CAADAQADBwADwvySEXi2rT98M7GIAg');
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('UserSubscription.userLeftUnknowAdmin', [
+                            'admin'    => $update->message->from->getMention(),
+                            'fullname' => $update->message->left_chat_member->getFullname(),
+                        ]))
+                        ->publish();
+
+                    return true;
+                }
+
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBgADwvySEejmQn82duSBAg');
                 $botService->createMessage($update->message)
                     ->appendMessage(trans('UserSubscription.userLeftUnknown', [
@@ -75,9 +104,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 $botService->sendSticker($update->message->chat->id, 'CAADAQADBwADwvySEXi2rT98M7GIAg');
                 $botService->createMessage($update->message)
                     ->appendMessage(trans('UserSubscription.userLeftAdmin', [
-                        'admin'    => $update->message->from->username
-                            ? '@' . $update->message->from->username
-                            : $update->message->from->getFullname(),
+                        'admin'    => $update->message->from->getMention(),
                         'fullname' => $update->message->left_chat_member->getFullname(),
                         'gamertag' => $userGamertags->gamertag_value,
                     ]))
@@ -104,6 +131,9 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                         ->publish();
                 }
             }
+
+            $user->gamertag->delete();
+            $user->delete();
 
             return true;
         }
