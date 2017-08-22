@@ -64,7 +64,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                 if ($gamertagSingle) {
                     $botService->createMessage($update->message)
                         ->appendMessage(trans('EdgeCommand.searchGtSingle', [
-                            'mention' => $gamertagSingle->user->getMention(),
+                            'mention' => $gamertagSingle->user->getMention(true),
                         ]))
                         ->publish();
 
@@ -72,40 +72,17 @@ class EdgeCommandStrategy implements UserStrategyContract
                 }
 
                 /** @var UserGamertag $gamertagSimilarsQuery */
+                /** @var UserGamertag $gamertagSimilar */
                 $gamertagSimilarsQuery = UserGamertag::query();
                 $gamertagSimilarsQuery->filterBySimilarity($commandText);
                 $gamertagSimilarsQuery->orderBySimilarity($commandText);
-                $gamertagSimilarsQuery->limit(5);
-                $gamertagSimilars = $gamertagSimilarsQuery->get();
+                $gamertagSimilar = $gamertagSimilarsQuery->first();
 
-                if ($gamertagSimilars->count() === 1) {
-                    /** @var UserGamertag $gamertagSimilar */
-                    $gamertagSimilar = $gamertagSimilars->first();
-
+                if ($gamertagSimilar) {
                     $botService->createMessage($update->message)
-                        ->appendMessage(trans('EdgeCommand.searchGtSimilaritySingle', [
+                        ->appendMessage(trans('EdgeCommand.searchGtSimilarity', [
                             'gamertag' => $gamertagSimilar->gamertag_value,
-                            'mention'  => $gamertagSimilar->user->getMention(),
-                        ]))
-                        ->publish();
-
-                    return;
-                }
-
-                if ($gamertagSimilars->count() > 1) {
-                    $gamertagSimilarItems = [];
-
-                    /** @var UserGamertag $gamertagSimilar */
-                    foreach ($gamertagSimilars as $gamertagSimilar) {
-                        $gamertagSimilarItems[] = trans('EdgeCommand.searchGtSimilarityMultipleItem', [
-                            'gamertag' => $gamertagSimilar->gamertag_value,
-                            'mention'  => $gamertagSimilar->user->getMention(),
-                        ]);
-                    }
-
-                    $botService->createMessage($update->message)
-                        ->appendMessage(trans('EdgeCommand.searchGtSimilarityMultipleHeader', [
-                            'items' => implode($gamertagSimilarItems),
+                            'mention'  => $gamertagSimilar->user->getMention(true),
                         ]))
                         ->publish();
 

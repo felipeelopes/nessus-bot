@@ -28,12 +28,17 @@ class User extends Model
 
     /**
      * Return the user mention (or first name) string.
+     * @param bool|null $fullname Return with fullname (default: false).
      * @return null|string
      */
-    public function getMention(): ?string
+    public function getMention(?bool $fullname = null): ?string
     {
         if ($this->user_username) {
-            return '@' . $this->user_username;
+            return '@' . addcslashes($this->user_username, '_');
+        }
+
+        if ($fullname === true) {
+            return trim($this->user_firstname . ' ' . $this->user_lastname);
         }
 
         return $this->user_firstname;

@@ -96,7 +96,13 @@ class MessageEntityBotCommand extends BaseFluent
      */
     public function getTextArgument(): ?string
     {
-        $text = trim(substr($this->text, strpos($this->text, ' ')));
+        $textStart = strpos($this->text, ' ');
+
+        if ($textStart === false) {
+            return null;
+        }
+
+        $text = trim(substr($this->text, $textStart));
 
         return $text !== ''
             ? $text

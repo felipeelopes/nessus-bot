@@ -26,7 +26,7 @@ class UserGamertag extends Model
      */
     public function scopeFilterBySimilarity(Builder $builder, string $gamertag)
     {
-        $builder->whereRaw('LEVENSHTEIN_RATIO(LOWER(`gamertag_value`), ?) >= 70', [
+        $builder->whereRaw('LEVENSHTEIN_RATIO(LOWER(`gamertag_value`), ?) >= 30', [
             Str::lower($gamertag),
         ]);
     }
