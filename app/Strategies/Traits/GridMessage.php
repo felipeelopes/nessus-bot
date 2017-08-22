@@ -85,7 +85,7 @@ trait GridMessage
             ]);
         }
 
-        $message = $botService->createMessage($update->message)
+        $botService->createMessage($update->message)
             ->appendMessage($result)
             ->setOptions([ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ])
             ->unduplicate(__CLASS__ . '@' . __FUNCTION__)
