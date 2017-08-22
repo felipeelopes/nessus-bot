@@ -64,7 +64,8 @@ class EdgeCommandStrategy implements UserStrategyContract
                 if ($gamertagSingle) {
                     $botService->createMessage($update->message)
                         ->appendMessage(trans('EdgeCommand.searchGtSingle', [
-                            'mention' => $gamertagSingle->user->getMention(true),
+                            'gamertag' => $gamertagSingle->gamertag_value,
+                            'mention'  => $gamertagSingle->user->getMention(true),
                         ]))
                         ->publish();
 
