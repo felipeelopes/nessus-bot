@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Traits\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class User extends Model
 {
+    use SoftDeletes;
+
     /**
      * Returns the user gamertag.
      */

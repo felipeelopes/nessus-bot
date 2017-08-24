@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Traits\SoftDeletes;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +27,8 @@ use Illuminate\Support\Str;
  */
 class GridSubscription extends Model
 {
+    use SoftDeletes;
+
     public const POSITION_RESERVE         = 'reserve';
     public const POSITION_TITULAR         = 'titular';
     public const POSITION_TITULAR_RESERVE = 'titularReserve';

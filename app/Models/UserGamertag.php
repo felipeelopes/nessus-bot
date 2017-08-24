@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Traits\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -19,6 +20,8 @@ use Illuminate\Support\Str;
  */
 class UserGamertag extends Model
 {
+    use SoftDeletes;
+
     /**
      * Find user by similarity.
      * @param Builder $builder  Builder instance.

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Models;
 
 use Application\Adapters\Telegram\User as TelegramUser;
+use Application\Models\Traits\SoftDeletes;
 use Application\SessionsProcessor\GridModification\UnsubscribeMoment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,6 +34,8 @@ use Illuminate\Support\Str;
  */
 class Grid extends Model
 {
+    use SoftDeletes;
+
     public const STATUS_CANCELED   = 'canceled';
     public const STATUS_FINISHED   = 'finished';
     public const STATUS_GATHERING  = 'gathering';
