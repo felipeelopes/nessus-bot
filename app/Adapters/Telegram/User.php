@@ -35,11 +35,14 @@ class User extends BaseFluent
      */
     public function getMention(): string
     {
-        if ($this->username) {
-            return '@' . $this->username;
+        $botService   = BotService::getInstance();
+        $userRegister = $this->getUserRegister();
+
+        if ($userRegister && $userRegister->gamertag) {
+            return $botService->formatMention($userRegister->gamertag->gamertag_value, $this->id);
         }
 
-        return $this->getFullname();
+        return $botService->formatMention($this->getFullname(), $this->id);
     }
 
     /**

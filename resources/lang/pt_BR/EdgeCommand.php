@@ -21,9 +21,9 @@ return [
     'searchGtEmpty'      => "*Nenhum resultado...*\n" .
                             'Não consegui achar uma Gamertag parecida.',
     'searchGtSingle'     => "*Encontrei!*\n" .
-                            "\xE2\x9E\x9C :gamertag \xE2\x86\x92 :mention",
+                            "\xE2\x9E\x9C *GT:* :gamertag \xE2\x86\x92 :mention",
     'searchGtSimilarity' => "*Encontrei alguém parecido:*\n" .
-                            "\xE2\x9E\x9C :gamertag \xE2\x86\x92 `:mention`",
+                            "\xE2\x9E\x9C *GT:* :gamertag \xE2\x86\x92 :mention",
 
     'systemRefreshed' => 'Recursos de sistema atualizados.',
 ];

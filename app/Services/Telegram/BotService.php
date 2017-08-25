@@ -74,6 +74,27 @@ class BotService implements ServiceContract
     }
 
     /**
+     * Escape a message to be compatible with Telegram.
+     * @param string|null $message Message.
+     * @return string
+     */
+    public function escape(?string $message): string
+    {
+        return addcslashes((string) $message, '_*`[]');
+    }
+
+    /**
+     * Format a User mention.
+     * @param string $mention Mention text.
+     * @param int    $id      User id.
+     * @return string
+     */
+    public function formatMention($mention, $id): string
+    {
+        return sprintf('[%s](tg://user?id=%u)', $this->escape($mention), $id);
+    }
+
+    /**
      * Get the Chat instance.
      * @return Chat
      */

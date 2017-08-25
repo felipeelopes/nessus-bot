@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Models;
 
 use Application\Models\Traits\SoftDeletes;
+use Application\Services\Telegram\BotService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -30,20 +31,25 @@ class User extends Model
     }
 
     /**
-     * Return the user mention (or first name) string.
-     * @param bool|null $fullname Return with fullname (default: false).
-     * @return null|string
+     * Returns the User fullname.
+     * @return string
      */
-    public function getMention(?bool $fullname = null): ?string
+    public function getFullname(): string
     {
-        if ($this->user_username) {
-            return '@' . addcslashes($this->user_username, '_');
+        return implode(' ', array_unique(array_filter([ $this->user_firstname, $this->user_lastname ])));
+    }
+
+    /**
+     * Return the user mention (or first name) string.
+     */
+    public function getMention(): string
+    {
+        $botService = BotService::getInstance();
+
+        if ($this->gamertag) {
+            return $botService->formatMention($this->gamertag->gamertag_value, $this->user_number);
         }
 
-        if ($fullname === true) {
-            return trim($this->user_firstname . ' ' . $this->user_lastname);
-        }
-
-        return $this->user_firstname;
+        return $botService->formatMention($this->getFullname(), $this->user_number);
     }
 }
