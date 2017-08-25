@@ -8,18 +8,16 @@ use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
+use Application\Services\GridNotificationService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 use Illuminate\Database\Eloquent\Builder;
 
 class TransferOwnerMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     /**
      * Returns the subscribers from grid except you.
      * @param Update  $update  Update instance.
@@ -89,9 +87,10 @@ class TransferOwnerMoment extends SessionMoment
         $subscriberHim->subscription_rule = GridSubscription::RULE_OWNER;
         $subscriberHim->save();
 
-        static::notifyUpdate($update, $process, trans('GridModification.transferOwnerUpdated', [
-            'value' => $subscriberHim->gamertag->gamertag_value,
-        ]));
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid, trans('GridModification.transferOwnerUpdated', [
+                'value' => $subscriberHim->gamertag->gamertag_value,
+            ]));
 
         return InitializationMoment::class;
     }
@@ -105,7 +104,8 @@ class TransferOwnerMoment extends SessionMoment
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         if ($grid->subscribers->count() < 2) {
-            self::notifyMessage($update, $process, trans('GridModification.transferOwnerIsEmpty'));
+            GridNotificationService::getInstance()
+                ->notifyMessage($update, $grid, trans('GridModification.transferOwnerIsEmpty'));
 
             throw new ForceMomentException(InitializationMoment::class);
         }

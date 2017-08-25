@@ -9,18 +9,16 @@ use Application\Adapters\Telegram\Update;
 use Application\Models\Grid as GridModel;
 use Application\Models\GridSubscription;
 use Application\Services\Assertions\EventService;
+use Application\Services\GridNotificationService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridModification\InitializationMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 
 class ConfirmMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     public const EVENT_INVALID_CONFIRMATION = 'invalidConfirmation';
     public const EVENT_REQUEST              = 'request';
     public const EVENT_SAVE                 = 'save';
@@ -92,7 +90,8 @@ class ConfirmMoment extends SessionMoment
 
         $update->message->forcePublic();
 
-        self::notifyOptions($update, $process);
+        GridNotificationService::getInstance()
+            ->notifyWithOptions($update, $grid);
 
         assert(EventService::getInstance()->register(self::EVENT_SAVE));
 

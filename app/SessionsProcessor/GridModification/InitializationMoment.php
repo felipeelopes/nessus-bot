@@ -10,10 +10,10 @@ use Application\Exceptions\SessionProcessor\SkipParentMomentException;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
 use Application\Services\CommandService;
+use Application\Services\GridNotificationService;
 use Application\Services\SessionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,8 +21,6 @@ use Illuminate\Support\Str;
 
 class InitializationMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     public const PROCESS_CONTINUE = 'continue';
     public const PROCESS_GRID_ID  = 'gridId';
 
@@ -73,17 +71,17 @@ class InitializationMoment extends SessionMoment
 
             switch (Str::upper($command->getArgument(1))) {
                 case trans('Command.commands.subscribeTitularCommandLetter'):
-                    $this->subscribeAs($update, $process, $grid, GridSubscription::POSITION_TITULAR);
+                    $this->subscribeAs($update, $grid, GridSubscription::POSITION_TITULAR);
 
                     return true;
                     break;
                 case trans('Command.commands.subscribeTitularReserveCommandLetter'):
-                    $this->subscribeAs($update, $process, $grid, GridSubscription::POSITION_TITULAR_RESERVE);
+                    $this->subscribeAs($update, $grid, GridSubscription::POSITION_TITULAR_RESERVE);
 
                     return true;
                     break;
                 case trans('Command.commands.subscribeReserveCommandLetter'):
-                    $this->subscribeAs($update, $process, $grid, GridSubscription::POSITION_RESERVE);
+                    $this->subscribeAs($update, $grid, GridSubscription::POSITION_RESERVE);
 
                     return true;
                     break;
@@ -93,13 +91,14 @@ class InitializationMoment extends SessionMoment
                     return true;
                     break;
                 case trans('Command.commands.subscribeObservationCommandLetter'):
-                    $this->setObservation($update, $process, $grid);
+                    $this->setObservation($update, $grid);
 
                     return true;
                     break;
             }
 
-            static::notifyOptions($update, $process);
+            GridNotificationService::getInstance()
+                ->notifyWithOptions($update, $grid);
 
             return true;
         }
@@ -162,11 +161,10 @@ class InitializationMoment extends SessionMoment
 
     /**
      * Set an user observation on grid.
-     * @param Update  $update  Update instance.
-     * @param Process $process Process instance.
-     * @param Grid    $grid    Grid instance.
+     * @param Update $update Update instance.
+     * @param Grid   $grid   Grid instance.
      */
-    private function setObservation(Update $update, Process $process, Grid $grid)
+    private function setObservation(Update $update, Grid $grid)
     {
         $botService       = BotService::getInstance();
         $userSubscription = $grid->getUserSubscription($update->message->from);
@@ -191,7 +189,8 @@ class InitializationMoment extends SessionMoment
                     ->appendMessage(trans('GridSubscription.observationDropped'))
                     ->publish();
 
-                static::notifyOptions($update, $process);
+                GridNotificationService::getInstance()
+                    ->notifyWithOptions($update, $grid);
 
                 return;
             }
@@ -210,17 +209,17 @@ class InitializationMoment extends SessionMoment
         $userSubscription->subscription_description = $commandText;
         $userSubscription->save();
 
-        static::notifyOptions($update, $process);
+        GridNotificationService::getInstance()
+            ->notifyWithOptions($update, $grid);
     }
 
     /**
      * Subscribe no grid with a specific rule.
-     * @param Update  $update   Update instance.
-     * @param Process $process  Process instance.
-     * @param Grid    $grid     Grid instance.
-     * @param string  $position Subscription position.
+     * @param Update $update   Update instance.
+     * @param Grid   $grid     Grid instance.
+     * @param string $position Subscription position.
      */
-    private function subscribeAs(Update $update, Process $process, Grid $grid, string $position)
+    private function subscribeAs(Update $update, Grid $grid, string $position)
     {
         $botService       = BotService::getInstance();
         $userSubscription = $grid->getUserSubscription($update->message->from);
@@ -256,7 +255,8 @@ class InitializationMoment extends SessionMoment
             $userSubscription->reserved_at           = Carbon::now();
             $userSubscription->save();
 
-            static::notifyOptions($update, $process);
+            GridNotificationService::getInstance()
+                ->notifyWithOptions($update, $grid);
 
             return;
         }
@@ -296,7 +296,8 @@ class InitializationMoment extends SessionMoment
             $grid->acceptTitularReserve();
         }
 
-        static::notifyOptions($update, $process);
+        GridNotificationService::getInstance()
+            ->notifyWithOptions($update, $grid);
     }
 
     /**
@@ -336,6 +337,7 @@ class InitializationMoment extends SessionMoment
 
         $grid->acceptTitularReserve();
 
-        static::notifyOptions($update, $process);
+        GridNotificationService::getInstance()
+            ->notifyWithOptions($update, $grid);
     }
 }

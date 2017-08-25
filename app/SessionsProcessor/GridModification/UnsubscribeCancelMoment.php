@@ -6,14 +6,12 @@ namespace Application\SessionsProcessor\GridModification;
 
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
+use Application\Services\GridNotificationService;
 use Application\SessionsProcessor\Definition\SessionMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 
 class UnsubscribeCancelMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     /**
      * @inheritdoc
      */
@@ -26,7 +24,8 @@ class UnsubscribeCancelMoment extends SessionMoment
         $grid->grid_status_details = $input;
         $grid->save();
 
-        static::notifyUpdate($update, $process, trans('GridModification.unsubscribeCancelUpdate'));
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid, trans('GridModification.unsubscribeCancelUpdate'));
 
         return InitializationMoment::class;
     }

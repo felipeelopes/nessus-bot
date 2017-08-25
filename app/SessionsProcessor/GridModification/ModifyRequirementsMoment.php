@@ -6,18 +6,16 @@ namespace Application\SessionsProcessor\GridModification;
 
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
+use Application\Services\GridNotificationService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridCreation\RequirementsMoment;
 use Application\SessionsProcessor\GridCreation\SubtitleMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 
 class ModifyRequirementsMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     /**
      * @inheritdoc
      */
@@ -47,9 +45,10 @@ class ModifyRequirementsMoment extends SessionMoment
         $grid->grid_requirements = $input;
         $grid->save();
 
-        static::notifyUpdate($update, $process, trans('GridModification.modifyRequirementsUpdated', [
-            'value' => $input ?: trans('GridModification.modifyRequirementsNone'),
-        ]));
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid, trans('GridModification.modifyRequirementsUpdated', [
+                'value' => $input ?: trans('GridModification.modifyRequirementsNone'),
+            ]));
 
         return InitializationMoment::class;
     }

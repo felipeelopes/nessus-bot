@@ -8,16 +8,14 @@ use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
+use Application\Services\GridNotificationService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 
 class UnsubscribeMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     public const CANCEL_ACCESS_ISSUE    = 'accessIssue';
     public const CANCEL_LACK_INTEREST   = 'lackInterest';
     public const CANCEL_LACK_PLAYERS    = 'lackPlayers';
@@ -70,7 +68,8 @@ class UnsubscribeMoment extends SessionMoment
 
         $grid->acceptTitularReserve();
 
-        static::notifyUpdate($update, $process, trans('GridModification.unsubscribeYouUpdate'));
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid, trans('GridModification.unsubscribeYouUpdate'));
     }
 
     /**
@@ -95,7 +94,8 @@ class UnsubscribeMoment extends SessionMoment
 
         $grid->acceptTitularReserve();
 
-        static::notifyUpdate($update, $process, trans('GridModification.unsubscribeOwnerUpdate'));
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid, trans('GridModification.unsubscribeOwnerUpdate'));
 
         return InitializationMoment::class;
     }

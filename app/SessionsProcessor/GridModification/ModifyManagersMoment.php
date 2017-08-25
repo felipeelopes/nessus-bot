@@ -8,11 +8,11 @@ use Application\Adapters\Telegram\Update;
 use Application\Exceptions\SessionProcessor\ForceMomentException;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
+use Application\Services\GridNotificationService;
 use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\SessionsProcessor\Definition\SessionMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,8 +20,6 @@ use Illuminate\Support\Collection;
 
 class ModifyManagersMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     /**
      * Returns the subscribers from grid except you.
      * @param Process $process Process instance.
@@ -133,13 +131,15 @@ class ModifyManagersMoment extends SessionMoment
             $subscriberModified->subscription_rule = GridSubscription::RULE_USER;
             $subscriberModified->save();
 
-            static::notifyUpdate($update, $process, trans('GridModification.modifyManagerRevokeUpdate', $subscriberGamertag));
+            GridNotificationService::getInstance()
+                ->notifyUpdate($update, $grid, trans('GridModification.modifyManagerRevokeUpdate', $subscriberGamertag));
         }
         else if ($subscriberModified->subscription_rule === GridSubscription::RULE_USER) {
             $subscriberModified->subscription_rule = GridSubscription::RULE_MANAGER;
             $subscriberModified->save();
 
-            static::notifyUpdate($update, $process, trans('GridModification.modifyManagerAddUpdate', $subscriberGamertag));
+            GridNotificationService::getInstance()
+                ->notifyUpdate($update, $grid, trans('GridModification.modifyManagerAddUpdate', $subscriberGamertag));
         }
 
         return InitializationMoment::class;
@@ -154,7 +154,8 @@ class ModifyManagersMoment extends SessionMoment
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
 
         if ($grid->subscribers->count() < 2) {
-            self::notifyMessage($update, $process, trans('GridModification.modifyManagersIsEmpty'));
+            GridNotificationService::getInstance()
+                ->notifyMessage($update, $grid, trans('GridModification.modifyManagersIsEmpty'));
 
             throw new ForceMomentException(InitializationMoment::class);
         }

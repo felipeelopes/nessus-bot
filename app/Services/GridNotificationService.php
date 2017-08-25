@@ -2,29 +2,34 @@
 
 declare(strict_types = 1);
 
-namespace Application\SessionsProcessor\GridModification\Traits;
+namespace Application\Services;
 
 use Application\Adapters\Grid as GridAdapter;
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
-use Application\Services\PredefinitionService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\GridModification\InitializationMoment;
-use Application\Types\Process;
 use Illuminate\Support\Collection;
 
-trait ModificationMoment
+class GridNotificationService
 {
+    /**
+     * @inheritdoc
+     */
+    public static function getInstance(): GridNotificationService
+    {
+        return MockupService::getInstance()->instance(static::class);
+    }
+
     /**
      * Notify the a message with all update options.
      * @param Update      $update  Update instance.
-     * @param Process     $process Process instance.
+     * @param Grid        $grid    Grid instance.
      * @param string|null $message Message.
      */
-    public static function notifyMessage(Update $update, Process $process, string $message): void
+    public function notifyMessage(Update $update, Grid $grid, string $message): void
     {
-        /** @var Grid $grid */
-        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
+        $botService = BotService::getInstance();
 
         $isPrivate    = $update->message->isPrivate();
         $isCanceled   = $grid->isCanceled();
@@ -121,7 +126,6 @@ trait ModificationMoment
                    $availableOption['conditional'] !== false;
         });
 
-        $botService = BotService::getInstance();
         $botMessage = $botService->createMessage($update->message)
             ->setReplica(false)
             ->appendMessage($message)
@@ -137,27 +141,13 @@ trait ModificationMoment
 
     /**
      * Notify the update message with all update options.
-     * @param Update  $update  Update instance.
-     * @param Process $process Process instance.
-     */
-    public static function notifyOptions(Update $update, Process $process): void
-    {
-        self::notifyUpdate($update, $process, null, false);
-    }
-
-    /**
-     * Notify the update message with all update options.
      * @param Update      $update      Update instance.
-     * @param Process     $process     Process instance.
+     * @param Grid        $grid        Grid instance.
      * @param string|null $updateTitle Update title.
      * @param bool|null   $publish     Publish to group (default: true).
-     * @throws \Exception
      */
-    public static function notifyUpdate(Update $update, Process $process, ?string $updateTitle, ?bool $publish = null): void
+    public function notifyUpdate(Update $update, Grid $grid, ?string $updateTitle, ?bool $publish = null): void
     {
-        /** @var Grid $grid */
-        $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
-
         $gridAdapter = GridAdapter::fromModel($grid);
 
         $gridStructure = $gridAdapter->getStructure(GridAdapter::STRUCTURE_TYPE_FULL);
@@ -170,14 +160,23 @@ trait ModificationMoment
             ]);
         }
 
-        self::notifyMessage($update, $process, $updateMessage);
+        $this->notifyMessage($update, $grid, $updateMessage);
 
         if ($publish !== false && $update->message->isPrivate()) {
-            $publicUpdate          = clone $update;
-            $publicUpdate->message = clone $publicUpdate->message;
+            $publicUpdate = clone $update;
             $publicUpdate->message->forcePublic();
 
-            self::notifyMessage($publicUpdate, $process, $gridStructure);
+            $this->notifyMessage($publicUpdate, $grid, $gridStructure);
         }
+    }
+
+    /**
+     * Notify the update message with all update options.
+     * @param Update $update Update instance.
+     * @param Grid   $grid   Grid instance.
+     */
+    public function notifyWithOptions(Update $update, Grid $grid): void
+    {
+        $this->notifyUpdate($update, $grid, null, false);
     }
 }

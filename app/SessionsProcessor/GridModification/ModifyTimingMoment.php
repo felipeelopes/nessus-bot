@@ -7,17 +7,15 @@ namespace Application\SessionsProcessor\GridModification;
 use Application\Adapters\Grid as GridAdapter;
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
+use Application\Services\GridNotificationService;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\Definition\SessionMoment;
 use Application\SessionsProcessor\GridCreation\TimingMoment;
-use Application\SessionsProcessor\GridModification\Traits\ModificationMoment;
 use Application\Types\Process;
 use Carbon\Carbon;
 
 class ModifyTimingMoment extends SessionMoment
 {
-    use ModificationMoment;
-
     /**
      * @inheritdoc
      */
@@ -49,9 +47,10 @@ class ModifyTimingMoment extends SessionMoment
 
         $gridAdapter = GridAdapter::fromModel($grid);
 
-        static::notifyUpdate($update, $process, trans('GridModification.modifyTimingUpdated', [
-            'value' => $gridAdapter->getTimingFormatted(),
-        ]));
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid, trans('GridModification.modifyTimingUpdated', [
+                'value' => $gridAdapter->getTimingFormatted(),
+            ]));
 
         return InitializationMoment::class;
     }
