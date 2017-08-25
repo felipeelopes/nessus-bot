@@ -9,13 +9,20 @@ use Application\Adapters\Telegram\Chat;
 use Application\Adapters\Telegram\ChatMember;
 use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\SendMessage;
+use Application\Adapters\Telegram\Update;
 use Application\Adapters\Telegram\User;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Telegram\RequesterService;
+use Illuminate\Http\Request;
 
 class BotService implements ServiceContract
 {
+    /**
+     * @var Update
+     */
+    private $currentUpdate;
+
     /**
      * Requester Service instance.
      * @var RequesterService
@@ -126,6 +133,24 @@ class BotService implements ServiceContract
     public function getMe(): ?User
     {
         return $this->requester->request(User::class, 'getMe', null, RequesterService::CACHE_HOUR);
+    }
+
+    /**
+     * Returns the current Update instance.
+     * @return Update
+     */
+    public function getUpdate(): Update
+    {
+        if ($this->currentUpdate) {
+            return $this->currentUpdate;
+        }
+
+        /** @var Request $request */
+        $request = app('request');
+
+        $this->currentUpdate = new Update(json_decode($request->getContent(), true));
+
+        return $this->currentUpdate;
     }
 
     /**

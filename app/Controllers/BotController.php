@@ -9,6 +9,7 @@ use Application\Controllers\Contracts\RouterRegisterContract;
 use Application\Services\MockupService;
 use Application\Services\PredefinitionService;
 use Application\Services\SessionService;
+use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Application\Strategies\CancelCommandStrategy;
 use Application\Strategies\EdgeCommandStrategy;
@@ -18,7 +19,6 @@ use Application\Strategies\GridModificationStrategy;
 use Application\Strategies\PredefinitionStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Application\Strategies\UserSubscriptionStrategy;
-use Illuminate\Http\Request;
 use Route;
 
 class BotController extends Controller implements RouterRegisterContract
@@ -44,11 +44,10 @@ class BotController extends Controller implements RouterRegisterContract
 
     /**
      * Process an Updates request from Telegram.
-     * @param Request $request Telegram request.
      */
-    public function process(Request $request): void
+    public function process(): void
     {
-        $this->processUpdate(new Update(json_decode($request->getContent(), true)));
+        $this->processUpdate(BotService::getInstance()->getUpdate());
     }
 
     /**
