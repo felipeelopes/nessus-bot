@@ -92,6 +92,11 @@ class InitializationMoment extends SessionMoment
 
                     return true;
                     break;
+                case trans('Command.commands.subscribeObservationCommandLetter'):
+                    $this->setObservation($update, $process, $grid);
+
+                    return true;
+                    break;
             }
 
             static::notifyOptions($update, $process);
@@ -153,6 +158,59 @@ class InitializationMoment extends SessionMoment
         }
 
         return null;
+    }
+
+    /**
+     * Set an user observation on grid.
+     * @param Update  $update  Update instance.
+     * @param Process $process Process instance.
+     * @param Grid    $grid    Grid instance.
+     */
+    private function setObservation(Update $update, Process $process, Grid $grid)
+    {
+        $botService       = BotService::getInstance();
+        $userSubscription = $grid->getUserSubscription($update->message->from);
+
+        if (!$userSubscription) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.alreadyUnsubscribed'))
+                ->publish();
+
+            return;
+        }
+
+        $command     = $update->message->getCommand();
+        $commandText = $command->getTextArgument();
+
+        if (!$commandText) {
+            if ($userSubscription->subscription_description) {
+                $userSubscription->subscription_description = null;
+                $userSubscription->save();
+
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('GridSubscription.observationDropped'))
+                    ->publish();
+
+                static::notifyOptions($update, $process);
+
+                return;
+            }
+
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.observationHowTo', [
+                    'command' => trans('Command.commands.subscribeObservationCommand', [
+                        'id' => $userSubscription->grid_id,
+                    ]),
+                ]))
+                ->publish();
+
+            return;
+        }
+
+        $userSubscription->subscription_description = $commandText;
+        $userSubscription->save();
+
+        static::notifyOptions($update, $process);
     }
 
     /**

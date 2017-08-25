@@ -8,6 +8,7 @@ use Application\Adapters\Telegram\User;
 use Application\Models\Grid as GridModel;
 use Application\Models\GridSubscription;
 use Application\Services\MockupService;
+use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -152,12 +153,21 @@ class Grid extends BaseFluent
             $resultTitulars = [];
             $resultReserves = [];
 
+            $botService = BotService::getInstance();
+
             /** @var GridSubscription $gridSubscriber */
             foreach ($grid->subscribers_sorted as $gridSubscriber) {
                 $gridSubscriberMask = [
-                    'gamertag' => $gridSubscriber->gamertag->gamertag_value,
+                    'gamertag' => $botService->escape($gridSubscriber->gamertag->gamertag_value),
                     'icon'     => implode(' ', $gridSubscriber->getIcons()),
                 ];
+
+                if ($gridSubscriber->subscription_description) {
+                    $gridSubscriberMask['gamertag'] = trans('Grid.subscriberObservation', [
+                        'gamertag'    => $gridSubscriberMask['gamertag'],
+                        'observation' => $botService->escape($gridSubscriber->subscription_description),
+                    ]);
+                }
 
                 if ($gridSubscriber->isTitular()) {
                     $resultTitulars[] = trans('Grid.titularItem', $gridSubscriberMask);

@@ -63,5 +63,9 @@ return [
         'subscribeUnsubscribeCommand'       => 'G:idS',
         'subscribeUnsubscribeCommandLetter' => 'S',
         'subscribeUnsubscribeDescription'   => 'Sair',
+
+        'subscribeObservationCommand'       => 'G:idO',
+        'subscribeObservationCommandLetter' => 'O',
+        'subscribeObservationDescription'   => 'Acrescentar observação...',
     ],
 ];

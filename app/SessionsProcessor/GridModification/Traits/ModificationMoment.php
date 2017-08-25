@@ -107,6 +107,11 @@ trait ModificationMoment
                 'conditional' => !$isPrivate && !$isCanceled,
             ],
             [
+                'command'     => 'subscribeObservation',
+                'arguments'   => [ 'id' => $grid->id ],
+                'conditional' => !$isPrivate && !$isCanceled,
+            ],
+            [
                 'command'     => 'subscribeUnsubscribe',
                 'arguments'   => [ 'id' => $grid->id ],
                 'conditional' => !$isPrivate && !$isCanceled,

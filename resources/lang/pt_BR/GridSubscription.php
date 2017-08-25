@@ -16,4 +16,8 @@ return [
                                  'Só será possível entrar como *titular-reserva* se as vagas de *titular* se esgotarem.',
     'errorAlreadyTitular'     => "*Desculpe, guardião...*\n" .
                                  'Você não pode se tornar um *titular-reserva*, pois já está inscrito como *titular* nesta grade.',
+
+    'observationDropped' => 'A sua observação foi removida desta grade.',
+    'observationHowTo'   => "Informe ao lado do comando a observação.\n" .
+                            '*Exemplo:* /:command caçador',
 ];

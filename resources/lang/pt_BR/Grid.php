@@ -15,6 +15,8 @@ return [
     'gridDuration'      => "\xE2\x9E\x9C *Duração*: cerca de :value\n",
     'gridPlayers'       => "\n*Participantes*: até :value\n",
 
+    'subscriberObservation' => ':gamertag (_:observation_)',
+
     'titularsHeader'   => "\n*Titulares:*\n",
     'titularItem'      => "\xF0\x9F\x8E\xAE :gamertag :icon\n",
     'titularItemEmpty' => "\xF0\x9F\x8E\xAE \n",
