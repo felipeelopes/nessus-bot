@@ -21,6 +21,8 @@ class ForceMomentException extends RuntimeException
     public function __construct(string $moment)
     {
         $this->moment = $moment;
+
+        parent::__construct();
     }
 
     /**
