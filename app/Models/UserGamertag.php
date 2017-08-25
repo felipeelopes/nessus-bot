@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Observers\UserGamertagObserver;
 use Application\Models\Traits\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,6 +22,16 @@ use Illuminate\Support\Str;
 class UserGamertag extends Model
 {
     use SoftDeletes;
+
+    /**
+     * Model boot.
+     */
+    protected static function boot(): void
+    {
+        static::observe(UserGamertagObserver::class);
+
+        parent::boot();
+    }
 
     /**
      * Find user by similarity.

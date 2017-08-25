@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Observers\UserObserver;
 use Application\Models\Traits\SoftDeletes;
 use Application\Services\Telegram\BotService;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class User extends Model
 {
     use SoftDeletes;
+
+    /**
+     * Model boot.
+     */
+    protected static function boot(): void
+    {
+        static::observe(UserObserver::class);
+
+        parent::boot();
+    }
 
     /**
      * Returns the user gamertag.

@@ -6,7 +6,6 @@ namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
 use Application\Models\User;
-use Application\Models\UserGamertag;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserService;
@@ -46,12 +45,6 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             }
             else {
                 $user->restore();
-
-                /** @var UserGamertag|mixed $userGamertagRelation */
-                $userGamertagRelation = $user->gamertag();
-                $userGamertagRelation->withTrashed()
-                    ->first()
-                    ->restore();
 
                 $userGamertags = $user->gamertag;
 
@@ -128,7 +121,6 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 }
             }
 
-            $user->gamertag->delete();
             $user->delete();
 
             return true;
