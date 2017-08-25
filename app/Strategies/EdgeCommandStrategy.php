@@ -8,6 +8,7 @@ use Application\Adapters\Telegram\Update;
 use Application\Models\User;
 use Application\Models\UserGamertag;
 use Application\Services\CommandService;
+use Application\Services\KeyboardService;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Strategies\Contracts\UserStrategyContract;
@@ -64,9 +65,11 @@ class EdgeCommandStrategy implements UserStrategyContract
                     return;
                 }
 
+                $keyboardService = KeyboardService::getInstance();
+
                 /** @var UserGamertag $gamertagSingle */
                 $gamertagSingleQuery = UserGamertag::query();
-                $gamertagSingleQuery->where('gamertag_value', $commandText);
+                $gamertagSingleQuery->where('gamertag_value', 'REGEXP', $keyboardService->generateFuzzyExpression($commandText));
                 $gamertagSingle = $gamertagSingleQuery->first();
 
                 if ($gamertagSingle) {
