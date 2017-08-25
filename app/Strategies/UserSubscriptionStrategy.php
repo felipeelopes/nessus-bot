@@ -32,7 +32,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
             if ($user === null) {
                 $botService->createMessage($update->message)
                     ->appendMessage(trans('UserRegistration.toPrivate', [
-                        'fullname' => $update->message->new_chat_member->getFullname(),
+                        'mention' => $update->message->new_chat_member->getMention(),
                     ]))
                     ->unduplicate(WelcomeMoment::class . '@' . __FUNCTION__ . '@' . $update->message->new_chat_member->id)
                     ->addLinkButton(
@@ -41,6 +41,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                             'botname' => $botService->getMe()->username,
                         ])
                     )
+                    ->setReplica(false)
                     ->publish();
             }
             else {
@@ -51,9 +52,10 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                 if ($userGamertags) {
                     $botService->createMessage($update->message)
                         ->appendMessage(trans('UserRegistration.welcomeAgain', [
-                            'fullname' => $update->message->new_chat_member->getFullname(),
+                            'mention'  => $update->message->new_chat_member->getMention(),
                             'gamertag' => $userGamertags->gamertag_value,
                         ]))
+                        ->setReplica(false)
                         ->publish();
                 }
             }
@@ -72,6 +74,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                             'admin'    => $update->message->from->getMention(),
                             'fullname' => $update->message->left_chat_member->getFullname(),
                         ]))
+                        ->setReplica(false)
                         ->publish();
 
                     return true;
@@ -82,6 +85,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                     ->appendMessage(trans('UserSubscription.userLeftUnknown', [
                         'fullname' => $update->message->left_chat_member->getFullname(),
                     ]))
+                    ->setReplica(false)
                     ->publish();
 
                 return true;
@@ -97,6 +101,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                         'fullname' => $update->message->left_chat_member->getFullname(),
                         'gamertag' => $userGamertags->gamertag_value,
                     ]))
+                    ->setReplica(false)
                     ->publish();
             }
             else {
@@ -109,6 +114,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
                             'fullname' => $update->message->left_chat_member->getFullname(),
                             'gamertag' => $userGamertags->gamertag_value,
                         ]))
+                        ->setReplica(false)
                         ->publish();
 
                     $bot = $botService->getMe();

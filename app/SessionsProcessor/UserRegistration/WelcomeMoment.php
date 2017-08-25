@@ -100,7 +100,7 @@ class WelcomeMoment extends SessionMoment
         $botService->createMessage($update->message)
             ->forcePublic()
             ->appendMessage(trans('UserRegistration.welcomeToGroup', [
-                'fullname' => $update->message->from->getFullname(),
+                'mention'  => $update->message->from->getMention(),
                 'gamertag' => $gamertag,
             ]))
             ->publish();

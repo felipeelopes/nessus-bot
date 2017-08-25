@@ -8,12 +8,12 @@ return [
                                ':whichGamertag',
     'welcomeToGroupSticker' => 'CAADAQADAgADwvySEW6F5o6Z1x05Ag',
     'welcomeToGroup'        => "*Vamos celebrar!*\n" .
-                               'Nosso novo guardião, *:fullname* (Gamertag *:gamertag*), estará conosco nas próximas missões.',
+                               'Nosso novo guardião, :mention (Gamertag *:gamertag*), estará conosco nas próximas missões.',
     'welcomeAgain'          => "*Vamos celebrar, de novo!*\n" .
-                               'Nosso guardião, *:fullname* (Gamertag *:gamertag*), está conosco novamente.',
+                               'Nosso guardião, :mention (Gamertag *:gamertag*), está conosco novamente!',
 
     // Need to talk in private.
-    'toPrivate'             => "Seja bem-vindo, *:fullname*!\n\n" .
+    'toPrivate'             => "Seja bem-vindo, :mention!\n\n" .
                                'Antes de enviar novas mensagens aqui no grupo, preciso falar com você em particular.',
     'toPrivateButton'       => "\xC2\xAB Clique aqui para iniciarmos a conversa... \xC2\xBB",
     'toPrivateLink'         => 'https://t.me/:botname',
