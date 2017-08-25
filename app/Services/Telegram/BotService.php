@@ -80,7 +80,7 @@ class BotService implements ServiceContract
      */
     public function escape(?string $message): string
     {
-        return addcslashes((string) $message, '_*`[]');
+        return addcslashes((string) $message, '_*`[');
     }
 
     /**

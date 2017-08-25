@@ -56,6 +56,14 @@ class EdgeCommandStrategy implements UserStrategyContract
             $commandText = $messageCommand->getTextArgument();
 
             if ($commandText !== null) {
+                if (strlen($commandText) < 3) {
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.searchGtFewLetters'))
+                        ->publish();
+
+                    return;
+                }
+
                 /** @var UserGamertag $gamertagSingle */
                 $gamertagSingleQuery = UserGamertag::query();
                 $gamertagSingleQuery->where('gamertag_value', $commandText);

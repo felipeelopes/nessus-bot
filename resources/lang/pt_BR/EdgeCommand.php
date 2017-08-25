@@ -20,6 +20,8 @@ return [
 
     'searchGtEmpty'      => "*Nenhum resultado...*\n" .
                             'Não consegui achar uma Gamertag parecida.',
+    'searchGtFewLetters' => "*Err...*\n" .
+                            'Preciso de pelo menos três letras para pesquisar por alguém.',
     'searchGtSingle'     => "*Encontrei!*\n" .
                             "\xE2\x9E\x9C *GT:* :gamertag \xE2\x86\x92 :mention",
     'searchGtSimilarity' => "*Encontrei alguém parecido:*\n" .
