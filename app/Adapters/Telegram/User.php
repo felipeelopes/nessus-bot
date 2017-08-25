@@ -16,6 +16,7 @@ use Application\Services\UserService;
  * @property-read string|null $last_name     User last name.
  * @property-read string|null $username      User username.
  * @property-read string|null $language_code User language code tag (IETF).
+ * @property-read bool        $is_bot        User is bot?
  */
 class User extends BaseFluent
 {

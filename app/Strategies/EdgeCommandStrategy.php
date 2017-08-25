@@ -27,7 +27,7 @@ class EdgeCommandStrategy implements UserStrategyContract
         $admins      = [];
 
         foreach ($chatMembers as $chatMember) {
-            if ($chatMember->user->id === (int) env('NBOT_WEBHOOK_ID')) {
+            if ($chatMember->user->is_bot) {
                 continue;
             }
 
