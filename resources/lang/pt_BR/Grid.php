@@ -3,9 +3,9 @@
 declare(strict_types = 1);
 
 return [
-    'header'         => "\xE2\x9A\xA0 *ATENÇÃO: SISTEMA EM FASE DE DESENVOLVIMENTO.*\nPODERÁ APRESENTAR ALGUNS ERROS E FALTA DE RECURSOS.\n\n" .
-                        ":icon *:title*:subtitle :icon\n\n",
-    'headerSubtitle' => ' (_:subtitle_)',
+    'header'            => "\xE2\x98\xA0 *:title*:subtitle \xE2\x98\xA0\n\n",
+    'headerIconWrapper' => ":icon :header :icon\n\n",
+    'headerSubtitle'    => ' (_:subtitle_)',
 
     'gridOwner'         => "\xE2\x9E\x9C *Organizador*: :value\n",
     'gridStatus'        => "\xE2\x9E\x9C *Status*: :value:details\n",
@@ -32,11 +32,14 @@ return [
     'statusGathering'  => 'reunindo',
     'statusPlaying'    => 'em andamento',
     'statusFinished'   => 'concluído',
+    'statusUnreported' => 'concluído, mas não reportado',
     'statusCanceled'   => 'cancelado',
-    'statusUnreported' => 'não reportado',
 
-    'statusIconDefault'  => "\xE2\x98\xA0",
-    'statusIconCanceled' => "\xF0\x9F\x9A\xAB",
+    'statusIconGathering'  => "\xF0\x9F\x8C\x80",
+    'statusIconPlaying'    => "\xF0\x9F\x85\xBF",
+    'statusIconFinished'   => "\xF0\x9F\x8F\x86",
+    'statusIconUnreported' => "\xF0\x9F\x92\xA4",
+    'statusIconCanceled'   => "\xF0\x9F\x9A\xAB",
 
     'timingToday'    => 'hoje, às :timing',
     'timingTomorrow' => 'amanhã, dia :day, às :timing',

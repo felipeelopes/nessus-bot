@@ -200,6 +200,35 @@ class Grid extends Model
     }
 
     /**
+     * Returns the status text.
+     */
+    public function getStatusText(): ?string
+    {
+        switch ($this->grid_status) {
+            case self::STATUS_UNREPORTED:
+                return 'unreported';
+                break;
+            case self::STATUS_PLAYING:
+                return 'playing';
+                break;
+            case self::STATUS_GATHERING:
+                return 'gathering';
+                break;
+            case self::STATUS_WAITING:
+                return 'waiting';
+                break;
+            case self::STATUS_FINISHED:
+                return 'finished';
+                break;
+            case self::STATUS_CANCELED:
+                return 'canceled';
+                break;
+        }
+
+        return null;
+    }
+
+    /**
      * Return an User subscription from grid, if it exists.
      * @param TelegramUser $user User instance.
      * @return GridSubscription|null

@@ -13,6 +13,7 @@ use Application\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Illuminate\Translation\Translator;
 
 /**
  * @property string      $title        Grid title.
@@ -82,7 +83,7 @@ class Grid extends BaseFluent
     public function getStructure(string $structureType): string
     {
         $grid     = null;
-        $gridIcon = 'default';
+        $gridIcon = null;
 
         if ($this->grid_id) {
             /** @var Builder $gridQuery */
@@ -91,18 +92,30 @@ class Grid extends BaseFluent
             $gridQuery->with('subscribers.gamertag');
             $grid = $gridQuery->find($this->grid_id);
 
-            if ($grid->isCanceled()) {
-                $gridIcon = 'canceled';
+            $gridStatusText = $grid->getStatusText();
+
+            /** @var Translator $trans */
+            $trans = app('translator');
+
+            if ($gridStatusText !== null &&
+                $trans->has('Grid.statusIcon' . Str::ucfirst($gridStatusText))) {
+                $gridIcon = $gridStatusText;
             }
         }
 
         $result = trans('Grid.header', [
-            'icon'     => trans('Grid.statusIcon' . Str::ucfirst($gridIcon)),
             'title'    => $this->title,
             'subtitle' => $this->subtitle
                 ? trans('Grid.headerSubtitle', [ 'subtitle' => $this->subtitle ])
                 : null,
         ]);
+
+        if ($gridIcon !== null) {
+            $result = trans('Grid.headerIconWrapper', [
+                'icon'   => trans('Grid.statusIcon' . Str::ucfirst($gridIcon)),
+                'header' => rtrim($result, "\n"),
+            ]);
+        }
 
         if ($structureType === self::STRUCTURE_TYPE_EXAMPLE) {
             /** @var UserService $userService */
@@ -113,15 +126,11 @@ class Grid extends BaseFluent
         }
 
         if ($grid && $structureType === self::STRUCTURE_TYPE_FULL) {
-            $gridStatusDetail = $grid->grid_status_details;
+            $gridStatusDetail = null;
 
-            if ($gridStatusDetail !== null) {
-                if ($grid->isCanceled()) {
-                    $gridStatusDetail = $grid->getCancelReason();
-                }
-
+            if ($grid->isCanceled()) {
                 $gridStatusDetail = trans('Grid.gridStatusDetails', [
-                    'details' => $gridStatusDetail,
+                    'details' => $grid->getCancelReason(),
                 ]);
             }
 
