@@ -21,6 +21,7 @@ class UserRegistrationStrategy implements UserStrategyContract
     {
         if ($user === null) {
             $sessionService = SessionService::getInstance();
+            $sessionService->accessiblePublically();
             $sessionService->setInitialMoment(WelcomeMoment::class);
 
             return $sessionService->run($update);
