@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Observers\GridSubscriptionObserver;
 use Application\Models\Traits\SoftDeletes;
 use Carbon\Carbon;
 use DB;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 /**
+ * @property Grid         $grid                     Grid related.
  * @property int          $grid_id                  Grid id reference.
  * @property int          $gamertag_id              Gamertag id reference.
  * @property string|null  $subscription_description Subscription description.
@@ -48,6 +50,16 @@ class GridSubscription extends Model
     }
 
     /**
+     * Model boot.
+     */
+    protected static function boot(): void
+    {
+        static::observe(GridSubscriptionObserver::class);
+
+        parent::boot();
+    }
+
+    /**
      * Returns the gamertag subscribed.
      * @return HasOne
      */
@@ -76,6 +88,15 @@ class GridSubscription extends Model
         }
 
         return $icons;
+    }
+
+    /**
+     * Returns the grid related.
+     * @return HasOne
+     */
+    public function grid(): HasOne
+    {
+        return $this->hasOne(Grid::class, 'id', 'grid_id');
     }
 
     /**

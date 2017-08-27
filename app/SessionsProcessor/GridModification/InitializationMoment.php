@@ -98,7 +98,7 @@ class InitializationMoment extends SessionMoment
             }
 
             GridNotificationService::getInstance()
-                ->notifyWithOptions($update, $grid);
+                ->notifyUpdate($update, $grid);
 
             return true;
         }
@@ -190,7 +190,7 @@ class InitializationMoment extends SessionMoment
                     ->publish();
 
                 GridNotificationService::getInstance()
-                    ->notifyWithOptions($update, $grid);
+                    ->notifyUpdate($update, $grid);
 
                 return;
             }
@@ -210,7 +210,7 @@ class InitializationMoment extends SessionMoment
         $userSubscription->save();
 
         GridNotificationService::getInstance()
-            ->notifyWithOptions($update, $grid);
+            ->notifyUpdate($update, $grid);
     }
 
     /**
@@ -256,7 +256,7 @@ class InitializationMoment extends SessionMoment
             $userSubscription->save();
 
             GridNotificationService::getInstance()
-                ->notifyWithOptions($update, $grid);
+                ->notifyUpdate($update, $grid);
 
             return;
         }
@@ -297,7 +297,7 @@ class InitializationMoment extends SessionMoment
         }
 
         GridNotificationService::getInstance()
-            ->notifyWithOptions($update, $grid);
+            ->notifyUpdate($update, $grid);
     }
 
     /**
@@ -334,10 +334,5 @@ class InitializationMoment extends SessionMoment
         }
 
         $userSubscription->delete();
-
-        $grid->acceptTitularReserve();
-
-        GridNotificationService::getInstance()
-            ->notifyWithOptions($update, $grid);
     }
 }

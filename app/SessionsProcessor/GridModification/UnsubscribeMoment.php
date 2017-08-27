@@ -65,11 +65,6 @@ class UnsubscribeMoment extends SessionMoment
         if ($userSubscription !== null) {
             $userSubscription->delete();
         }
-
-        $grid->acceptTitularReserve();
-
-        GridNotificationService::getInstance()
-            ->notifyUpdate($update, $grid, trans('GridModification.unsubscribeYouUpdate'));
     }
 
     /**
@@ -83,16 +78,13 @@ class UnsubscribeMoment extends SessionMoment
         /** @var GridSubscription $subscriberHim */
         $subscribers = $grid->subscribers;
 
-        $subscriptionOwner                    = $grid->getUserSubscription($update->message->from);
-        $subscriptionOwner->subscription_rule = GridSubscription::RULE_USER;
-        $subscriptionOwner->save();
-        $subscriptionOwner->delete();
-
         $subscriberHim                    = $subscribers->where('gamertag_id', $input)->first();
         $subscriberHim->subscription_rule = GridSubscription::RULE_OWNER;
         $subscriberHim->save();
 
-        $grid->acceptTitularReserve();
+        $subscriptionOwner                    = $grid->getUserSubscription($update->message->from);
+        $subscriptionOwner->subscription_rule = GridSubscription::RULE_USER;
+        $subscriptionOwner->delete();
 
         GridNotificationService::getInstance()
             ->notifyUpdate($update, $grid, trans('GridModification.unsubscribeOwnerUpdate'));

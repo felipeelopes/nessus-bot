@@ -144,9 +144,8 @@ class GridNotificationService
      * @param Update      $update      Update instance.
      * @param Grid        $grid        Grid instance.
      * @param string|null $updateTitle Update title.
-     * @param bool|null   $publish     Publish to group (default: true).
      */
-    public function notifyUpdate(Update $update, Grid $grid, ?string $updateTitle, ?bool $publish = null): void
+    public function notifyUpdate(Update $update, Grid $grid, ?string $updateTitle = null): void
     {
         $gridAdapter = GridAdapter::fromModel($grid);
 
@@ -162,21 +161,12 @@ class GridNotificationService
 
         $this->notifyMessage($update, $grid, $updateMessage);
 
-        if ($publish !== false && $update->message->isPrivate()) {
-            $publicUpdate = clone $update;
-            $publicUpdate->message->forcePublic();
+        if ($updateTitle !== null && $update->message->isPrivate()) {
+            $updateCopy          = clone $update;
+            $updateCopy->message = clone $updateCopy->message;
+            $updateCopy->message->forcePublic();
 
-            $this->notifyMessage($publicUpdate, $grid, $gridStructure);
+            $this->notifyMessage($updateCopy, $grid, $gridStructure);
         }
-    }
-
-    /**
-     * Notify the update message with all update options.
-     * @param Update $update Update instance.
-     * @param Grid   $grid   Grid instance.
-     */
-    public function notifyWithOptions(Update $update, Grid $grid): void
-    {
-        $this->notifyUpdate($update, $grid, null, false);
     }
 }

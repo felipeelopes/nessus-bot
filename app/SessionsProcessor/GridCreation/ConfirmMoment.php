@@ -91,7 +91,7 @@ class ConfirmMoment extends SessionMoment
         $update->message->forcePublic();
 
         GridNotificationService::getInstance()
-            ->notifyWithOptions($update, $grid);
+            ->notifyUpdate($update, $grid);
 
         assert(EventService::getInstance()->register(self::EVENT_SAVE));
 
