@@ -15,8 +15,8 @@ return [
                               '*Digite:* /:command @...',
     'gtSingleRegistered'   => '*Gamertag:* :gamertag',
     'gtSingleUnregistered' => '_Gamertag não registrada._',
-    'gtItemRegistered'     => "*:mention*\n\xE2\x86\x92 :gamertag\n\n",
-    'gtItemUnregistered'   => "*:mention*\n\xE2\x86\x92 _Gamertag não registrada._\n\n",
+    'gtItemRegistered'     => ":mention\n\xE2\x86\x92 :gamertag\n\n",
+    'gtItemUnregistered'   => ":mention\n\xE2\x86\x92 _Gamertag não registrada._\n\n",
 
     'searchGtEmpty'      => "*Nenhum resultado...*\n" .
                             'Não consegui achar uma Gamertag parecida.',

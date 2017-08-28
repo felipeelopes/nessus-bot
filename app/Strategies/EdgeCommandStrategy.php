@@ -78,6 +78,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                             'gamertag' => $gamertagSingle->gamertag_value,
                             'mention'  => $gamertagSingle->user->getMention(),
                         ]))
+                        ->setSilent()
                         ->publish();
 
                     return;
@@ -96,6 +97,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                             'gamertag' => $gamertagSimilar->gamertag_value,
                             'mention'  => $gamertagSimilar->user->getMention(),
                         ]))
+                        ->setSilent()
                         ->publish();
 
                     return;
@@ -159,6 +161,7 @@ class EdgeCommandStrategy implements UserStrategyContract
 
         $botService->createMessage($update->message)
             ->appendMessage(implode($messageBuilder))
+            ->setSilent()
             ->publish();
     }
 

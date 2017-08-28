@@ -298,6 +298,17 @@ class BotMessageService
     }
 
     /**
+     * Set message as silent - no notify user.
+     * @return BotMessageService
+     */
+    public function setSilent(): BotMessageService
+    {
+        $this->message->disable_notification = true;
+
+        return $this;
+    }
+
+    /**
      * Mark option as required.
      * @return BotMessageService
      */

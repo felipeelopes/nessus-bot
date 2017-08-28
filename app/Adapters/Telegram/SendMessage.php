@@ -13,6 +13,7 @@ use Application\Adapters\BaseFluent;
  * @property bool|null   $disable_web_page_preview Disable webpage preview on Message.
  * @property int|null    $reply_to_message_id      Message to reply.
  * @property array       $reply_markup             Reply markup.
+ * @property bool|null   $disable_notification     Disable message notification.
  */
 class SendMessage extends BaseFluent
 {
