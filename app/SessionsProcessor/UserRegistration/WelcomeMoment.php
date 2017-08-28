@@ -59,7 +59,7 @@ class WelcomeMoment extends SessionMoment
             $botService->createMessage($update->message)
                 ->forcePublic()
                 ->appendMessage(trans('UserRegistration.toPrivate', [
-                    'fullname' => $update->message->from->getFullname(),
+                    'mention' => $update->message->from->getMention(),
                 ]))
                 ->unduplicate(__CLASS__ . '@' . __FUNCTION__ . '@' . $update->message->from->id)
                 ->addLinkButton(
