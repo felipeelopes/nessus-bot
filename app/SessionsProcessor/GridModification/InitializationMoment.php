@@ -206,6 +206,16 @@ class InitializationMoment extends SessionMoment
             return;
         }
 
+        if (strlen($commandText) > 20) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridSubscription.errorObservationTooLong', [
+                    'length' => strlen($commandText),
+                ]))
+                ->publish();
+
+            return;
+        }
+
         $userSubscription->subscription_description = $commandText;
         $userSubscription->save();
 

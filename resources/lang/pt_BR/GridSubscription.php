@@ -20,4 +20,7 @@ return [
     'observationDropped' => 'A sua observação foi removida desta grade.',
     'observationHowTo'   => "Informe ao lado do comando a observação.\n" .
                             '*Exemplo:* /:command caçador',
+
+    'errorObservationTooLong' => "A observação não deve exceder 20 caracteres.\n" .
+                                 'Você enviou :length caracteres.',
 ];
