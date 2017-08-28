@@ -78,7 +78,19 @@ class UnsubscribeMoment extends SessionMoment
         /** @var GridSubscription $subscriberHim */
         $subscribers = $grid->subscribers;
 
-        $subscriberHim                    = $subscribers->where('gamertag_id', $input)->first();
+        $subscriberHim = $subscribers->where('gamertag_id', $input)->first();
+
+        if (!$subscriberHim) {
+            $botService = BotService::getInstance();
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridModification.errorUnsubscribeUserUnavailable'))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(TransferOwnerMoment::getSubscribers($update, $process)), true)
+                ->publish();
+
+            return self::class;
+        }
+
         $subscriberHim->subscription_rule = GridSubscription::RULE_OWNER;
         $subscriberHim->save();
 
