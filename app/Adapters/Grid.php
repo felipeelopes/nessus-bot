@@ -115,12 +115,7 @@ class Grid extends BaseFluent
             }
         }
 
-        $result = trans('Grid.header', [
-            'title'    => $this->title,
-            'subtitle' => $this->subtitle
-                ? trans('Grid.headerSubtitle', [ 'subtitle' => $this->subtitle ])
-                : null,
-        ]);
+        $result = trans('Grid.header', [ 'title' => $this->getTitle() ]);
 
         if ($gridIcon !== null) {
             $result = trans('Grid.headerIconWrapper', [
@@ -212,12 +207,17 @@ class Grid extends BaseFluent
 
     /**
      * Returns the timing formatted.
+     * @param bool|null $fulltime Show full time, else just hour (default: true).
      * @return string
      */
-    public function getTiming(): string
+    public function getTiming(?bool $fulltime = null): string
     {
         $timingNow  = Carbon::now()->second(0);
         $timingHour = $this->timing->format('H:i');
+
+        if ($fulltime === false) {
+            return $timingHour;
+        }
 
         if ($timingNow->day !== $this->timing->day) {
             return trans('Grid.timingTomorrow', [
@@ -227,5 +227,18 @@ class Grid extends BaseFluent
         }
 
         return trans('Grid.timingToday', [ 'timing' => $timingHour ]);
+    }
+
+    /**
+     * Returns this Grid title formatted.
+     */
+    public function getTitle(): string
+    {
+        $headerSubtitle = $this->subtitle ? trans('Grid.headerSubtitle', [ 'subtitle' => $this->subtitle ]) : null;
+
+        return trans('Grid.headerBase', [
+            'title'    => $this->title,
+            'subtitle' => $headerSubtitle,
+        ]);
     }
 }

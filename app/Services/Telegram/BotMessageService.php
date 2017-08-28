@@ -63,9 +63,9 @@ class BotMessageService
 
     /**
      * Constructor.
-     * @param Message $updateMessage Message instace from Update.
+     * @param Message|null $updateMessage Message instace from Update.
      */
-    public function __construct(Message $updateMessage)
+    public function __construct(?Message $updateMessage = null)
     {
         $this->updateMessage = $updateMessage;
 
@@ -73,11 +73,15 @@ class BotMessageService
         $this->message->parse_mode               = SendMessage::PARSE_MODE_MARKDOWN;
         $this->message->disable_web_page_preview = true;
 
-        if (self::isPublicMessage($updateMessage)) {
-            $this->setReplica();
-        }
+        if ($updateMessage !== null) {
+            if (self::isPublicMessage($updateMessage)) {
+                $this->setReplica();
+            }
 
-        $this->setReceiver($updateMessage->chat->id);
+            if ($updateMessage->chat) {
+                $this->setReceiver($updateMessage->chat->id);
+            }
+        }
     }
 
     /**
@@ -203,12 +207,14 @@ class BotMessageService
                 throw $exception;
             }
 
-            (new self($this->updateMessage))
-                ->forcePublic()
-                ->setReplica()
-                ->allowExceptions()
-                ->appendMessage(trans('Command.cantContact'))
-                ->publish();
+            if ($this->updateMessage) {
+                (new self($this->updateMessage))
+                    ->forcePublic()
+                    ->setReplica()
+                    ->allowExceptions()
+                    ->appendMessage(trans('Command.cantContact'))
+                    ->publish();
+            }
 
             return null;
         }

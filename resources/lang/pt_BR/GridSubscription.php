@@ -23,4 +23,9 @@ return [
 
     'errorObservationTooLong' => "A observação não deve exceder 20 caracteres.\n" .
                                  'Você enviou :length caracteres.',
+
+    'notifyMessage' => "*Atenção, guardião!*\n" .
+                       "Você está inscrito na grade :command (\":title\") das *:hours*.\n\n" .
+                       "Começaremos em *:minutes*.\n\n" .
+                       'Esteja pronto!',
 ];

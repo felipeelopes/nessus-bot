@@ -23,9 +23,10 @@ use Illuminate\Support\Str;
  * @property UserGamertag $gamertag                 Gamertag reference.
  * @property Carbon       $reserved_at              Reserved timestamp.
  *
- * @method orderByGridRanking()
- * @method orderByGridRule()
- * @method orderByGamertag()
+ * @method void orderByGridRanking()
+ * @method void orderByGridRule()
+ * @method void orderByGamertag()
+ * @method void filterByPosition(string $position)
  */
 class GridSubscription extends Model
 {
@@ -124,6 +125,16 @@ class GridSubscription extends Model
     public function isTitular(): bool
     {
         return $this->subscription_position === self::POSITION_TITULAR;
+    }
+
+    /**
+     * Order subscribers by rule: owner, managers, then users.
+     * @param Builder $builder  Builder instance.
+     * @param string  $position Subscription position.
+     */
+    public function scopeFilterByPosition(Builder $builder, string $position): void
+    {
+        $builder->where('subscription_position', $position);
     }
 
     /**

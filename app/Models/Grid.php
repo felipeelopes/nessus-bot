@@ -25,11 +25,13 @@ use Illuminate\Support\Str;
  * @property Carbon                        $grid_duration       Grid duration.
  * @property string                        $grid_status         Grid status.
  * @property string                        $grid_status_details Grid status description.
+ * @property Carbon                        $notified_at         Grid notification timestamp.
  *
  * @method Builder filterAvailables()
  * @method Builder filterOpeneds()
  * @method Builder filterOwneds(User $user)
  * @method Builder filterSubscribeds(User $user)
+ * @method Builder filterNonNotifieds()
  * @method Builder orderByTiming()
  */
 class Grid extends Model
@@ -50,6 +52,7 @@ class Grid extends Model
     protected $casts = [
         'grid_players' => 'int',
         'grid_timing'  => 'datetime',
+        'notified_at'  => 'datetime',
     ];
 
     /**
@@ -342,6 +345,17 @@ class Grid extends Model
     public function scopeFilterAvailables(Builder $builder): void
     {
         $builder->whereIn('grid_status', [ self::STATUS_WAITING, self::STATUS_GATHERING, self::STATUS_PLAYING ]);
+    }
+
+    /**
+     * Filter for only non-notifieds grids.
+     * @param Builder|Grid $builder Builder instance.
+     */
+    public function scopeFilterNonNotifieds(Builder $builder): void
+    {
+        $builder->filterAvailables();
+        $builder->whereNull('notified_at');
+        $builder->whereRaw('SUBTIME(`grid_timing`, "00:15:00") <= ?', [ Carbon::now() ]);
     }
 
     /**

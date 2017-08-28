@@ -3,7 +3,8 @@
 declare(strict_types = 1);
 
 return [
-    'header'            => "\xE2\x98\xA0 *:title*:subtitle \xE2\x98\xA0\n\n",
+    'header'            => "\xE2\x98\xA0 :title \xE2\x98\xA0\n\n",
+    'headerBase'        => '*:title*:subtitle',
     'headerIconWrapper' => ":icon :header :icon\n\n",
     'headerSubtitle'    => ' (_:subtitle_)',
 
@@ -45,6 +46,6 @@ return [
     'timingTomorrow' => 'amanhã, dia :day, às :timing',
 
     'durationHours'   => ':hours hora|:hours horas',
-    'durationMinutes' => ':minutes minuto|:minutes minutos',
+    'durationMinutes' => '[0,1]:minutes minuto|:minutes minutos',
     'durationBoth'    => ':hours e :minutes',
 ];

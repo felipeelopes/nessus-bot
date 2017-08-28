@@ -48,10 +48,10 @@ class BotService implements ServiceContract
 
     /**
      * Creates a new message service.
-     * @param Message $message Message instance from Update.
+     * @param Message|null $message Message instance from Update.
      * @return BotMessageService
      */
-    public function createMessage($message): BotMessageService
+    public function createMessage(?Message $message = null): BotMessageService
     {
         return new BotMessageService($message);
     }
