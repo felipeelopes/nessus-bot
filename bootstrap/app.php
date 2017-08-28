@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
+use Application\Console\Kernel as ConsoleKernel;
 use Application\Controllers\Kernel;
 use Application\Exceptions\Handler as ApplicationExceptionHandler;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 /**
  * Create the application.
