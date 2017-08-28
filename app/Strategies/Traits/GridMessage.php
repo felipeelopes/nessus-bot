@@ -39,8 +39,12 @@ trait GridMessage
     private function sendGridListing(Update $update, BotService $botService, Collection $grids): ?bool
     {
         if ($grids->isEmpty()) {
+            $messageTrans = $update->message->isCommand(CommandService::COMMAND_LIST_GRIDS)
+                ? trans('GridListing.isEmpty')
+                : trans('GridListing.isEmptyYour');
+
             $botService->createMessage($update->message)
-                ->appendMessage(trans('GridListing.isEmpty'))
+                ->appendMessage($messageTrans)
                 ->setOptions([ OptionItem::fromCommand(CommandService::COMMAND_NEW_GRID) ])
                 ->unduplicate(__CLASS__ . '@' . __FUNCTION__)
                 ->publish();

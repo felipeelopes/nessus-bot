@@ -3,8 +3,10 @@
 declare(strict_types = 1);
 
 return [
-    'isEmpty' => "*Aparentemente tudo tranquilo, guardião...*\n" .
-                 'Não há nenhuma grade de missão em aberto.',
+    'isEmpty'     => "*Aparentemente tudo tranquilo, guardião...*\n" .
+                     'Não há nenhuma grade em aberto.',
+    'isEmptyYour' => "*Aparentemente tudo tranquilo, guardião...*\n" .
+                     'Não há nenhuma grade *sua* em aberto.',
 
     'titleBase'     => "*:title:*\n",
     'titlePlaying'  => "*Em andamento:*\n",
