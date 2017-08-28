@@ -51,7 +51,7 @@ class Grid extends BaseFluent
      * Return the grid duration formatted.
      * @return string|null
      */
-    public function getDurationFormatted(): ?string
+    public function getDuration(): ?string
     {
         $durationArray            = [];
         $durationHours            = (int) $this->duration;
@@ -73,6 +73,18 @@ class Grid extends BaseFluent
         }
 
         return null;
+    }
+
+    /**
+     * Returns how much time need wait to Grid start.
+     * Minimum value is "0 minute" (even for negative values).
+     * @return string
+     */
+    public function getMinutesDistance(): string
+    {
+        $diffInMinutes = max(0, Carbon::now()->diffInMinutes($this->timing, false));
+
+        return trans_choice('Grid.durationMinutes', $diffInMinutes, [ 'minutes' => $diffInMinutes ]);
     }
 
     /**
@@ -141,12 +153,12 @@ class Grid extends BaseFluent
         }
 
         $result .= trans('Grid.gridTiming', [
-            'value' => $this->getTimingFormatted(),
+            'value' => $this->getTiming(),
         ]);
 
         if ($grid && !$grid->isCanceled()) {
             $result .= trans('Grid.gridDuration', [
-                'value' => $this->getDurationFormatted(),
+                'value' => $this->getDuration(),
             ]);
         }
 
@@ -202,7 +214,7 @@ class Grid extends BaseFluent
      * Returns the timing formatted.
      * @return string
      */
-    public function getTimingFormatted(): string
+    public function getTiming(): string
     {
         $timingNow  = Carbon::now()->second(0);
         $timingHour = $this->timing->format('H:i');

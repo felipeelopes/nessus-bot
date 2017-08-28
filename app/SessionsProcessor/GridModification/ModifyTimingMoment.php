@@ -30,7 +30,7 @@ class ModifyTimingMoment extends SessionMoment
         $botService->createMessage($update->message)
             ->setCancelable()
             ->appendMessage(trans('GridModification.modifyTimingWizard', [
-                'current' => $gridAdapter->getTimingFormatted(),
+                'current' => $gridAdapter->getTiming(),
             ]))
             ->publish();
     }
@@ -49,7 +49,7 @@ class ModifyTimingMoment extends SessionMoment
 
         GridNotificationService::getInstance()
             ->notifyUpdate($update, $grid, trans('GridModification.modifyTimingUpdated', [
-                'value' => $gridAdapter->getTimingFormatted(),
+                'value' => $gridAdapter->getTiming(),
             ]));
 
         return InitializationMoment::class;

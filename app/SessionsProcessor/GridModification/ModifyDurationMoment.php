@@ -30,7 +30,7 @@ class ModifyDurationMoment extends SessionMoment
         $botService->createMessage($update->message)
             ->setCancelable()
             ->appendMessage(trans('GridModification.modifyDurationWizard', [
-                'current' => $gridAdapter->getDurationFormatted(),
+                'current' => $gridAdapter->getDuration(),
             ]))
             ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardDurationOptions')))
             ->publish();
@@ -50,7 +50,7 @@ class ModifyDurationMoment extends SessionMoment
 
         GridNotificationService::getInstance()
             ->notifyUpdate($update, $grid, trans('GridModification.modifyDurationUpdated', [
-                'value' => $gridAdapter->getDurationFormatted(),
+                'value' => $gridAdapter->getDuration(),
             ]));
 
         return InitializationMoment::class;
