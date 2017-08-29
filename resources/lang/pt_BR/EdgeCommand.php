@@ -28,4 +28,9 @@ return [
                             "\xE2\x9E\x9C *GT:* :gamertag \xE2\x86\x92 :mention",
 
     'systemRefreshed' => 'Recursos de sistema atualizados.',
+
+    'goodAfternoon' => '*Boa tarde, guardiões!*',
+    'goodEarly'     => '*Boa madrugada, guardiões!*',
+    'goodEvening'   => '*Boa noite, guardiões!*',
+    'goodMorning'   => '*Bom dia, guardiões!*',
 ];

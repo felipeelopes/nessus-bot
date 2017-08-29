@@ -6,6 +6,7 @@ namespace Application\Controllers;
 
 use Application\Adapters\Telegram\Update;
 use Application\Controllers\Contracts\RouterRegisterContract;
+use Application\Events\GoodMorningExecutor;
 use Application\Services\MockupService;
 use Application\Services\PredefinitionService;
 use Application\Services\SessionService;
@@ -75,6 +76,8 @@ class BotController extends Controller implements RouterRegisterContract
             $user->user_language  = $update->message->from->language_code;
             $user->save();
         }
+
+        (new GoodMorningExecutor)->run();
 
         /** @var PredefinitionStrategy $predefinition */
         $predefinition = $mockupService->instance(PredefinitionStrategy::class);

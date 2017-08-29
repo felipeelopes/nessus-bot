@@ -13,7 +13,7 @@ class GridFinisherExecutor extends Executor
     /**
      * @inheritdoc
      */
-    public function run(?Model $model): ?bool
+    public function run(?Model $model = null): ?bool
     {
         /** @var Grid $gridsQuery */
         $gridsQuery = Grid::query();

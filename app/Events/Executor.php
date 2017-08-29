@@ -14,5 +14,5 @@ abstract class Executor
      * @param Model|null $model Model instance to be argumented.
      * @return bool|null
      */
-    abstract public function run(?Model $model): ?bool;
+    abstract public function run(?Model $model = null): ?bool;
 }
