@@ -20,7 +20,7 @@ use Illuminate\Translation\Translator;
  * @property string|null $subtitle     Grid subtitle.
  * @property string|null $requirements Grid requirements.
  * @property Carbon      $timing       Grid timing.
- * @property int         $duration     Grid duration.
+ * @property float       $duration     Grid duration.
  * @property int         $players      Grid players.
  * @property User        $owner        Grid owner.
  * @property int|null    $grid_id      Grid id reference.
