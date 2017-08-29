@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-$preDownload = "\n\n\xE2\x9E\x9C Download prévio disponível na *Xbox Live* (_29.1GB_).";
+$preDownload = "\n\n\xE2\x9E\x9C Download prévio disponível na *Xbox Live* (_34.9GB_).";
 
 return [
     'launchDays'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date*.\nFaltam apenas :days dias!{$preDownload}",
