@@ -111,9 +111,11 @@ class SessionService implements ServiceContract
         $momentInitializer = $session->get(self::SESSION_MOMENT_INITIALIZER);
 
         // Ignore if is not this Session Moment.
-        if ($momentInitializer !== null &&
-            $momentInitializer !== $this->initialMoment) {
-            return null;
+        if ($momentInitializer !== null) {
+            if ($momentInitializer !== $this->initialMoment ||
+                !$update->message->isPrivate()) {
+                return null;
+            }
         }
 
         /** @var SessionMoment $momentInstance */
