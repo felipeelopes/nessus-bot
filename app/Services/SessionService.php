@@ -20,11 +20,6 @@ class SessionService implements ServiceContract
     private const SESSION_PROCESS            = __CLASS__ . '@process';
 
     /**
-     * @var bool
-     */
-    private $accessiblePublically;
-
-    /**
      * @var string
      */
     private $currentMoment;
@@ -67,14 +62,6 @@ class SessionService implements ServiceContract
     }
 
     /**
-     * Turn this session accessible publically.
-     */
-    public function accessiblePublically()
-    {
-        $this->accessiblePublically = true;
-    }
-
-    /**
      * Clear current moment.
      */
     public function clearMoment(): void
@@ -100,11 +87,6 @@ class SessionService implements ServiceContract
      */
     public function run(Update $update): ?bool
     {
-        if ($this->accessiblePublically !== true &
-            !$update->message->isPrivate()) {
-            return false;
-        }
-
         /** @var Session $session */
         $session = app(Session::class);
 

@@ -47,7 +47,6 @@ class GridModificationStrategy implements UserStrategyContract
         }
 
         $sessionService = SessionService::getInstance();
-        $sessionService->accessiblePublically();
         $sessionService->setInitialMoment(InitializationMoment::class);
 
         return $sessionService->run($update);
