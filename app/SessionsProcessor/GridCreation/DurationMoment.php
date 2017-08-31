@@ -22,7 +22,7 @@ class DurationMoment extends SessionMoment
 
     /**
      * Parse duration to Carbon.
-     * @param int|null $duration Duration input.
+     * @param float|null $duration Duration input.
      * @return Carbon
      */
     public static function parseDuration(?float $duration): Carbon

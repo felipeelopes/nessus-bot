@@ -418,7 +418,7 @@ class Grid extends Model
 
     /**
      * Returns all subscribers of list sorted by rule and position.
-     * @return HasMany
+     * @return HasMany|Builder
      */
     public function subscribers_sorted(): HasMany
     {

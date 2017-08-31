@@ -23,10 +23,10 @@ use Illuminate\Support\Str;
  * @property UserGamertag $gamertag                 Gamertag reference.
  * @property Carbon       $reserved_at              Reserved timestamp.
  *
- * @method void orderByGridRanking()
- * @method void orderByGridRule()
- * @method void orderByGamertag()
- * @method void filterByPosition(string $position)
+ * @method Builder orderByGridRanking()
+ * @method Builder orderByGridRule()
+ * @method Builder orderByGamertag()
+ * @method Builder filterByPosition(string $position)
  */
 class GridSubscription extends Model
 {
