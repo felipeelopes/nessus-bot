@@ -7,6 +7,7 @@ namespace Application\Console\Commands;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
+use Application\Events\TipsExecutor;
 use Application\Models\Event;
 use Application\Models\Model;
 use Application\Services\SettingService;
@@ -44,6 +45,7 @@ class EventsProcessor extends Command
 
         $this->runExecutor(new GridFinisherExecutor);
         $this->runExecutor(new GridNotifierExecutor);
+        $this->runExecutor(new TipsExecutor);
 
         /** @var Event $eventsQuery */
         $eventsQuery = Event::query();
