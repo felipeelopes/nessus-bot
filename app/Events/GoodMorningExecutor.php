@@ -31,6 +31,10 @@ class GoodMorningExecutor extends Executor
      */
     public function run(?Model $model = null): ?bool
     {
+        if (env('APP_ENV') === 'testing') {
+            return true;
+        }
+
         $previousType = SettingService::fromReference($this, self::PREVIOUS_TYPE);
 
         $now     = Carbon::now();
