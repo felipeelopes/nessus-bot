@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Console\Commands;
 
+use Application\Events\CountdownExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
@@ -43,9 +44,12 @@ class EventsProcessor extends Command
         $settingRunning->setting_value = true;
         $settingRunning->save();
 
+        Carbon::setLocale(env('APP_LOCALE'));
+
         $this->runExecutor(new GridFinisherExecutor);
         $this->runExecutor(new GridNotifierExecutor);
         $this->runExecutor(new TipsExecutor);
+        $this->runExecutor(new CountdownExecutor);
 
         /** @var Event $eventsQuery */
         $eventsQuery = Event::query();
