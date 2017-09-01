@@ -8,6 +8,7 @@ use Application\Adapters\Live\Gamertag;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Live\RequesterService;
+use GuzzleHttp\Exception\ClientException;
 
 class LiveService implements ServiceContract
 {
@@ -26,10 +27,17 @@ class LiveService implements ServiceContract
      */
     public function getGamertag(string $gamertag): ?Gamertag
     {
+        /** @var RequesterService $requester */
         $mockupService = MockupService::getInstance();
         $requester     = $mockupService->newInstance(RequesterService::class, [ __CLASS__, 'https://xboxapi.com/v2/' ]);
         $requesterAuth = [ 'headers' => [ 'X-Auth' => env('LIVE_API_ID') ] ];
-        $response      = $requester->requestRaw('GET', sprintf('%s/profile', $gamertag), $requesterAuth, RequesterService::CACHE_HOUR);
+
+        try {
+            $response = $requester->requestRaw('GET', sprintf('%s/profile', $gamertag), $requesterAuth, RequesterService::CACHE_HOUR);
+        }
+        catch (ClientException $clientException) {
+            return null;
+        }
 
         if (!$response) {
             return null;
