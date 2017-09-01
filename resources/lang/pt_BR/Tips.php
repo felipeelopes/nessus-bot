@@ -3,7 +3,7 @@
 declare(strict_types = 1);
 
 return [
-    'header' => "*Lembrete :id de :count:*\n" .
+    'header' => "*Dica :id de :count:*\n" .
                 "\xE2\x9E\x9C :tip",
     'all'    => [
         'Jamais ofenda outros membros do clã. Respeito acima de tudo. Qualquer diferença deve ser resolvido em privado e junto a um dos nossos administradores.',
@@ -18,7 +18,7 @@ return [
         'Se você tem um amigo que possui o Destiny 2 e é gente fina, convide-o para fazer parte do clã.',
         'É estritamente proibido conteúdos pornográficos ou click-baits. Foque em postar conteúdos relacionados ao jogo, o quanto puder.',
         'Somente maiores de 18 anos são permitidos no grupo - ou então, se for um adolecente responsável e bem recomendado por membros com boa reputação.',
-        'Membros que não participem serão removidos automaticamente. Se você precisa dar um tempo do jogo por motivos pessoais, comunique antes a um administrador.',
+        'Membros que não participam em atividades junto a outros membros do clã serão removidos automaticamente. Se você precisa dar um tempo do jogo por motivos pessoais, comunique antes a um administrador.',
         'Não é permitido a publicação de outros clãs ou grupos relacionado a Destiny ou a qualquer outro jogo.',
         'Sempre que tiver qualquer tipo de problema, fale diretamente com um de nossos administradores. Utilize o comando /Administradores para auxiliá-lo.',
         'Para encontrar alguém, digite "@" (_arroba_) e em seguida o nome do usuário. Assim que enviar a mensagem ele será notificado.',
