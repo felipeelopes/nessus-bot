@@ -11,11 +11,10 @@ return [
                                "*\xE2\x9E\x9C Qual será o título da missão?*\n" .
                                'Obrigatório (até 80 caracteres).',
     'creationWizardOptions' => [
-        [ 'value' => 'Câmara de Cristal', 'description' => '*Incursão*: Câmara de Cristal' ],
-        [ 'value' => 'Fim de Crota', 'description' => '*Incursão*: Fim de Crota' ],
-        [ 'value' => 'Queda do Rei', 'description' => '*Incursão*: Queda do Rei' ],
-        [ 'value' => 'Ira da Máquina', 'description' => '*Incursão*: Ira da Máquina' ],
+        [ 'value' => 'Leviatã', 'description' => '*Incursão*: Leviatã' ],
         [ 'value' => 'Anoitecer', 'description' => '*Semanal*: Anoitecer' ],
+        [ 'value' => 'Assalto', 'description' => '*Semanal*: Assalto' ],
+        [ 'value' => 'Modo Campanha', 'description' => 'Modo Campanha' ],
     ],
 
     'creationWizardSubtitle'        => "*\xE2\x9E\x9C Qual será o subtítulo da missão?*\n" .
