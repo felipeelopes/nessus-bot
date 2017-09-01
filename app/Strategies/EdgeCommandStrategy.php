@@ -76,7 +76,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                     $botService->createMessage($update->message)
                         ->appendMessage(trans('EdgeCommand.searchGtSingle', [
                             'gamertag' => $gamertagSingle->gamertag_value,
-                            'mention'  => $gamertagSingle->user->getMention(),
+                            'mention'  => $gamertagSingle->user->getMention(true),
                         ]))
                         ->setSilent()
                         ->publish();
@@ -95,7 +95,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                     $botService->createMessage($update->message)
                         ->appendMessage(trans('EdgeCommand.searchGtSimilarity', [
                             'gamertag' => $gamertagSimilar->gamertag_value,
-                            'mention'  => $gamertagSimilar->user->getMention(),
+                            'mention'  => $gamertagSimilar->user->getMention(true),
                         ]))
                         ->setSilent()
                         ->publish();

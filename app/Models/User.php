@@ -53,11 +53,11 @@ class User extends Model
     /**
      * Return the user mention (or first name) string.
      */
-    public function getMention(): string
+    public function getMention(?bool $useFullname = null): string
     {
         $botService = BotService::getInstance();
 
-        if ($this->gamertag) {
+        if ($useFullname !== true && $this->gamertag) {
             return $botService->formatMention($this->gamertag->gamertag_value, $this->user_number);
         }
 
