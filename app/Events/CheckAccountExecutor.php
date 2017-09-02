@@ -29,7 +29,7 @@ class CheckAccountExecutor extends Executor
         }
 
         $now           = Carbon::now();
-        $minDifference = Carbon::now()->subHour(6);
+        $minDifference = Carbon::now()->subHour(9);
 
         /** @var UserGamertag $userGamertagQuery */
         /** @var UserGamertag $userGamertag */
@@ -65,7 +65,7 @@ class CheckAccountExecutor extends Executor
         }
 
         $setting = SettingService::fromReference($userGamertag, self::LAST_CHECK_REFERENCE);
-        $setting->save();
+        $setting->touch();
 
         if (!$userGamertag->gamertag_id) {
             $liveService  = LiveService::getInstance();

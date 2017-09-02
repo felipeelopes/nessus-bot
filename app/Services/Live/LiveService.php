@@ -33,7 +33,7 @@ class LiveService implements ServiceContract
         $requesterAuth = [ 'headers' => [ 'X-Auth' => env('LIVE_API_ID') ] ];
 
         try {
-            $response = $requester->requestRaw('GET', sprintf('%s/profile', $gamertag), $requesterAuth, RequesterService::CACHE_HOUR);
+            $response = $requester->requestRaw('GET', sprintf('%s/profile', $gamertag), $requesterAuth);
         }
         catch (ClientException $clientException) {
             return null;
