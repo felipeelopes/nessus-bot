@@ -78,7 +78,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                             'gamertag' => $gamertagSingle->gamertag_value,
                             'mention'  => $gamertagSingle->user->getMention(true),
                         ]))
-                        ->setSilent()
+                        ->disableNotification()
                         ->publish();
 
                     return;
@@ -97,7 +97,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                             'gamertag' => $gamertagSimilar->gamertag_value,
                             'mention'  => $gamertagSimilar->user->getMention(true),
                         ]))
-                        ->setSilent()
+                        ->disableNotification()
                         ->publish();
 
                     return;
@@ -161,7 +161,7 @@ class EdgeCommandStrategy implements UserStrategyContract
 
         $botService->createMessage($update->message)
             ->appendMessage(implode($messageBuilder))
-            ->setSilent()
+            ->disableNotification()
             ->publish();
     }
 
@@ -211,6 +211,7 @@ class EdgeCommandStrategy implements UserStrategyContract
 
         if ($update->message->isCommand(CommandService::COMMAND_ADMINS)) {
             $botService->createMessage($update->message)
+                ->disableNotification()
                 ->appendMessage(trans('UserRules.adminHeader', [
                     'admins' => implode(self::getAdministratorsList($botService)),
                 ]))
