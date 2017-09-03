@@ -2,14 +2,16 @@
 
 declare(strict_types = 1);
 
+use Application\Services\CommandService;
+
 $confirmTimingYes   = 'Confirmar';
 $confirmCreationYes = 'Confirmar';
 
 return [
     'creationWizard'        => "*Percebi a presença de inimigos, guardião!*\n" .
                                "Precisamos definir um plano de missão para não deixá-los avançar.\n\n" .
-                               "*\xE2\x9E\x9C Qual será o título da missão?*\n" .
-                               'Obrigatório (até 80 caracteres).',
+                               "*\xE2\x9E\x9C Qual será o título da missão?*\n\n" .
+                               'Você pode *escolher uma das opções abaixo* ou *digitar um título diferente* com até 80 caracteres.',
     'creationWizardOptions' => [
         [ 'value' => 'Leviatã', 'description' => '*Incursão*: Leviatã' ],
         [ 'value' => 'Anoitecer', 'description' => '*Semanal*: Anoitecer' ],
@@ -40,26 +42,26 @@ return [
     'creationWizardTimingConfirmToday'    => 'hoje, às :timing',
     'creationWizardTimingConfirmTomorrow' => 'amanhã, dia :day, às :timing',
     'creationWizardTimingConfirmOptions'  => [
-        [ 'value' => $confirmTimingYes ],
+        [ 'command' => CommandService::COMMAND_CONFIRM, 'value' => $confirmTimingYes ],
     ],
     'creationWizardTimingConfirmYes'      => $confirmTimingYes,
 
     'creationWizardDuration'        => "*\xE2\x9E\x9C Quantas horas durará a missão, em média?*\n" .
                                        'Informe o valor.',
     'creationWizardDurationOptions' => [
-        [ 'value' => '0.5', 'description' => 'menos de uma hora' ],
-        [ 'value' => '1', 'description' => 'cerca de uma hora' ],
-        [ 'value' => '2', 'description' => 'cerca de duas horas' ],
-        [ 'value' => '4', 'description' => 'cerca de quatro horas' ],
-        [ 'value' => '6', 'description' => 'cerca de seis horas' ],
+        [ 'value' => '0.5', 'description' => 'menos de uma hora', 'command' => '10' ],
+        [ 'value' => '1', 'description' => 'cerca de uma hora', 'command' => '20' ],
+        [ 'value' => '2', 'description' => 'cerca de duas horas', 'command' => '30' ],
+        [ 'value' => '4', 'description' => 'cerca de quatro horas', 'command' => '40' ],
+        [ 'value' => '6', 'description' => 'cerca de seis horas', 'command' => '50' ],
     ],
 
     'creationWizardPlayers'        => "*\xE2\x9E\x9C Quantos participarão do esquadrão?*\n" .
                                       'Digite um valor entre 2 e :max.',
     'creationWizardPlayersOptions' => [
-        [ 'value' => '6', 'description' => '6 (_ex. incursões_)' ],
-        [ 'value' => '4', 'description' => '4 (_ex. crisol_)' ],
-        [ 'value' => '3', 'description' => '3 (_ex. anoitecer_)' ],
+        [ 'value' => '6', 'description' => '6 (_ex. incursões_)', 'command' => '6' ],
+        [ 'value' => '4', 'description' => '4 (_ex. crisol_)', 'command' => '4' ],
+        [ 'value' => '3', 'description' => '3 (_ex. anoitecer, assalto_)', 'command' => '3' ],
     ],
 
     'creationWizardConfirmCreationHeader'  => "*Esta é a última etapa, guardião!*\n" .
@@ -68,7 +70,7 @@ return [
                                               ":structure\n\n" .
                                               "---\n\n",
     'creationWizardConfirmCreationOptions' => [
-        [ 'value' => $confirmCreationYes, 'description' => 'Confirmar e publicar no grupo' ],
+        [ 'command' => CommandService::COMMAND_CONFIRM, 'value' => $confirmCreationYes, 'description' => 'Confirmar e publicar no grupo' ],
     ],
     'creationWizardConfirmCreationYes'     => $confirmCreationYes,
 

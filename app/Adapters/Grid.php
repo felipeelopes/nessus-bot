@@ -151,7 +151,7 @@ class Grid extends BaseFluent
             'value' => $this->getTiming(),
         ]);
 
-        if ($grid && !$grid->isCanceled()) {
+        if (!$grid || !$grid->isCanceled()) {
             $result .= trans('Grid.gridDuration', [
                 'value' => $this->getDuration(),
             ]);

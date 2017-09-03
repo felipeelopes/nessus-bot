@@ -11,6 +11,7 @@ class CommandService
     public const COMMAND_ADMINS          = 'admins';
     public const COMMAND_CANCEL          = 'cancel';
     public const COMMAND_COMMANDS        = 'commands';
+    public const COMMAND_CONFIRM         = 'confirm';
     public const COMMAND_GRID_SHOW_SHORT = 'gridShowShort';
     public const COMMAND_GT              = 'gt';
     public const COMMAND_LIST_GRIDS      = 'listGrids';

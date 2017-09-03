@@ -18,18 +18,25 @@ class TimingConfirmMoment extends SessionMoment
     public const EVENT_REQUEST = 'request';
 
     /**
+     * @var bool|null
+     */
+    private static $skipRequest;
+
+    /**
      * @inheritdoc
      */
     public function request(Update $update, Process $process): void
     {
-        $botService = BotService::getInstance();
-        $botService->createMessage($update->message)
-            ->setCancelable()
-            ->appendMessage(trans('GridCreation.creationWizardTimingConfirm', [
-                'timing' => $process->get(TimingMoment::PROCESS_TIMING_TEXT),
-            ]))
-            ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardTimingConfirmOptions')))
-            ->publish();
+        if (self::$skipRequest !== true) {
+            $botService = BotService::getInstance();
+            $botService->createMessage($update->message)
+                ->setCancelable()
+                ->appendMessage(trans('GridCreation.creationWizardTimingConfirm', [
+                    'timing' => $process->get(TimingMoment::PROCESS_TIMING_TEXT),
+                ]))
+                ->setOptions(PredefinitionService::getInstance()->optionsFrom(trans('GridCreation.creationWizardTimingConfirmOptions')))
+                ->publish();
+        }
 
         assert(EventService::getInstance()->register(self::EVENT_REQUEST));
     }
@@ -39,8 +46,10 @@ class TimingConfirmMoment extends SessionMoment
      */
     public function validateInput(?string $input, Update $update, Process $process): ?string
     {
-        if ($input !== trans('GridCreation.creationWizardTimingConfirmYes')) {
-            TimingMoment::processTiming($input, $update, $process);
+        if (strcasecmp($input, trans('Command.commands.confirmCommand')) !== 0) {
+            if (!TimingMoment::processTiming($input, $update, $process)) {
+                self::$skipRequest = true;
+            }
 
             throw new ForceMomentException(self::class);
         }

@@ -19,10 +19,13 @@ class CancelCommandStrategy implements UserStrategyContract
      */
     public function process(?User $user, Update $update): ?bool
     {
-        if ($update->message->isCommand()) {
+        $isCancel = $update->message->isPrivate() &&
+                    strcasecmp((string) $update->message->text, trans('Command.commands.cancelCommand')) === 0;
+
+        if ($isCancel || $update->message->isCommand()) {
             SessionService::getInstance()->clearMoment();
 
-            if ($update->message->isCommand(CommandService::COMMAND_CANCEL)) {
+            if ($isCancel || $update->message->isCommand(CommandService::COMMAND_CANCEL)) {
                 /** @var CommandService $commandService */
                 $commandService = MockupService::getInstance()->instance(CommandService::class);
                 BotService::getInstance()->createMessage($update->message)

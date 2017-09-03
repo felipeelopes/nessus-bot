@@ -68,8 +68,14 @@ class PredefinitionService implements ServiceContract
                 }
             }
 
-            if ($optionDescription->command && !ctype_digit($optionDescription->command)) {
-                $commandName = trans('Command.commands.' . $optionDescription->command . 'Command', $optionDescription->arguments ?? []);
+            if ($optionDescription->command) {
+                $commandName = !ctype_digit($optionDescription->command)
+                    ? trans('Command.commands.' . $optionDescription->command . 'Command', $optionDescription->arguments ?? [])
+                    : $optionDescription->command;
+            }
+
+            if ($commandDescription === $commandName) {
+                $commandDescription = null;
             }
 
             $commands .= trans('Predefinition.listOption', [

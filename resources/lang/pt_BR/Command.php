@@ -14,7 +14,8 @@ return [
                      'Teremos um problema sério se eu tiver bloqueado...',
 
     'commands' => [
-        'cancelCommand' => 'Cancelar',
+        'cancelCommand'  => 'Cancelar',
+        'confirmCommand' => 'Confirmar',
 
         'commandsCommand'     => 'Comandos',
         'commandsDescription' => 'Esta listagem dos comandos disponíveis',
