@@ -140,4 +140,7 @@ return [
     'unsubscribeCancelLackInterest'   => 'Falta de interesse',
     'unsubscribeCancelAccessIssue'    => 'Problema de acesso ao jogo',
     'unsubscribeCancelOthers'         => 'Outros',
+
+    'errorForbidden' => "*Err...*\n" .
+                        'Você não é um organizador ou moderador desta grade.',
 ];

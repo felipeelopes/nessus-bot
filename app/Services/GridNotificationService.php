@@ -116,6 +116,11 @@ class GridNotificationService
                 'conditional' => !$isPrivate && !$isCanceled,
             ],
             [
+                'command'     => 'gridManager',
+                'arguments'   => [ 'id' => $grid->id ],
+                'conditional' => !$isPrivate && !$isCanceled,
+            ],
+            [
                 'command'     => 'subscribeUnsubscribe',
                 'arguments'   => [ 'id' => $grid->id ],
                 'conditional' => !$isPrivate && !$isCanceled,

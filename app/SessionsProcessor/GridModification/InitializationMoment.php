@@ -95,6 +95,11 @@ class InitializationMoment extends SessionMoment
 
                     return true;
                     break;
+                case trans('Command.commands.gridManagerCommandLetter'):
+                    $this->runManager($update, $grid);
+
+                    return true;
+                    break;
             }
 
             GridNotificationService::getInstance()
@@ -157,6 +162,27 @@ class InitializationMoment extends SessionMoment
         }
 
         return null;
+    }
+
+    /**
+     * Starts the grid manager.
+     */
+    private function runManager(Update $update, Grid $grid)
+    {
+        $botService = BotService::getInstance();
+
+        if (!$grid->isOwner($update->message->from)) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('GridModification.errorForbidden'))
+                ->publish();
+
+            return;
+        }
+
+        $update->message->forcePrivate();
+
+        GridNotificationService::getInstance()
+            ->notifyUpdate($update, $grid);
     }
 
     /**

@@ -67,5 +67,9 @@ return [
         'subscribeObservationCommand'       => 'G:idO',
         'subscribeObservationCommandLetter' => 'O',
         'subscribeObservationDescription'   => 'Acrescentar observação...',
+
+        'gridManagerCommand'       => 'G:idP',
+        'gridManagerCommandLetter' => 'P',
+        'gridManagerDescription'   => 'Personalizar grade...',
     ],
 ];
