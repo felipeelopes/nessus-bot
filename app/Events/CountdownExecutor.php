@@ -33,7 +33,7 @@ class CountdownExecutor extends Executor
             $message[] = Carbon::getTranslator()->transChoice('hour', $diff->h, [ ':count' => $diff->h ]);
         }
 
-        if ($diff->d === 0 && $diff->m) {
+        if ($diff->d === 0 && $diff->h === 0 && $diff->m) {
             $message[] = Carbon::getTranslator()->transChoice('minute', $diff->m, [ ':count' => $diff->m ]);
         }
 
