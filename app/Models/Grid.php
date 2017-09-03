@@ -33,7 +33,7 @@ use Illuminate\Support\Str;
  * @method Builder filterOwneds(User $user)
  * @method Builder filterSubscribeds(User $user)
  * @method Builder filterNonNotifieds()
- * @method Builder filterHourDifference(?int $minimumDifference = null, ?int $maximumDifference = null)
+ * @method Builder filterMinutesDifference(?int $minimumDifference = null, ?int $maximumDifference = null)
  * @method Builder orderByTiming()
  */
 class Grid extends Model
@@ -365,14 +365,14 @@ class Grid extends Model
     /**
      * Filter by timing distance between now and grid timing.
      */
-    public function scopeFilterHourDifference(Builder $builder, ?int $minimumDifference = null, ?int $maximumDifference = null)
+    public function scopeFilterMinutesDifference(Builder $builder, ?int $minimumDifference = null, ?int $maximumDifference = null)
     {
         if ($minimumDifference !== null) {
-            $builder->whereRaw('TIMESTAMPDIFF(HOUR, NOW(), `grid_timing`) >= ?', [ $minimumDifference ]);
+            $builder->whereRaw('TIMESTAMPDIFF(MINUTE, NOW(), `grid_timing`) >= ?', [ $minimumDifference ]);
         }
 
         if ($maximumDifference !== null) {
-            $builder->whereRaw('TIMESTAMPDIFF(HOUR, NOW(), `grid_timing`) < ?', [ $maximumDifference ]);
+            $builder->whereRaw('TIMESTAMPDIFF(MINUTE, NOW(), `grid_timing`) < ?', [ $maximumDifference ]);
         }
     }
 

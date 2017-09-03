@@ -27,17 +27,27 @@ class GridRespawnExecutor extends Executor
         $gridsQuery->where(function (Builder $builder) {
             $builder->orWhere(function (Builder $builder) {
                 /** @var Grid $builder */
-                $builder->filterHourDifference(4);
+                $builder->filterMinutesDifference(240);
                 $builder->filterLastTouchBefore(self::LAST_RESPAWN_REFERENCE, Carbon::now()->subHour());
             });
             $builder->orWhere(function (Builder $builder) {
                 /** @var Grid $builder */
-                $builder->filterHourDifference(1, 4);
+                $builder->filterMinutesDifference(60, 240);
                 $builder->filterLastTouchBefore(self::LAST_RESPAWN_REFERENCE, Carbon::now()->subMinute(30));
             });
             $builder->orWhere(function (Builder $builder) {
                 /** @var Grid $builder */
-                $builder->filterHourDifference(null, 1);
+                $builder->filterMinutesDifference(15, 60);
+                $builder->filterLastTouchBefore(self::LAST_RESPAWN_REFERENCE, Carbon::now()->subMinute(15));
+            });
+            $builder->orWhere(function (Builder $builder) {
+                /** @var Grid $builder */
+                $builder->filterMinutesDifference(0, 15);
+                $builder->filterLastTouchBefore(self::LAST_RESPAWN_REFERENCE, Carbon::now()->subMinute(5));
+            });
+            $builder->orWhere(function (Builder $builder) {
+                /** @var Grid $builder */
+                $builder->filterMinutesDifference(null, 0);
                 $builder->filterLastTouchBefore(self::LAST_RESPAWN_REFERENCE, Carbon::now()->subMinute(15));
             });
         });
