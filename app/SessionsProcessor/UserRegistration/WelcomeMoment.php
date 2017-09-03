@@ -118,6 +118,12 @@ class WelcomeMoment extends SessionMoment
      */
     public function validateInitialization(Update $update, Process $process): bool
     {
+        // Should ignore if is not the public group.
+        if (!$update->message->isPrivate() &&
+            $update->message->chat->id !== env('NBOT_GROUP_ID')) {
+            return false;
+        }
+
         // Ignore registration check if message was sent directly to Bot.
         // Except if is the "/start" command.
         return !$update->message->isPrivate() ||
