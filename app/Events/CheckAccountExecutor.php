@@ -6,7 +6,6 @@ namespace Application\Events;
 
 use Application\Models\Model;
 use Application\Models\UserGamertag;
-use Application\Services\Bungie\BungieService;
 use Application\Services\Live\LiveService;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;

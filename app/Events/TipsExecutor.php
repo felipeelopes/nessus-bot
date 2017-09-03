@@ -27,7 +27,7 @@ class TipsExecutor extends Executor
         $previousAt = SettingService::fromReference($this, self::PREVIOUS_AT);
 
         if (!$previousAt->setting_value) {
-            $previousAt->setting_value = Carbon::now()->subDay(1)->timestamp;
+            $previousAt->setting_value = Carbon::now()->subDay()->timestamp;
         }
 
         $diff = $now->diffInMinutes(Carbon::createFromTimestamp($previousAt->setting_value));
