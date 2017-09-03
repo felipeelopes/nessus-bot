@@ -10,9 +10,7 @@ use Application\Services\Live\LiveService;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class CheckAccountExecutor extends Executor
 {
@@ -38,24 +36,7 @@ class CheckAccountExecutor extends Executor
             // $builder->orWhereNull('bungie_account');
             // $builder->orWhereNull('bungie_membership');
         });
-        $userGamertagQuery->where(function (Builder $builder) use ($minDifference) {
-            $builder->whereNotExists(function (QueryBuilder $builder) {
-                $builder->select('id');
-                $builder->from('settings');
-                $builder->where('reference_type', UserGamertag::class);
-                $builder->where('reference_id', DB::raw('nbot_user_gamertags.id'));
-                $builder->limit(1);
-            });
-            $builder->orWhereExists(function (QueryBuilder $builder) use ($minDifference) {
-                $builder->select('id');
-                $builder->from('settings');
-                $builder->where('reference_type', UserGamertag::class);
-                $builder->where('reference_id', DB::raw('nbot_user_gamertags.id'));
-                $builder->where('setting_name', self::LAST_CHECK_REFERENCE);
-                $builder->where('updated_at', '<=', $minDifference);
-                $builder->limit(1);
-            });
-        });
+        $userGamertagQuery->filterLastTouchBefore(self::LAST_CHECK_REFERENCE, $minDifference);
         $userGamertagQuery->inRandomOrder();
         $userGamertag = $userGamertagQuery->first();
 

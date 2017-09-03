@@ -9,6 +9,7 @@ use Application\Events\CountdownExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
+use Application\Events\GridRespawnExecutor;
 use Application\Events\TipsExecutor;
 use Application\Services\SettingService;
 use Carbon\Carbon;
@@ -47,6 +48,7 @@ class EventsProcessor extends Command
 
         $this->runExecutor(new GridFinisherExecutor);
         $this->runExecutor(new GridNotifierExecutor);
+        $this->runExecutor(new GridRespawnExecutor);
         $this->runExecutor(new TipsExecutor);
         $this->runExecutor(new CountdownExecutor);
         $this->runExecutor(new CheckAccountExecutor);

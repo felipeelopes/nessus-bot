@@ -6,6 +6,7 @@ namespace Application\Services;
 
 use Application\Adapters\Grid as GridAdapter;
 use Application\Adapters\Telegram\Update;
+use Application\Events\GridRespawnExecutor;
 use Application\Models\Grid;
 use Application\Services\Telegram\BotService;
 use Application\SessionsProcessor\GridModification\InitializationMoment;
@@ -37,10 +38,8 @@ class GridNotificationService
         $isManager    = $isOwner || $grid->isManager($update->message->from);
         $isSubscriber = $grid->isSubscriber($update->message->from);
 
-        $isAdministratorOnly  = $update->message->from->isAdminstrator() && (
-                !$isSubscriber ||
-                $grid->isUser($update->message->from, true)
-            );
+        $isAdministratorOnly  = $update->message->from->isAdminstrator() &&
+                                (!$isSubscriber || $grid->isUser($update->message->from, true));
         $administrativePrefix = $isAdministratorOnly
             ? trans('GridModification.modifyAdministrative')
             : null;
@@ -137,6 +136,9 @@ class GridNotificationService
         }
 
         $botMessage->publish();
+
+        $respawnReference = SettingService::fromReference($grid, GridRespawnExecutor::LAST_RESPAWN_REFERENCE);
+        $respawnReference->touch();
     }
 
     /**

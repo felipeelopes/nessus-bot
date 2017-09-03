@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Models;
 
 use Application\Adapters\Telegram\User as TelegramUser;
+use Application\Models\Traits\LastTouchBeforeFilter;
 use Application\Models\Traits\SoftDeletes;
 use Application\SessionsProcessor\GridModification\UnsubscribeMoment;
 use Carbon\Carbon;
@@ -32,11 +33,13 @@ use Illuminate\Support\Str;
  * @method Builder filterOwneds(User $user)
  * @method Builder filterSubscribeds(User $user)
  * @method Builder filterNonNotifieds()
+ * @method Builder filterHourDifference(?int $minimumDifference = null, ?int $maximumDifference = null)
  * @method Builder orderByTiming()
  */
 class Grid extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,
+        LastTouchBeforeFilter;
 
     public const STATUS_CANCELED   = 'canceled';
     public const STATUS_FINISHED   = 'finished';
@@ -261,12 +264,16 @@ class Grid extends Model
 
     /**
      * Check if an user is the manager (or owner) of this Grid.
-     * @param TelegramUser $user       User instance.
-     * @param bool|null    $explicitly If is explicitly the owner (not an administrator).
+     * @param TelegramUser|null $user       User instance.
+     * @param bool|null         $explicitly If is explicitly the owner (not an administrator).
      * @return bool
      */
-    public function isManager(TelegramUser $user, ?bool $explicitly = null): bool
+    public function isManager(?TelegramUser $user, ?bool $explicitly = null): bool
     {
+        if ($user === null) {
+            return false;
+        }
+
         if ($explicitly !== false && $this->isOwner($user)) {
             return true;
         }
@@ -278,12 +285,16 @@ class Grid extends Model
 
     /**
      * Check if an user is the owner of this Grid.
-     * @param TelegramUser $user       User instance.
-     * @param bool|null    $explicitly If is explicitly the owner (not an administrator).
+     * @param TelegramUser|null $user       User instance.
+     * @param bool|null         $explicitly If is explicitly the owner (not an administrator).
      * @return bool
      */
-    public function isOwner(TelegramUser $user, ?bool $explicitly = null): bool
+    public function isOwner(?TelegramUser $user, ?bool $explicitly = null): bool
     {
+        if ($user === null) {
+            return false;
+        }
+
         if ($explicitly !== false && $user->isAdminstrator()) {
             return true;
         }
@@ -304,11 +315,15 @@ class Grid extends Model
 
     /**
      * Check if an user is in fact subscribed on grid.
-     * @param TelegramUser $user User instance.
+     * @param TelegramUser|null $user User instance.
      * @return bool
      */
-    public function isSubscriber(TelegramUser $user): bool
+    public function isSubscriber(?TelegramUser $user): bool
     {
+        if ($user === null) {
+            return false;
+        }
+
         return $this->getUserSubscription($user) !== null;
     }
 
@@ -345,6 +360,20 @@ class Grid extends Model
     public function scopeFilterAvailables(Builder $builder): void
     {
         $builder->whereIn('grid_status', [ self::STATUS_WAITING, self::STATUS_GATHERING, self::STATUS_PLAYING ]);
+    }
+
+    /**
+     * Filter by timing distance between now and grid timing.
+     */
+    public function scopeFilterHourDifference(Builder $builder, ?int $minimumDifference = null, ?int $maximumDifference = null)
+    {
+        if ($minimumDifference !== null) {
+            $builder->whereRaw('TIMESTAMPDIFF(HOUR, NOW(), `grid_timing`) >= ?', [ $minimumDifference ]);
+        }
+
+        if ($maximumDifference !== null) {
+            $builder->whereRaw('TIMESTAMPDIFF(HOUR, NOW(), `grid_timing`) < ?', [ $maximumDifference ]);
+        }
     }
 
     /**
