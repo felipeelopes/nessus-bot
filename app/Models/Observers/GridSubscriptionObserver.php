@@ -21,5 +21,7 @@ class GridSubscriptionObserver extends Observer
 
         GridNotificationService::getInstance()
             ->notifyUpdate(BotService::getInstance()->getUpdate(), $model->grid);
+
+        self::deleteSettings($model);
     }
 }

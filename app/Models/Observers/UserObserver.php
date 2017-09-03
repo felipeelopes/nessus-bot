@@ -19,6 +19,8 @@ class UserObserver extends Observer
         if ($model->gamertag) {
             $model->gamertag->delete();
         }
+
+        self::deleteSettings($model);
     }
 
     /**

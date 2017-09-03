@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Models;
 
+use Application\Models\Traits\MorphReferenceFilter;
 use Application\Models\Traits\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -16,7 +17,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Setting extends Model
 {
-    use   SoftDeletes;
+    use SoftDeletes,
+        MorphReferenceFilter;
 
     /**
      * Model casts.

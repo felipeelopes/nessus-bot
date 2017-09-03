@@ -5,9 +5,25 @@ declare(strict_types = 1);
 namespace Application\Models\Observers;
 
 use Application\Models\Model;
+use Application\Models\Setting;
 
 abstract class Observer
 {
+    /**
+     * Delete setting references.
+     */
+    protected static function deleteSettings(Model $model): void
+    {
+        /** @var Setting $settingsQuery */
+        $settingsQuery = Setting::query();
+        $settingsQuery->filterMorphReference($model);
+        $settings = $settingsQuery->get();
+
+        foreach ($settings as $setting) {
+            $setting->forceDelete();
+        }
+    }
+
     /**
      * Observe after create a new model.
      * @param Model $model

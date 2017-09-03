@@ -19,15 +19,9 @@ class SettingService
     {
         $isModel = $reference instanceof Model;
 
+        /** @var Setting $settingQuery */
         $settingQuery = Setting::query();
-        $settingQuery->where('reference_type', get_class($reference));
-
-        if ($isModel) {
-            $settingQuery->where('reference_id', $reference->id);
-        }
-        else {
-            $settingQuery->whereNull('reference_id');
-        }
+        $settingQuery->filterMorphReference($reference);
 
         /** @var Setting $setting */
         $setting = $settingQuery->first();

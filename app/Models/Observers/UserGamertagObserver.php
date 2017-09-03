@@ -37,5 +37,7 @@ class UserGamertagObserver extends Observer
         foreach ($gridSubscriptions as $gridSubscription) {
             $gridSubscription->delete();
         }
+
+        self::deleteSettings($model);
     }
 }
