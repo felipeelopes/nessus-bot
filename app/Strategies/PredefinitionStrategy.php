@@ -24,7 +24,7 @@ class PredefinitionStrategy implements UserStrategyContract
         /** @var OptionItem|null $commandMatch */
         $commandMatch = array_first($predefinitions, function (OptionItem $optionItem) use ($message) {
             return $optionItem->command === $message ||
-                   ($optionItem->value && strcasecmp($optionItem->value, $message) === 0);
+                   ($optionItem->value && strcasecmp((string) $optionItem->value, $message) === 0);
         });
 
         if ($commandMatch !== null) {
@@ -38,7 +38,7 @@ class PredefinitionStrategy implements UserStrategyContract
 
             foreach ($predefinitions as $predefinition) {
                 if ($predefinition->command === $command ||
-                    ($predefinition->value && strcasecmp($predefinition->value, $command) === 0)) {
+                    ($predefinition->value && strcasecmp((string) $predefinition->value, $command) === 0)) {
                     $update->message->text     = (string) $predefinition->value;
                     $update->message->entities = null;
 
