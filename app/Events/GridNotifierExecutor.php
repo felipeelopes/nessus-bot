@@ -7,7 +7,6 @@ namespace Application\Events;
 use Application\Adapters\Grid as GridAdapter;
 use Application\Models\Grid;
 use Application\Models\GridSubscription;
-use Application\Models\Model;
 use Application\Models\User;
 use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
@@ -19,7 +18,7 @@ class GridNotifierExecutor extends Executor
     /**
      * @inheritdoc
      */
-    public function run(?Model $model = null): ?bool
+    public function run(): ?bool
     {
         /** @var Grid $gridsQuery */
         $gridsQuery = Grid::query();

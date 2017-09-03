@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Application\Events;
 
-use Application\Models\Model;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
@@ -16,7 +15,7 @@ class TipsExecutor extends Executor
     /**
      * @inheritdoc
      */
-    public function run(?Model $model = null): ?bool
+    public function run(): ?bool
     {
         $now = Carbon::now();
 

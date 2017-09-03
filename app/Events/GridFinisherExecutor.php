@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Application\Events;
 
 use Application\Models\Grid;
-use Application\Models\Model;
 use Carbon\Carbon;
 
 class GridFinisherExecutor extends Executor
@@ -13,7 +12,7 @@ class GridFinisherExecutor extends Executor
     /**
      * @inheritdoc
      */
-    public function run(?Model $model = null): ?bool
+    public function run(): ?bool
     {
         /** @var Grid $gridsQuery */
         $gridsQuery = Grid::query();

@@ -6,7 +6,6 @@ namespace Application\Events;
 
 use Application\Adapters\Telegram\Update;
 use Application\Models\Grid;
-use Application\Models\Model;
 use Application\Services\GridNotificationService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +18,7 @@ class GridRespawnExecutor extends Executor
     /**
      * @inheritdoc
      */
-    public function run(?Model $model = null): ?bool
+    public function run(): ?bool
     {
         /** @var Grid $gridsQuery */
         $gridsQuery = Grid::query();

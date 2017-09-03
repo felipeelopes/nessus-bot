@@ -9,6 +9,7 @@ use Application\Events\CountdownExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
+use Application\Events\GridPlayingExecutor;
 use Application\Events\GridRespawnExecutor;
 use Application\Events\TipsExecutor;
 use Application\Services\SettingService;
@@ -46,6 +47,7 @@ class EventsProcessor extends Command
 
         Carbon::setLocale(env('APP_LOCALE'));
 
+        $this->runExecutor(new GridPlayingExecutor);
         $this->runExecutor(new GridFinisherExecutor);
         $this->runExecutor(new GridNotifierExecutor);
         $this->runExecutor(new GridRespawnExecutor);

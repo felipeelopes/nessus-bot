@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Application\Events;
 
-use Application\Models\Model;
 use Application\Models\Setting;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
@@ -49,7 +48,7 @@ class CountdownExecutor extends Executor
     /**
      * @inheritdoc
      */
-    public function run(?Model $model = null): ?bool
+    public function run(): ?bool
     {
         $now        = Carbon::now();
         $previousAt = SettingService::fromReference($this, self::PREVIOUS_AT);
