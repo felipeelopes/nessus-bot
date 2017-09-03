@@ -94,7 +94,10 @@ class UnsubscribeMoment extends SessionMoment
         $subscriberHim->subscription_rule = GridSubscription::RULE_OWNER;
         $subscriberHim->save();
 
-        $subscriptionOwner                    = $grid->getUserSubscription($update->message->from);
+        $subscriptionOwner = $grid->getUserSubscription($update->message->from);
+
+        assert($subscriptionOwner !== null);
+
         $subscriptionOwner->subscription_rule = GridSubscription::RULE_USER;
         $subscriptionOwner->delete();
 

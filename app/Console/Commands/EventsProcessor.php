@@ -18,7 +18,7 @@ use Illuminate\Console\Command;
 
 class EventsProcessor extends Command
 {
-    const SETTING_RUNNING = 'running';
+    public const SETTING_RUNNING = 'running';
 
     /**
      * @var string

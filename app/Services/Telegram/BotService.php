@@ -130,7 +130,7 @@ class BotService implements ServiceContract
      * Returns the Bot reference User.
      * @return User|BaseFluent
      */
-    public function getMe(): ?User
+    public function getMe(): User
     {
         return $this->requester->request(User::class, 'getMe', null, RequesterService::CACHE_HOUR);
     }

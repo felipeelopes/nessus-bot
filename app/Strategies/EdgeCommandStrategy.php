@@ -53,6 +53,8 @@ class EdgeCommandStrategy implements UserStrategyContract
         $botService     = BotService::getInstance();
         $messageCommand = $update->message->getCommand();
 
+        assert($messageCommand !== null);
+
         if ($messageCommand->entities->isEmpty()) {
             $commandText = $messageCommand->getTextArgument();
 

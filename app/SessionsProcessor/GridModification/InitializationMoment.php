@@ -24,15 +24,15 @@ class InitializationMoment extends SessionMoment
     public const PROCESS_CONTINUE = 'continue';
     public const PROCESS_GRID_ID  = 'gridId';
 
-    const REPLY_MODIFY_DURATION     = 'ModifyDuration';
-    const REPLY_MODIFY_MANAGERS     = 'ModifyManagers';
-    const REPLY_MODIFY_PLAYERS      = 'ModifyPlayers';
-    const REPLY_MODIFY_REQUIREMENTS = 'ModifyRequirements';
-    const REPLY_MODIFY_SUBTITLE     = 'ModifySubtitle';
-    const REPLY_MODIFY_TIMING       = 'ModifyTiming';
-    const REPLY_MODIFY_TITLE        = 'ModifyTitle';
-    const REPLY_TRANSFER_OWNER      = 'TransferOwner';
-    const REPLY_UNSUBSCRIBE         = 'Unsubscribe';
+    public const REPLY_MODIFY_DURATION     = 'ModifyDuration';
+    public const REPLY_MODIFY_MANAGERS     = 'ModifyManagers';
+    public const REPLY_MODIFY_PLAYERS      = 'ModifyPlayers';
+    public const REPLY_MODIFY_REQUIREMENTS = 'ModifyRequirements';
+    public const REPLY_MODIFY_SUBTITLE     = 'ModifySubtitle';
+    public const REPLY_MODIFY_TIMING       = 'ModifyTiming';
+    public const REPLY_MODIFY_TITLE        = 'ModifyTitle';
+    public const REPLY_TRANSFER_OWNER      = 'TransferOwner';
+    public const REPLY_UNSUBSCRIBE         = 'Unsubscribe';
 
     /**
      * @inheritdoc
@@ -45,6 +45,8 @@ class InitializationMoment extends SessionMoment
 
         if ($update->message->isCommand(CommandService::COMMAND_GRID_SHOW_SHORT)) {
             $command = $update->message->getCommand();
+
+            assert($command !== null);
 
             if ($command->arguments->count() < 1) {
                 return false;
@@ -203,7 +205,10 @@ class InitializationMoment extends SessionMoment
             return;
         }
 
-        $command     = $update->message->getCommand();
+        $command = $update->message->getCommand();
+
+        assert($command !== null);
+
         $commandText = $command->getTextArgument();
 
         if (!$commandText) {

@@ -28,6 +28,8 @@ class TransferOwnerMoment extends SessionMoment
     {
         $user = UserService::getInstance()->get($update->message->from->id);
 
+        assert($user !== null);
+
         /** @var Grid|Builder $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));
         $grid->load('subscribers.gamertag');
@@ -71,6 +73,8 @@ class TransferOwnerMoment extends SessionMoment
     public function save(?string $input, Update $update, Process $process): ?string
     {
         $user = UserService::getInstance()->get($update->message->from->id);
+
+        assert($user !== null);
 
         /** @var Grid $grid */
         $grid = (new Grid)->find($process->get(InitializationMoment::PROCESS_GRID_ID));

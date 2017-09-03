@@ -60,6 +60,8 @@ class ConfirmMoment extends SessionMoment
     {
         $user = UserService::getInstance()->get($update->message->from->id);
 
+        assert($user !== null);
+
         /** @var Grid $processGrid */
         $processGrid = $process->offsetGet(self::PROCESS_GRID);
 

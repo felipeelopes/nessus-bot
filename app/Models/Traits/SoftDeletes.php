@@ -8,6 +8,7 @@ use Carbon\Carbon;
 
 /**
  * @property-read Carbon|null $deleted_at
+ * @method $this withTrashed()
  */
 trait SoftDeletes
 {

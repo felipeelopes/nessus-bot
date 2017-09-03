@@ -129,6 +129,8 @@ class Grid extends BaseFluent
             $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($this->owner->id);
 
+            assert($user !== null);
+
             $result .= trans('Grid.gridOwner', [ 'value' => $user->gamertag->gamertag_value ]);
         }
 

@@ -14,8 +14,8 @@ use GuzzleHttp\Exception\ClientException;
 
 class RequesterService
 {
-    const CACHE_DAY  = Carbon::MINUTES_PER_HOUR * Carbon::HOURS_PER_DAY;
-    const CACHE_HOUR = Carbon::MINUTES_PER_HOUR;
+    public const CACHE_DAY  = Carbon::MINUTES_PER_HOUR * Carbon::HOURS_PER_DAY;
+    public const CACHE_HOUR = Carbon::MINUTES_PER_HOUR;
 
     /**
      * Base URI.
@@ -140,7 +140,9 @@ class RequesterService
         }
         catch (ClientException $clientException) {
             if ($clientException->getCode() === 403) {
-                $response        = $clientException->getResponse();
+                $response = $clientException->getResponse();
+                assert($response !== null);
+
                 $requestResponse = new RequestResponse(json_decode($response->getBody()->getContents(), true));
 
                 throw new RequestException($requestResponse);

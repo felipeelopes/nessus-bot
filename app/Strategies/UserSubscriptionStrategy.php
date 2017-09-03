@@ -23,7 +23,7 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
         $botService = BotService::getInstance();
 
         if ($update->message->new_chat_member) {
-            /** @var User|Builder|mixed $userQuery */
+            /** @var User|Builder $userQuery */
             $userQuery = User::query();
             $userQuery->whereUserNumber($update->message->new_chat_member->id);
             $userQuery->withTrashed();

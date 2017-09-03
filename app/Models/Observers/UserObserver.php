@@ -27,10 +27,9 @@ class UserObserver extends Observer
      */
     public function restoring(Model $model): void
     {
-        /** @var UserGamertag|mixed $userGamertagRelation */
+        /** @var UserGamertag $userGamertagRelation */
         $userGamertagRelation = $model->gamertag();
-        $userGamertagRelation->withTrashed()
-            ->first()
-            ->restore();
+        $userGamertagRelation = $userGamertagRelation->withTrashed()->first();
+        $userGamertagRelation->restore();
     }
 }

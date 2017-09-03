@@ -51,6 +51,8 @@ class ModifyManagersMoment extends SessionMoment
     {
         $user = UserService::getInstance()->get($update->message->from->id);
 
+        assert($user !== null);
+
         $gridSubscribersGamertags = [];
 
         foreach (self::getSubscribers($process) as $subscriber) {
@@ -80,6 +82,8 @@ class ModifyManagersMoment extends SessionMoment
     public function request(Update $update, Process $process): void
     {
         $user = UserService::getInstance()->get($update->message->from->id);
+
+        assert($user !== null);
 
         $gridSubscribersGamertags = [];
 

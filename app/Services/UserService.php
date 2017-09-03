@@ -30,6 +30,7 @@ class UserService implements ServiceContract
         /** @var User|Builder $userQuery */
         $userQuery = User::query();
         $userQuery->whereUserNumber($userId);
+        $userQuery->withTrashed();
 
         return $userQuery->first();
     }
