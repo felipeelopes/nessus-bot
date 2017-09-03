@@ -8,7 +8,7 @@ return [
     'adminCommands'      => "\n*Comandos administrativos:*\n",
     'command'            => ":command - :description;\n",
 
-    'callPrivate' => 'Resolveremos esse assunto no privado, guardião.',
+    'callPrivate' => 'Resolveremos esse assunto no privado, :mention.',
     'cantContact' => "\xE2\x9A\xA0 *Err...*\n" .
                      "Não consigo enviar mensagem para você, guardião.\n" .
                      'Teremos um problema sério se eu tiver bloqueado...',

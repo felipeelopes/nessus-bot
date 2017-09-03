@@ -153,8 +153,10 @@ class BotMessageService
         if (!$this->updateMessage->isPrivate()) {
             $this->after(function () {
                 (new self($this->updateMessage))
-                    ->appendMessage(trans('Command.callPrivate'))
-                    ->unduplicate(self::class . '@' . __FUNCTION__ . '@from:' . $this->updateMessage->from->id)
+                    ->setReplica(false)
+                    ->appendMessage(trans('Command.callPrivate', [
+                        'mention' => $this->updateMessage->from->getMention()
+                    ]))
                     ->publish();
             });
         }
