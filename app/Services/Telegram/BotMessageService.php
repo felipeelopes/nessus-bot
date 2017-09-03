@@ -190,10 +190,7 @@ class BotMessageService
             }
 
             $predefinitionService = PredefinitionService::getInstance();
-
-            if ($this->updateMessage->isPrivate()) {
-                $predefinitionService->setOptions($this->options);
-            }
+            $predefinitionService->setOptions($this->options, $this->updateMessage->isPrivate());
 
             $optionsMessage  = $predefinitionService->buildOptions();
             $optionsTemplate = $this->optionsSpecifics !== true

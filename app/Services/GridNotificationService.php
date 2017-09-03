@@ -169,11 +169,9 @@ class GridNotificationService
         $this->notifyMessage($update, $grid, $updateMessage);
 
         if ($updateTitle !== null && $update->message->isPrivate()) {
-            $updateCopy          = clone $update;
-            $updateCopy->message = clone $updateCopy->message;
-            $updateCopy->message->forcePublic();
+            $update->message->forcePublic();
 
-            $this->notifyMessage($updateCopy, $grid, $gridStructure);
+            $this->notifyMessage($update, $grid, $gridStructure);
         }
     }
 }
