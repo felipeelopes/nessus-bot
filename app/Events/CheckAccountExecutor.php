@@ -75,6 +75,8 @@ class CheckAccountExecutor extends Executor
             $userGamertag->save();
         }
 
+        $setting->forceDelete();
+
         return true;
     }
 }
