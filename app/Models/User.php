@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string                 $user_firstname  User first name.
  * @property string                 $user_lastname   User last name.
  * @property string                 $user_language   User language tag (IETF).
+ *
  * @method Builder whereUserNumber(int $userNumber)
  */
 class User extends Model

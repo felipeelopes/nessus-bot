@@ -5,9 +5,9 @@ declare(strict_types = 1);
 $preDownload = "\n\n\xE2\x9E\x9C Download prévio disponível na *Xbox Live* (_34.9GB_).";
 
 return [
-    'launchDays'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date* às *00:00*.\nFaltam apenas :days dias!{$preDownload}",
-    'launchHours' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date* às *00:00*.\nFaltam menos de :hours horas!{$preDownload}",
-    'launchToday' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam menos de :hours horas!{$preDownload}",
+    'launchDays'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date* às *00:00*.\nFaltam apenas *:days dias*!{$preDownload}",
+    'launchHours' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado em *:date* às *00:00*.\nFaltam menos de *:hours horas*!{$preDownload}",
+    'launchToday' => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam menos de *:hours horas*!{$preDownload}",
     'launchSoon'  => "\xE2\x9E\x9C O *Destiny 2* deverá ser lançado *hoje*.\nFaltam apenas alguns instantes!{$preDownload}",
     'launched'    => "\xE2\x9E\x9C O *Destiny 2* já deve estar a todo vapor!\nVamos recuperar nossa Luz, guardião!",
 

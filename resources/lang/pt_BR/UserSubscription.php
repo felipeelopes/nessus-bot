@@ -16,7 +16,7 @@ return [
     'userLeftKnown'       => "*Guardião caído!*\n" .
                              '*:fullname* (Gamertag *:gamertag*) não faz mais parte da equipe.',
 
-    'thankfulMessage' => "*Carta de despedida*\n\n" .
+    'thankfulMessage' => "*Carta de despedida: \xF0\x9F\x92\x8C*\n\n" .
                          "Guardião, embora esteja saindo de nosso clã, agradecemos muito ter dividido seu tempo conosco.\n" .
                          "Estaremos sempre esperando sua volta.\n\n" .
                          'De coração, :botname.',
