@@ -118,6 +118,10 @@ class WelcomeMoment extends SessionMoment
      */
     public function validateInitialization(Update $update, Process $process): bool
     {
+        if ($update->message->from->is_bot) {
+            return false;
+        }
+
         // Ignore registration check if message was sent directly to Bot.
         // Except if is the "/start" command.
         return !$update->message->isPrivate() ||
