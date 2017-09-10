@@ -23,6 +23,7 @@ class CommandService
     public const COMMAND_REGISTER        = 'register';
     public const COMMAND_RULES           = 'rules';
     public const COMMAND_START           = 'start';
+    public const COMMAND_STATS           = 'stats';
 
     /**
      * Returns the Command Service instance.
@@ -51,11 +52,7 @@ class CommandService
             $commands[] = static::COMMAND_NEW_GRID;
             $commands[] = static::COMMAND_LIST_GRIDS;
             $commands[] = static::COMMAND_MY_GRIDS;
-        }
-
-        $commands[] = static::COMMAND_NEWS;
-
-        if ($userRegister !== null) {
+            $commands[] = static::COMMAND_STATS;
             $commands[] = static::COMMAND_GT;
         }
 

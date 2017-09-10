@@ -22,6 +22,7 @@ class SettingService
         /** @var Setting $settingQuery */
         $settingQuery = Setting::query();
         $settingQuery->filterMorphReference($reference);
+        $settingQuery->where('setting_name', $name);
 
         /** @var Setting $setting */
         $setting = $settingQuery->first();

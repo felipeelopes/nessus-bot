@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Console\Commands;
 
 use Application\Events\CheckAccountExecutor;
+use Application\Events\CheckStatsExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
@@ -52,6 +53,7 @@ class EventsProcessor extends Command
         $this->runExecutor(new GridRespawnExecutor);
         $this->runExecutor(new TipsExecutor);
         $this->runExecutor(new CheckAccountExecutor);
+        $this->runExecutor(new CheckStatsExecutor);
 
         $settingRunning->setting_value = false;
         $settingRunning->save();

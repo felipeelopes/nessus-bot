@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Models;
 
 use Application\Models\Observers\UserObserver;
+use Application\Models\Traits\LastTouchBeforeFilter;
 use Application\Models\Traits\SoftDeletes;
 use Application\Services\Telegram\BotService;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,7 +23,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class User extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,
+        LastTouchBeforeFilter;
 
     /**
      * Model boot.

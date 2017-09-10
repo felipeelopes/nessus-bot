@@ -9,6 +9,7 @@ use Application\Adapters\Bungie\UserInfoCard;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Live\RequesterService;
+use Illuminate\Support\Collection;
 
 class BungieService implements ServiceContract
 {
@@ -56,5 +57,21 @@ class BungieService implements ServiceContract
         }
 
         return new UserInfoCard(array_first($userResponse));
+    }
+
+    /**
+     * Returns the user stats (simplified version).
+     */
+    public function userStatsSimplified(int $membership): ?Collection
+    {
+        $statsResponse = $this->request('GET', sprintf('Destiny2/1/Account/%u/Stats/', $membership));
+
+        if (!$statsResponse) {
+            return null;
+        }
+
+        return (new Collection(array_get($statsResponse, 'mergedAllCharacters.results.allPvE.allTime')))->map(function ($stat) {
+            return array_get($stat, 'basic.value');
+        });
     }
 }

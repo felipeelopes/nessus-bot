@@ -19,6 +19,7 @@ use Application\Strategies\GridListingStrategy;
 use Application\Strategies\GridModificationStrategy;
 use Application\Strategies\PredefinitionStrategy;
 use Application\Strategies\UserRegistrationStrategy;
+use Application\Strategies\UserStatsStrategy;
 use Application\Strategies\UserSubscriptionStrategy;
 use GuzzleHttp\Exception\RequestException;
 use Route;
@@ -142,6 +143,12 @@ class BotController extends Controller implements RouterRegisterContract
         /** @var GridCreationStrategy $gridCreation */
         $gridCreation = $mockupService->instance(GridCreationStrategy::class);
         if ($gridCreation->process($user, $update)) {
+            return;
+        }
+
+        /** @var UserStatsStrategy $userStats */
+        $userStats = $mockupService->instance(UserStatsStrategy::class);
+        if ($userStats->process($user, $update)) {
             return;
         }
 

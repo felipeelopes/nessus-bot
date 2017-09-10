@@ -50,6 +50,9 @@ return [
         'refreshCommand'     => 'Atualizar',
         'refreshDescription' => 'Atualiza os recursos de sistema',
 
+        'statsCommand'     => 'Estatisticas',
+        'statsDescription' => 'Exibe as estatísticas do clã',
+
         'gridShowShortCommand' => 'G',
 
         'subscribeTitularCommand'       => 'G:idT',
