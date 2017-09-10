@@ -24,8 +24,10 @@ return [
     'errorObservationTooLong' => "A observação não deve exceder 20 caracteres.\n" .
                                  'Você enviou :length caracteres.',
 
-    'notifyMessage' => "*Atenção, guardião!*\n" .
-                       "Você está inscrito na grade :command (\":title\") das *:hours*.\n\n" .
-                       "Começaremos em *:minutes*.\n\n" .
-                       'Esteja pronto!',
+    'notifyMessage'             => "*Atenção, guardião!*\n" .
+                                   "Você está inscrito como *:position* na grade :command (\":title\") das *:hours*, que começará em *:minutes*.\n\n" .
+                                   ':observations',
+    'observationTitular'        => '*Esteja pronto!*',
+    'observationTitularReserve' => 'Como *titular-reserva*, você poderá tornar-se *titular* caso um dos titulares desista.',
+    'observationReserve'        => 'Como *reserva*, você poderá ser convocado a qualquer momento caso sua presença seja necessária.',
 ];

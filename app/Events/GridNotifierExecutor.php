@@ -11,7 +11,7 @@ use Application\Models\User;
 use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class GridNotifierExecutor extends Executor
 {
@@ -34,20 +34,23 @@ class GridNotifierExecutor extends Executor
             /** @var GridSubscription|Builder $gridSubscribersQuery */
             $gridSubscribersQuery = $grid->subscribers();
             $gridSubscribersQuery->with([ 'gamertag.user' ]);
-            $gridSubscribersQuery->filterByPosition(GridSubscription::POSITION_TITULAR);
             $gridSubscribers = $gridSubscribersQuery->get();
 
-            /** @var User[]|Collection $users */
-            $users = $gridSubscribers->pluck('gamertag.user');
+            foreach ($gridSubscribers as $gridSubscriber) {
+                /** @var User $user */
+                $user = $gridSubscriber->gamertag->user;
 
-            foreach ($users as $user) {
+                $observations = trans('GridSubscription.observation' . Str::ucfirst($gridSubscriber->subscription_position));
+
                 $botService->createMessage()
                     ->setReceiver($user->user_number)
                     ->appendMessage(trans('GridSubscription.notifyMessage', [
-                        'command' => '/' . trans('Command.commands.gridShowShortCommand') . $grid->id,
-                        'title'   => $gridAdapter->getTitle(),
-                        'hours'   => $gridAdapter->getTiming(false),
-                        'minutes' => $gridAdapter->getMinutesDistance(),
+                        'position'     => GridSubscription::getPositionText($gridSubscriber->subscription_position),
+                        'command'      => '/' . trans('Command.commands.gridShowShortCommand') . $grid->id,
+                        'title'        => $gridAdapter->getTitle(),
+                        'hours'        => $gridAdapter->getTiming(false),
+                        'minutes'      => $gridAdapter->getMinutesDistance(),
+                        'observations' => $observations,
                     ]))
                     ->publish();
             }
