@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Application\Console\Commands;
 
 use Application\Events\CheckAccountExecutor;
-use Application\Events\CountdownExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
@@ -52,7 +51,6 @@ class EventsProcessor extends Command
         $this->runExecutor(new GridNotifierExecutor);
         $this->runExecutor(new GridRespawnExecutor);
         $this->runExecutor(new TipsExecutor);
-        $this->runExecutor(new CountdownExecutor);
         $this->runExecutor(new CheckAccountExecutor);
 
         $settingRunning->setting_value = false;
