@@ -145,6 +145,18 @@ class BotMessageService
     }
 
     /**
+     * Force that this message bt send to administrative group.
+     * @return BotMessageService
+     */
+    public function forceAdministrative(): BotMessageService
+    {
+        $this->setReceiver(env('NBOT_ADMIN_ID'));
+        $this->setReplica(false);
+
+        return $this;
+    }
+
+    /**
      * Force that this message be send to user.
      * @return BotMessageService
      */

@@ -6,6 +6,7 @@ namespace Application\Events;
 
 use Application\Models\Model;
 use Application\Models\UserGamertag;
+use Application\Services\Bungie\BungieService;
 use Application\Services\Live\LiveService;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
@@ -33,8 +34,7 @@ class CheckAccountExecutor extends Executor
         $userGamertagQuery = UserGamertag::query();
         $userGamertagQuery->where(function (Builder $builder) {
             $builder->whereNull('gamertag_id');
-            // $builder->orWhereNull('bungie_account');
-            // $builder->orWhereNull('bungie_membership');
+            $builder->orWhereNull('bungie_membership');
         });
         $userGamertagQuery->filterLastTouchBefore(self::LAST_CHECK_REFERENCE, $minDifference);
         $userGamertagQuery->inRandomOrder();
@@ -52,16 +52,14 @@ class CheckAccountExecutor extends Executor
             $liveGamertag = $liveService->getGamertag($userGamertag->gamertag_value);
 
             if ($liveGamertag === null) {
-                if ($now->hour >= 9 && $now->hour <= 21) {
-                    $botService = BotService::getInstance();
-                    $botService->createMessage()
-                        ->forcePublic()
-                        ->appendMessage(trans('CheckAccount.cantFoundGamertag', [
-                            'mention'  => $userGamertag->user->getMention(true),
-                            'gamertag' => $userGamertag->gamertag_value,
-                        ]))
-                        ->publish();
-                }
+                $botService = BotService::getInstance();
+                $botService->createMessage()
+                    ->forceAdministrative()
+                    ->appendMessage(trans('CheckAccount.cantFoundGamertag', [
+                        'gamertag' => $userGamertag->gamertag_value,
+                        'fullname' => $userGamertag->user->getFullname(),
+                    ]))
+                    ->publish();
 
                 return true;
             }
@@ -71,9 +69,29 @@ class CheckAccountExecutor extends Executor
             if ($userGamertag->gamertag_value !== $liveGamertag->value) {
                 $userGamertag->gamertag_value = $liveGamertag->value;
             }
-
-            $userGamertag->save();
         }
+
+        if ($userGamertag->gamertag_id && !$userGamertag->bungie_membership) {
+            $bungieService = BungieService::getInstance();
+            $bungieUser    = $bungieService->searchUser($userGamertag->gamertag_value);
+
+            if ($bungieUser === null) {
+                $botService = BotService::getInstance();
+                $botService->createMessage()
+                    ->forceAdministrative()
+                    ->appendMessage(trans('CheckAccount.cantFoundMembership', [
+                        'gamertag' => $userGamertag->gamertag_value,
+                        'fullname' => $userGamertag->user->getFullname(),
+                    ]))
+                    ->publish();
+
+                return true;
+            }
+
+            $userGamertag->bungie_membership = $bungieUser->membershipId;
+        }
+
+        $userGamertag->save();
 
         $setting->forceDelete();
 

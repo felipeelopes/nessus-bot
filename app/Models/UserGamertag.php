@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 /**
- * @property User|null $user           User referenced.
- * @property int       $user_id        User referenced id.
- * @property int       $gamertag_id    Gamergag id.
- * @property string    $gamertag_value Gamertag value.
+ * @property User|null $user              User referenced.
+ * @property int       $user_id           User referenced id.
+ * @property int|null  $gamertag_id       Gamergag id.
+ * @property string    $gamertag_value    Gamertag value.
+ * @property int|null  $bungie_membership Bungie membership.
  *
  * @method $this filterBySimilarity(string $gamertag)
  * @method $this orderBySimilarity(string $gamertag)
