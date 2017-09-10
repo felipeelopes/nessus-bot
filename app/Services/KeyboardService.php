@@ -9,33 +9,28 @@ use Illuminate\Support\Str;
 class KeyboardService
 {
     private const FUZZY_KEYS = [
-        'a' => 'aqwsxz4e',
-        'b' => 'bvfghn 68',
-        'c' => 'cxsdfv ',
-        'd' => 'dswerfvcx',
-        'e' => 'ew234rfds3a',
-        'f' => 'fdertgbvc',
-        'g' => 'gfrtyhnbv9',
-        'h' => 'hgtyujmnb',
-        'i' => 'iu789olkj1y',
-        'j' => 'jhyuikmn1l',
-        'k' => 'kjuiolm',
-        'l' => 'lkiopç',
-        'm' => 'mnhjk',
-        'n' => 'nbghjm',
-        'o' => 'oi890pçlk',
-        'p' => 'po90çl',
-        'q' => 'q12wsa9',
-        'r' => 're345tgfd',
-        's' => 'saqwedcxz5',
-        't' => 'tr456yhgf7',
-        'u' => 'uy678ikjha',
-        'v' => 'vcdfgb ',
-        'w' => 'wq123edsa',
-        'x' => 'xzasdc ',
-        'y' => 'yt567ujhgi',
-        'z' => 'zasxe',
-        ' ' => ' zxcvbnm',
+        'a' => 'a4e',
+        'b' => 'b68',
+        'c' => 'cxs',
+        'e' => 'e3a',
+        'f' => 'ft',
+        'g' => 'gj9',
+        'i' => 'ilj1y',
+        'j' => 'jgi1l',
+        'l' => 'liu',
+        'm' => 'mn',
+        'n' => 'nm',
+        'o' => 'o0',
+        'p' => 'p9',
+        'q' => 'q9',
+        's' => 'sxz5',
+        't' => 'tf7',
+        'u' => 'ul',
+        'v' => 'vw',
+        'w' => 'wv',
+        'x' => 'xzc',
+        'y' => 'yi',
+        'z' => 'zsx',
     ];
 
     /**
@@ -54,7 +49,7 @@ class KeyboardService
      */
     public function generateFuzzyExpression(string $message): string
     {
-        $letters = str_split(Str::lower($message));
+        $letters = str_split(Str::lower(utf8_decode($message)));
         $result  = null;
 
         foreach ($letters as $letter) {
@@ -63,7 +58,7 @@ class KeyboardService
                 continue;
             }
 
-            $result .= preg_quote($letter, '/');
+            $result .= preg_quote($letter, '/') . '{1,2}';
         }
 
         return $result;
