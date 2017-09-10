@@ -33,7 +33,7 @@ class GridNotificationService
         $botService = BotService::getInstance();
 
         $isPrivate    = $update->message->isPrivate();
-        $isCanceled   = $grid->isCanceled();
+        $isFinished   = $grid->isCanceled() || $grid->isFinished();
         $isOwner      = $grid->isOwner($update->message->from);
         $isManager    = $isOwner || $grid->isManager($update->message->from);
         $isSubscriber = $grid->isSubscriber($update->message->from);
@@ -48,82 +48,82 @@ class GridNotificationService
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TITLE,
                 'description' => $administrativePrefix . trans('GridModification.modifyTitleOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_SUBTITLE,
                 'description' => $administrativePrefix . trans('GridModification.modifySubtitleOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_REQUIREMENTS,
                 'description' => $administrativePrefix . trans('GridModification.modifyRequirementsOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_TIMING,
                 'description' => $administrativePrefix . trans('GridModification.modifyTimingOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_DURATION,
                 'description' => $administrativePrefix . trans('GridModification.modifyDurationOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_PLAYERS,
                 'description' => $administrativePrefix . trans('GridModification.modifyPlayersOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_TRANSFER_OWNER,
                 'description' => $administrativePrefix . trans('GridModification.transferOwnerOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isOwner,
+                'conditional' => $isPrivate && !$isFinished && $isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_MODIFY_MANAGERS,
                 'description' => $administrativePrefix . trans('GridModification.modifyManagersOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isManager,
+                'conditional' => $isPrivate && !$isFinished && $isManager,
             ],
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeYouOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isSubscriber && !$isOwner,
+                'conditional' => $isPrivate && !$isFinished && $isSubscriber && !$isOwner,
             ],
             [
                 'value'       => InitializationMoment::REPLY_UNSUBSCRIBE,
                 'description' => trans('GridModification.unsubscribeOwnerOption'),
-                'conditional' => $isPrivate && !$isCanceled && $isSubscriber && $isOwner,
+                'conditional' => $isPrivate && !$isFinished && $isSubscriber && $isOwner,
             ],
             [
                 'command'     => 'subscribeTitular',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled && $grid->getVacancies() > 0,
+                'conditional' => !$isPrivate && !$isFinished && $grid->getVacancies() > 0,
             ],
             [
                 'command'     => 'subscribeTitularReserve',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled && $grid->getVacancies() === 0,
+                'conditional' => !$isPrivate && !$isFinished && $grid->getVacancies() === 0,
             ],
             [
                 'command'     => 'subscribeReserve',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled,
+                'conditional' => !$isPrivate && !$isFinished,
             ],
             [
                 'command'     => 'subscribeObservation',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled,
+                'conditional' => !$isPrivate && !$isFinished,
             ],
             [
                 'command'     => 'gridManager',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled,
+                'conditional' => !$isPrivate && !$isFinished,
             ],
             [
                 'command'     => 'subscribeUnsubscribe',
                 'arguments'   => [ 'id' => $grid->id ],
-                'conditional' => !$isPrivate && !$isCanceled,
+                'conditional' => !$isPrivate && !$isFinished,
             ],
         ]))->filter(function ($availableOption) {
             return !array_key_exists('conditional', $availableOption) ||

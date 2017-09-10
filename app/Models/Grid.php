@@ -263,6 +263,15 @@ class Grid extends Model
     }
 
     /**
+     * Return if this grid was finished.
+     * @return bool
+     */
+    public function isFinished(): bool
+    {
+        return $this->grid_status === self::STATUS_FINISHED;
+    }
+
+    /**
      * Check if an user is the manager (or owner) of this Grid.
      * @param TelegramUser|null $user       User instance.
      * @param bool|null         $explicitly If is explicitly the owner (not an administrator).
