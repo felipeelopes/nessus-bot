@@ -74,7 +74,7 @@ class BotController extends Controller implements RouterRegisterContract
             $user->user_firstname = $update->message->from->first_name;
             $user->user_lastname  = $update->message->from->last_name;
             $user->user_language  = $update->message->from->language_code;
-            $user->save();
+            $user->touch();
         }
 
         (new GoodMorningExecutor)->run();
