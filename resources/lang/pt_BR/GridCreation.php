@@ -26,6 +26,7 @@ return [
         [ 'value' => 'Normal' ],
         [ 'value' => 'Heróico' ],
         [ 'value' => 'Heróico com Desafio' ],
+        [ 'value' => 'Prestígio' ],
     ],
 
     'creationWizardRequirements'        => "*\xE2\x9E\x9C Quais serão as observações da missão?*\n" .

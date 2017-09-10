@@ -23,6 +23,10 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
         $botService = BotService::getInstance();
 
         if ($update->message->new_chat_member) {
+            if ($update->message->new_chat_member->is_bot) {
+                return true;
+            }
+
             /** @var User|Builder $userQuery */
             $userQuery = User::query();
             $userQuery->whereUserNumber($update->message->new_chat_member->id);
@@ -62,6 +66,10 @@ class UserSubscriptionStrategy implements UpdateStrategyContract
         }
 
         if ($update->message->left_chat_member) {
+            if ($update->message->left_chat_member->is_bot) {
+                return true;
+            }
+
             /** @var UserService $userService */
             $userService = MockupService::getInstance()->instance(UserService::class);
             $user        = $userService->get($update->message->left_chat_member->id);
