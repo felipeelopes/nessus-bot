@@ -20,7 +20,9 @@ use Application\Strategies\GridModificationStrategy;
 use Application\Strategies\PredefinitionStrategy;
 use Application\Strategies\UserRegistrationStrategy;
 use Application\Strategies\UserSubscriptionStrategy;
+use GuzzleHttp\Exception\RequestException;
 use Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class BotController extends Controller implements RouterRegisterContract
 {
@@ -48,7 +50,21 @@ class BotController extends Controller implements RouterRegisterContract
      */
     public function process(): void
     {
-        $this->processUpdate(BotService::getInstance()->getUpdate());
+        try {
+            $this->processUpdate(BotService::getInstance()->getUpdate());
+        }
+        catch (RequestException $exception) {
+            /** @var Request $request */
+            $request = app('request');
+
+            /** @var \Raven_Client $sentry */
+            $sentry = app('sentry');
+            $sentry->captureException($exception, [
+                'extra' => [
+                    'Update' => json_decode($request->getContent(), true),
+                ],
+            ]);
+        }
     }
 
     /**
