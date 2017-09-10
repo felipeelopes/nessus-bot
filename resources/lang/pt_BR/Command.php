@@ -44,6 +44,9 @@ return [
         'rulesCommand'     => 'Regras',
         'rulesDescription' => 'Lista as regras do clã',
 
+        'linksCommand'     => 'Links',
+        'linksDescription' => 'Lista os links dos grupos dos clãs',
+
         'refreshCommand'     => 'Atualizar',
         'refreshDescription' => 'Atualiza os recursos de sistema',
 

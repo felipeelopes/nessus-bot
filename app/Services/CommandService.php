@@ -14,6 +14,7 @@ class CommandService
     public const COMMAND_CONFIRM         = 'confirm';
     public const COMMAND_GRID_SHOW_SHORT = 'gridShowShort';
     public const COMMAND_GT              = 'gt';
+    public const COMMAND_LINKS           = 'links';
     public const COMMAND_LIST_GRIDS      = 'listGrids';
     public const COMMAND_MY_GRIDS        = 'myGrids';
     public const COMMAND_NEWS            = 'news';
@@ -67,6 +68,7 @@ class CommandService
             $commands[] = static::COMMAND_REGISTER;
         }
 
+        $commands[] = static::COMMAND_LINKS;
         $commands[] = static::COMMAND_ADMINS;
         $commands[] = static::COMMAND_RULES;
 

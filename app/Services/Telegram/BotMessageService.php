@@ -155,7 +155,7 @@ class BotMessageService
                 (new self($this->updateMessage))
                     ->setReplica(false)
                     ->appendMessage(trans('Command.callPrivate', [
-                        'mention' => $this->updateMessage->from->getMention()
+                        'mention' => $this->updateMessage->from->getMention(),
                     ]))
                     ->publish();
             });

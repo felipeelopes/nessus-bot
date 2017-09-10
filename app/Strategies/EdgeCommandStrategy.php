@@ -211,6 +211,14 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
+        if ($update->message->isCommand(CommandService::COMMAND_LINKS)) {
+            $botService->createMessage($update->message)
+                ->appendMessage(trans('EdgeCommand.clanList'))
+                ->publish();
+
+            return true;
+        }
+
         if ($update->message->isCommand(CommandService::COMMAND_ADMINS)) {
             $botService->createMessage($update->message)
                 ->disableNotification()

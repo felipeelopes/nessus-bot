@@ -33,4 +33,8 @@ return [
     'goodEarly'     => '*Boa madrugada, guardiões!*',
     'goodEvening'   => '*Boa noite, guardiões!*',
     'goodMorning'   => '*Bom dia, guardiões!*',
+
+    'clanList' => "*Nossos clãs:*\n\n" .
+                  "\xE2\x9E\x9C [Os Incursor3s](https://www.bungie.net/en/ClanV2/?groupid=1843400) (_vagas indisponíveis_)\n" .
+                  "\xE2\x9E\x9C [Os Incursor3s II](https://www.bungie.net/en/ClanV2/?groupid=1866448) (*vagas disponíveis*)",
 ];
