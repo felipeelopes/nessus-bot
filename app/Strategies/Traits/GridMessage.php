@@ -78,14 +78,20 @@ trait GridMessage
                 ]);
             }
 
+            $countPlayers = $grid->countPlayers();
+            $gridPlayers  = $grid->grid_players;
+
             $result .= trans('GridListing.item', [
                 'timing'     => $grid->grid_timing->format('H:i'),
                 'command'    => '/' . trans('Command.commands.gridShowShortCommand') . $grid->id,
-                'players'    => $grid->countPlayers(),
-                'maxPlayers' => $grid->grid_players,
+                'players'    => $countPlayers,
+                'maxPlayers' => $gridPlayers,
                 'reserves'   => FormattingService::toSuperscript((string) $grid->countReserves()),
                 'title'      => FormattingService::ellipsis($grid->grid_title, 20),
                 'subtitle'   => $gridSubtitle,
+                'incomplete' => $countPlayers < $gridPlayers
+                    ? trans('GridListing.incompleteIcon')
+                    : null,
             ]);
         }
 

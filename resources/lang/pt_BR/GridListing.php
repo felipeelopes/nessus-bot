@@ -13,8 +13,10 @@ return [
     'titleToday'    => "*Próximos eventos:*\n",
     'titleTomorrow' => "*Somente amanhã:*\n",
 
-    'item'         => ":command :timing \xE2\x9E\x9C [[:players/:maxPlayers]] :reserves - *:title*:subtitle\n",
+    'item'         => ":command :timing \xE2\x9E\x9C [[:players/:maxPlayers]] :reserves - *:title*:subtitle :incomplete\n",
     'itemSubtitle' => ' (_:subtitle_)',
+
+    'incompleteIcon' => "\xF0\x9F\x94\x8D",
 
     'errorGridNotFound' => "*Err...*\n" .
                            'Não consegui localizar a grade solicitada.',
