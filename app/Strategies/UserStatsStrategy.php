@@ -331,11 +331,23 @@ class UserStatsStrategy implements UserStrategyContract
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_SELF_STATS)) {
-            $identifier = self::class . '@Command:' . CommandService::COMMAND_SELF_STATS;
+            $messageEntityBotCommand = $update->message->getCommand();
+            $whichRequestTrans       = trans('Stats.selfStatsRequest');
+
+            $mentionedUser = null;
+            if ($messageEntityBotCommand) {
+                $mentionedUser = array_first($messageEntityBotCommand->getMentions());
+                if ($mentionedUser) {
+                    $user              = $mentionedUser;
+                    $whichRequestTrans = trans('Stats.userStatsRequest');
+                }
+            }
+
+            $identifier = self::class . '@Command:' . CommandService::COMMAND_SELF_STATS . '@' . $user->id;
 
             BotService::getInstance()
                 ->createMessage($update->message)
-                ->appendMessage(trans('Stats.selfStatsRequest'))
+                ->appendMessage($whichRequestTrans)
                 ->unduplicate($identifier)
                 ->publish();
 
@@ -346,11 +358,10 @@ class UserStatsStrategy implements UserStrategyContract
                 ->appendMessage($this->generateStats($update->message->from->getUserRegister(), $userStats))
                 ->unduplicate($identifier);
 
-            $messageEntityBotCommand = $update->message->getCommand();
-            $isPublic                = $messageEntityBotCommand &&
-                                       $messageEntityBotCommand->getTextArgument() === 'public';
+            $isPublic = $messageEntityBotCommand &&
+                        $messageEntityBotCommand->getTextArgument() === 'public';
 
-            if (!$isPublic) {
+            if (!$isPublic && !$mentionedUser) {
                 $botMessageService->forcePrivate();
             }
 

@@ -81,4 +81,6 @@ return [
 
     'selfStatsRequest' => "*Estamos verificando suas estatísticas, guardião!*\n" .
                           'Aguarde alguns segundos...',
+    'userStatsRequest' => "*Estamos verificando estas estatísticas, guardião!*\n" .
+                          'Aguarde alguns segundos...',
 ];
