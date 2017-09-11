@@ -12,6 +12,7 @@ use Application\Events\GridNotifierExecutor;
 use Application\Events\GridPlayingExecutor;
 use Application\Events\GridRespawnExecutor;
 use Application\Events\TipsExecutor;
+use Application\Exceptions\Executor\KeepWorkingException;
 use Application\Services\SettingService;
 use Carbon\Carbon;
 use Exception;
@@ -70,6 +71,10 @@ class EventsProcessor extends Command
         try {
             $executor->run();
             printf("OK\n");
+        }
+        catch (KeepWorkingException $exception) {
+            printf("OK\n");
+            $this->runExecutor($executor);
         }
         catch (Exception $exception) {
             printf("FAILED\n");

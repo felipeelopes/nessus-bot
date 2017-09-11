@@ -25,7 +25,7 @@ class UserStatsStrategy implements UserStrategyContract
     /**
      * Format stat value.
      */
-    private static function formatValue(string $statsType, $statsValue)
+    public static function formatValue(string $statsType, $statsValue)
     {
         if ($statsType) {
             switch ($statsType) {
@@ -52,7 +52,7 @@ class UserStatsStrategy implements UserStrategyContract
     /**
      * Return the stats types.
      */
-    private static function getStatsTypes(): array
+    public static function getStatsTypes(): array
     {
         $groupAdventures  = trans('Stats.groupAdventures');
         $groupIluminateds = trans('Stats.groupIluminateds');

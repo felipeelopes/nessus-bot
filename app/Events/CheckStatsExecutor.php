@@ -4,15 +4,18 @@ declare(strict_types = 1);
 
 namespace Application\Events;
 
+use Application\Exceptions\Executor\KeepWorkingException;
 use Application\Models\Model;
 use Application\Models\Setting;
 use Application\Models\User;
 use Application\Services\Bungie\BungieService;
 use Application\Services\SettingService;
+use Application\Services\Telegram\BotService;
 use Application\Strategies\UserStatsStrategy;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class CheckStatsExecutor extends Executor
 {
@@ -57,7 +60,7 @@ class CheckStatsExecutor extends Executor
         $settingStatsUpdatedReference = SettingService::fromReference($userStatsStrategyReference, UserStatsStrategy::UPDATED_AT);
         $settingStatsUpdatedReference->touch();
 
-        return $userStats;
+        return $userStats ?: new Collection;
     }
 
     /**
@@ -92,8 +95,32 @@ class CheckStatsExecutor extends Executor
             $settingUserIdReference->setting_name   = $statUserIdReference;
         }
 
+        $statIsBetter = $settingValueReference->setting_value < $statValue;
+
         if (!$settingValueReference->exists ||
-            $settingValueReference->setting_value < $statValue) {
+            $statIsBetter) {
+            if ($statIsBetter && $settingUserIdReference->exists && $referenceUser->id !== $settingUserIdReference->setting_value) {
+                $statDefinition = (new Collection(UserStatsStrategy::getStatsTypes()))->where('name', $statName)->first();
+
+                if ($statDefinition) {
+                    $userBefore = (new User)->find($settingUserIdReference->setting_value);
+
+                    BotService::getInstance()
+                        ->createMessage()
+                        ->appendMessage(trans('Stats.statsSurpassed', [
+                            'title'          => Str::lower(Str::substr($statDefinition['title'], 0, 1)) . Str::substr($statDefinition['title'], 1),
+                            'valueBefore'    => UserStatsStrategy::formatValue($statDefinition['type'], $settingValueReference->setting_value),
+                            'gamertagBefore' => $userBefore->gamertag->gamertag_value,
+                            'valueNow'       => UserStatsStrategy::formatValue($statDefinition['type'], $statValue),
+                            'gamertagNow'    => $referenceUser->gamertag->gamertag_value,
+                            'diff'           => $settingValueReference->setting_value ? sprintf('+%.2f%%', $statValue / $settingValueReference->setting_value) : '+100.00%',
+                        ]))
+                        ->forcePublic()
+                        ->unduplicate(self::class . '@surpass' . $statName)
+                        ->publish();
+                }
+            }
+
             $settingValueReference->setting_value = $statValue;
             $settingValueReference->save();
 
@@ -137,6 +164,6 @@ class CheckStatsExecutor extends Executor
 
         self::requestStats($user);
 
-        return true;
+        throw new KeepWorkingException;
     }
 }

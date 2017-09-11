@@ -16,10 +16,10 @@ return [
     'statsItemSelf'   => "\xE2\x9E\x9C :trophy *:title*: :value (_:percent_)\n",
 
     'statsTrophy'    => "\xF0\x9F\x8F\x86",
-    'statsSurpassed' => "\xF0\x9F\x8F\x86 *Estatística superada!*\n" .
+    'statsSurpassed' => "\xF0\x9F\x8F\x86 *Estatística superada!*\n\n" .
                         "\xE2\x9E\x9C *Estatística:* :title\n" .
                         "\xE2\x9E\x9C *Antes*: :valueBefore \xE2\x86\x92 _:gamertagBefore_\n" .
-                        "\xE2\x9E\x9C *Agora*: :valueNow \xE2\x86\x92 _:gamertagNow_",
+                        "\xE2\x9E\x9C *Agora*: :valueNow \xE2\x86\x92 _:gamertagNow_ (_:diff_)",
 
     'groupAdventures'  => 'Aventureiros do Clã',
     'groupIluminateds' => 'Iluminados do Clã',
