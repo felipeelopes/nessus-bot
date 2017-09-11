@@ -19,9 +19,11 @@ class CommandService
     public const COMMAND_MY_GRIDS        = 'myGrids';
     public const COMMAND_NEWS            = 'news';
     public const COMMAND_NEW_GRID        = 'newGrid';
+    public const COMMAND_RECALC_STATS    = 'recalcStats';
     public const COMMAND_REFRESH         = 'refresh';
     public const COMMAND_REGISTER        = 'register';
     public const COMMAND_RULES           = 'rules';
+    public const COMMAND_SELF_STATS      = 'selfStats';
     public const COMMAND_START           = 'start';
     public const COMMAND_STATS           = 'stats';
 
@@ -53,6 +55,7 @@ class CommandService
             $commands[] = static::COMMAND_LIST_GRIDS;
             $commands[] = static::COMMAND_MY_GRIDS;
             $commands[] = static::COMMAND_STATS;
+            $commands[] = static::COMMAND_SELF_STATS;
             $commands[] = static::COMMAND_GT;
         }
 

@@ -53,6 +53,9 @@ return [
         'statsCommand'     => 'Estatisticas',
         'statsDescription' => 'Exibe as estatísticas do clã',
 
+        'selfStatsCommand'     => 'MinhasEstatisticas',
+        'selfStatsDescription' => 'Exibe as suas estatísticas',
+
         'gridShowShortCommand' => 'G',
 
         'subscribeTitularCommand'       => 'G:idT',

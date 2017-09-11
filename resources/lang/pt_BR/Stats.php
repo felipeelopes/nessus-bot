@@ -11,6 +11,16 @@ return [
     'statsGroup'  => "\n*:title*:\n",
     'statsItem'   => "\xE2\x9E\x9C *:title*: :value \xE2\x86\x92 _:gamertag_\n",
 
+    'statsHeaderSelf' => "\xF0\x9F\x8F\x86 *Estatísticas de :gamertag:*\n\n" .
+                         ':contents',
+    'statsItemSelf'   => "\xE2\x9E\x9C *:title*: :value (_:percent_) :trophy\n",
+
+    'statsTrophy'    => "\xF0\x9F\x8F\x86",
+    'statsSurpassed' => "\xF0\x9F\x8F\x86 *Estatística superada!*\n" .
+                        "\xE2\x9E\x9C *Estatística:* :title\n" .
+                        "\xE2\x9E\x9C *Antes*: :valueBefore \xE2\x86\x92 _:gamertagBefore_\n" .
+                        "\xE2\x9E\x9C *Agora*: :valueNow \xE2\x86\x92 _:gamertagNow_",
+
     'groupAdventures'  => 'Aventureiros do Clã',
     'groupIluminateds' => 'Iluminados do Clã',
     'groupAssists'     => 'Assistentes do Clã',
@@ -65,7 +75,10 @@ return [
     'titleSuicides'              => 'Suicídios',
     'titleResurrectionsReceived' => 'Ressureições recebidas',
 
-    'typeHours'       => 'horas',
-    'typeMinutes'     => 'minutos',
-    'typeMeters'      => 'metros',
+    'typeHours'   => 'horas',
+    'typeMinutes' => 'minutos',
+    'typeMeters'  => 'metros',
+
+    'selfStatsRequest' => "*Estamos verificando suas estatísticas, guardião!*\n" .
+                          'Aguarde alguns segundos...',
 ];

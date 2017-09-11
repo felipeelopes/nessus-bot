@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
+use Application\Events\CheckStatsExecutor;
 use Application\Models\Setting;
 use Application\Models\User;
 use Application\Services\CommandService;
@@ -12,6 +13,7 @@ use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
 use Application\Strategies\Contracts\UserStrategyContract;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class UserStatsStrategy implements UserStrategyContract
 {
@@ -19,6 +21,33 @@ class UserStatsStrategy implements UserStrategyContract
     public const  TYPE_USER_ID = '@userId';
     public const  TYPE_VALUE   = '@value';
     public const  UPDATED_AT   = 'statsUpdatedAt';
+
+    /**
+     * Format stat value.
+     */
+    private static function formatValue(string $statsType, $statsValue)
+    {
+        if ($statsType) {
+            switch ($statsType) {
+                case 'float':
+                    $statsValue = sprintf('%.1f', $statsValue);
+                    break;
+                case 'time':
+                    $statsValue = $statsValue >= 3600
+                        ? sprintf('%.1f ' . trans('Stats.typeHours'), $statsValue / 3600)
+                        : sprintf('%.1f ' . trans('Stats.typeMinutes'), $statsValue / 60);
+                    break;
+                case 'm':
+                    $statsValue = sprintf('%.1f %s', $statsValue, trans('Stats.typeMeters'));
+                    break;
+                case 'percentual':
+                    $statsValue = sprintf('%.2f%%', $statsValue);
+                    break;
+            }
+        }
+
+        return $statsValue;
+    }
 
     /**
      * Return the stats types.
@@ -301,13 +330,42 @@ class UserStatsStrategy implements UserStrategyContract
             return true;
         }
 
+        if ($update->message->isCommand(CommandService::COMMAND_SELF_STATS)) {
+            $identifier = self::class . '@Command:' . CommandService::COMMAND_SELF_STATS;
+
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage(trans('Stats.selfStatsRequest'))
+                ->unduplicate($identifier)
+                ->publish();
+
+            $userStats = CheckStatsExecutor::requestStats($user);
+
+            $botMessageService = BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage($this->generateStats($update->message->from->getUserRegister(), $userStats))
+                ->unduplicate($identifier);
+
+            $messageEntityBotCommand = $update->message->getCommand();
+            $isPublic                = $messageEntityBotCommand &&
+                                       $messageEntityBotCommand->getTextArgument() === 'public';
+
+            if (!$isPublic) {
+                $botMessageService->forcePrivate();
+            }
+
+            $botMessageService->publish();
+
+            return true;
+        }
+
         return null;
     }
 
     /**
      * Generate game stats.
      */
-    private function generateStats()
+    private function generateStats(?User $user = null, ?Collection $userStats = null)
     {
         $contents      = '';
         $previousGroup = null;
@@ -327,11 +385,12 @@ class UserStatsStrategy implements UserStrategyContract
         $usersQuery->whereIn('id', $userIds);
         $users = $usersQuery->get()->pluck('gamertag.gamertag_value', 'id');
 
-        $typeHours   = trans('Stats.typeHours');
-        $typeMinutes = trans('Stats.typeMinutes');
-        $typeMeters  = trans('Stats.typeMeters');
-
         foreach (self::getStatsTypes() as $statsType) {
+            if ($userStats !== null &&
+                !$userStats->has($statsType['name'])) {
+                continue;
+            }
+
             if ($statsType['group'] !== $previousGroup) {
                 $previousGroup = $statsType['group'];
                 $contents      .= trans('Stats.statsGroup', [
@@ -356,28 +415,25 @@ class UserStatsStrategy implements UserStrategyContract
                 ? $users->get($settingUserIdReference->setting_value)
                 : null;
 
-            if ($statsType['type']) {
-                switch ($statsType['type']) {
-                    case 'float':
-                        $statsValue = sprintf('%.1f', $statsValue);
-                        break;
-                    case 'time':
-                        $statsValue = $statsValue >= 3600
-                            ? sprintf('%.1f ' . $typeHours, $statsValue / 3600)
-                            : sprintf('%.1f ' . $typeMinutes, $statsValue / 60);
-                        break;
-                    case 'm':
-                        $statsValue = sprintf('%.1f %s', $statsValue / 1000, $typeMeters);
-                        break;
-                    case 'percentual':
-                        $statsValue = sprintf('%.2f%%', $statsValue);
-                        break;
-                }
+            if ($user !== null) {
+                $userStatValue  = $userStats->get($statsType['name']);
+                $userStatTrophy = $userStatValue >= $statsValue
+                    ? trans('Stats.statsTrophy')
+                    : null;
+
+                $contents .= trans('Stats.statsItemSelf', [
+                    'title'   => $statsType['title'],
+                    'value'   => self::formatValue($statsType['type'], $userStatValue) ?: '-',
+                    'percent' => sprintf('%.2f%%', 100 / $statsValue * $userStatValue),
+                    'trophy'  => $userStatTrophy,
+                ]);
+
+                continue;
             }
 
             $contents .= trans('Stats.statsItem', [
                 'title'    => $statsType['title'],
-                'value'    => $statsValue ?: '-',
+                'value'    => self::formatValue($statsType['type'], $statsValue) ?: '-',
                 'gamertag' => $statsGamertag ?: '-',
             ]);
         }
@@ -387,6 +443,13 @@ class UserStatsStrategy implements UserStrategyContract
         $updatedAt = $updatedAt->exists
             ? $updatedAt->updated_at->format('d/m/Y \à\s H:i:s')
             : null;
+
+        if ($user !== null) {
+            return trans('Stats.statsHeaderSelf', [
+                'gamertag' => $user->gamertag->gamertag_value,
+                'contents' => $contents,
+            ]);
+        }
 
         return trans('Stats.statsHeader', [
             'contents' => $contents,

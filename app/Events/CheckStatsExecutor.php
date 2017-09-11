@@ -17,6 +17,43 @@ use Illuminate\Support\Collection;
 class CheckStatsExecutor extends Executor
 {
     /**
+     * Request an updated stats from a specific user.
+     * @param User $user
+     */
+    public static function requestStats($user): Collection
+    {
+        $userStatsStrategyReference = new UserStatsStrategy;
+
+        /** @var Setting $settingsQuery */
+        $settingsQuery = Setting::query();
+        $settingsQuery->filterMorphReference($userStatsStrategyReference);
+        $settings = $settingsQuery->get();
+
+        $bungieService = BungieService::getInstance();
+        $userStats     = $bungieService->userStatsSimplified($user->gamertag->bungie_membership);
+
+        if ($userStats) {
+            foreach ($userStats as $statName => $statValue) {
+                self::registerStat($settings, $statName, $statValue, $user);
+            }
+
+            if ($userStats->has('activitiesEntered') &&
+                $userStats->has('activitiesCleared') &&
+                $userStats->get('activitiesCleared') >= 10) {
+                self::registerStat($settings, 'activitiesReason', $userStats->get('activitiesCleared') / $userStats->get('activitiesEntered') * 100, $user);
+            }
+        }
+
+        $settingUserUpdatedReference = SettingService::fromReference($user, UserStatsStrategy::UPDATED_AT);
+        $settingUserUpdatedReference->touch();
+
+        $settingStatsUpdatedReference = SettingService::fromReference($userStatsStrategyReference, UserStatsStrategy::UPDATED_AT);
+        $settingStatsUpdatedReference->touch();
+
+        return $userStats;
+    }
+
+    /**
      * Register a stat.
      * @param Collection|Setting[] $settings
      */
@@ -91,31 +128,7 @@ class CheckStatsExecutor extends Executor
             return true;
         }
 
-        /** @var Setting $settingsQuery */
-        $settingsQuery = Setting::query();
-        $settingsQuery->filterMorphReference($userStatsStrategyReference);
-        $settings = $settingsQuery->get();
-
-        $bungieService = BungieService::getInstance();
-        $userStats     = $bungieService->userStatsSimplified($user->gamertag->bungie_membership);
-
-        if ($userStats) {
-            foreach ($userStats as $statName => $statValue) {
-                self::registerStat($settings, $statName, $statValue, $user);
-            }
-
-            if ($userStats->has('activitiesEntered') &&
-                $userStats->has('activitiesCleared') &&
-                $userStats->get('activitiesCleared') >= 10) {
-                self::registerStat($settings, 'activitiesReason', $userStats->get('activitiesCleared') / $userStats->get('activitiesEntered') * 100, $user);
-            }
-        }
-
-        $settingUserUpdatedReference = SettingService::fromReference($user, UserStatsStrategy::UPDATED_AT);
-        $settingUserUpdatedReference->touch();
-
-        $settingStatsUpdatedReference = SettingService::fromReference($userStatsStrategyReference, UserStatsStrategy::UPDATED_AT);
-        $settingStatsUpdatedReference->touch();
+        self::requestStats($user);
 
         return true;
     }
