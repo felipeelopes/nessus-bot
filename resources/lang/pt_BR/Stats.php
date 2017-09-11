@@ -13,7 +13,7 @@ return [
 
     'statsHeaderSelf' => "\xF0\x9F\x8F\x86 *Estatísticas de :gamertag:*\n\n" .
                          ':contents',
-    'statsItemSelf'   => "\xE2\x9E\x9C *:title*: :value (_:percent_) :trophy\n",
+    'statsItemSelf'   => "\xE2\x9E\x9C :trophy *:title*: :value (_:percent_)\n",
 
     'statsTrophy'    => "\xF0\x9F\x8F\x86",
     'statsSurpassed' => "\xF0\x9F\x8F\x86 *Estatística superada!*\n" .

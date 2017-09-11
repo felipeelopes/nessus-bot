@@ -30,7 +30,14 @@ class CheckStatsExecutor extends Executor
         $settings = $settingsQuery->get();
 
         $bungieService = BungieService::getInstance();
-        $userStats     = $bungieService->userStatsSimplified($user->gamertag->bungie_membership);
+        $userGamertag  = $user->gamertag;
+
+        if (!$userGamertag) {
+            return new Collection;
+        }
+
+        $membership = $userGamertag->bungie_membership;
+        $userStats  = $bungieService->userStatsSimplified($membership);
 
         if ($userStats) {
             foreach ($userStats as $statName => $statValue) {

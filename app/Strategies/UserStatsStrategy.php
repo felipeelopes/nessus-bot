@@ -378,7 +378,7 @@ class UserStatsStrategy implements UserStrategyContract
      */
     private function generateStats(?User $user = null, ?Collection $userStats = null)
     {
-        $contents      = '';
+        $contents      = [];
         $previousGroup = null;
 
         /** @var Setting $settingsQuery */
@@ -396,15 +396,16 @@ class UserStatsStrategy implements UserStrategyContract
         $usersQuery->whereIn('id', $userIds);
         $users = $usersQuery->get()->pluck('gamertag.gamertag_value', 'id');
 
-        foreach (self::getStatsTypes() as $statsType) {
+        foreach (self::getStatsTypes() as $statsKey => $statsType) {
             if ($userStats !== null &&
                 !$userStats->has($statsType['name'])) {
                 continue;
             }
 
-            if ($statsType['group'] !== $previousGroup) {
+            if ($userStats === null &&
+                $statsType['group'] !== $previousGroup) {
                 $previousGroup = $statsType['group'];
-                $contents      .= trans('Stats.statsGroup', [
+                $contents[]    = trans('Stats.statsGroup', [
                     'title' => $statsType['group'],
                 ]);
             }
@@ -432,17 +433,19 @@ class UserStatsStrategy implements UserStrategyContract
                     ? trans('Stats.statsTrophy')
                     : null;
 
-                $contents .= trans('Stats.statsItemSelf', [
+                $userStatPercent = sprintf('%.2f%%', 100 / $statsValue * $userStatValue);
+
+                $contents[$userStatPercent . $statsKey] = trans('Stats.statsItemSelf', [
                     'title'   => $statsType['title'],
                     'value'   => self::formatValue($statsType['type'], $userStatValue) ?: '-',
-                    'percent' => sprintf('%.2f%%', 100 / $statsValue * $userStatValue),
+                    'percent' => $userStatPercent,
                     'trophy'  => $userStatTrophy,
                 ]);
 
                 continue;
             }
 
-            $contents .= trans('Stats.statsItem', [
+            $contents[] = trans('Stats.statsItem', [
                 'title'    => $statsType['title'],
                 'value'    => self::formatValue($statsType['type'], $statsValue) ?: '-',
                 'gamertag' => $statsGamertag ?: '-',
@@ -456,14 +459,16 @@ class UserStatsStrategy implements UserStrategyContract
             : null;
 
         if ($user !== null) {
+            krsort($contents, SORT_NUMERIC);
+
             return trans('Stats.statsHeaderSelf', [
                 'gamertag' => $user->gamertag->gamertag_value,
-                'contents' => $contents,
+                'contents' => implode($contents),
             ]);
         }
 
         return trans('Stats.statsHeader', [
-            'contents' => $contents,
+            'contents' => implode($contents),
             'datetime' => $updatedAt ?: '-',
         ]);
     }
