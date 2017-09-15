@@ -26,7 +26,6 @@ class CheckAccountExecutor extends Executor
             return true;
         }
 
-        $now           = Carbon::now();
         $minDifference = Carbon::now()->subHour(9);
 
         /** @var UserGamertag $userGamertagQuery */

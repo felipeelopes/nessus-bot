@@ -168,6 +168,7 @@ class InitializationMoment extends SessionMoment
 
     /**
      * Starts the grid manager.
+     * @throws \Exception
      */
     private function runManager(Update $update, Grid $grid)
     {
@@ -191,6 +192,7 @@ class InitializationMoment extends SessionMoment
      * Set an user observation on grid.
      * @param Update $update Update instance.
      * @param Grid   $grid   Grid instance.
+     * @throws \Exception
      */
     private function setObservation(Update $update, Grid $grid)
     {
@@ -259,6 +261,7 @@ class InitializationMoment extends SessionMoment
      * @param Update $update   Update instance.
      * @param Grid   $grid     Grid instance.
      * @param string $position Subscription position.
+     * @throws \Exception
      */
     private function subscribeAs(Update $update, Grid $grid, string $position)
     {
@@ -346,6 +349,7 @@ class InitializationMoment extends SessionMoment
      * @param Update  $update  Update instance.
      * @param Process $process Process instance.
      * @param Grid    $grid    Grid instance.
+     * @throws \Exception
      */
     private function unsubscribeFrom(Update $update, Process $process, Grid $grid)
     {

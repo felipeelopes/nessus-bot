@@ -27,6 +27,7 @@ class GridNotificationService
      * @param Update      $update  Update instance.
      * @param Grid        $grid    Grid instance.
      * @param string|null $message Message.
+     * @throws \Exception
      */
     public function notifyMessage(Update $update, Grid $grid, string $message): void
     {
@@ -151,6 +152,7 @@ class GridNotificationService
      * @param Update      $update      Update instance.
      * @param Grid        $grid        Grid instance.
      * @param string|null $updateTitle Update title.
+     * @throws \Exception
      */
     public function notifyUpdate(Update $update, Grid $grid, ?string $updateTitle = null): void
     {

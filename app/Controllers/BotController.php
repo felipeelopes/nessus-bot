@@ -48,6 +48,7 @@ class BotController extends Controller implements RouterRegisterContract
 
     /**
      * Process an Updates request from Telegram.
+     * @throws \Exception
      */
     public function process(): void
     {
@@ -71,6 +72,7 @@ class BotController extends Controller implements RouterRegisterContract
     /**
      * Process an Update instance.
      * @param Update $update Update instance.
+     * @throws \Exception
      */
     public function processUpdate(Update $update): void
     {

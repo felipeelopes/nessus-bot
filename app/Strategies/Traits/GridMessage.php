@@ -35,6 +35,7 @@ trait GridMessage
      * @param BotService        $botService Bot Service instance.
      * @param Collection|Grid[] $grids      Grids.
      * @return bool|null
+     * @throws \Exception
      */
     private function sendGridListing(Update $update, BotService $botService, Collection $grids): ?bool
     {

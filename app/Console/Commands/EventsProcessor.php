@@ -34,6 +34,7 @@ class EventsProcessor extends Command
 
     /**
      * Execute the console command.
+     * @throws Exception
      */
     public function handle()
     {
@@ -63,6 +64,7 @@ class EventsProcessor extends Command
     /**
      * Run an Executor instance.
      * @param Executor $executor Executor instance.
+     * @throws Exception
      */
     private function runExecutor(Executor $executor): void
     {

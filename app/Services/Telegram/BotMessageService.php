@@ -164,12 +164,16 @@ class BotMessageService
     {
         if (!$this->updateMessage->isPrivate()) {
             $this->after(function () {
-                (new self($this->updateMessage))
-                    ->setReplica(false)
-                    ->appendMessage(trans('Command.callPrivate', [
-                        'mention' => $this->updateMessage->from->getMention(),
-                    ]))
-                    ->publish();
+                try {
+                    (new self($this->updateMessage))
+                        ->setReplica(false)
+                        ->appendMessage(trans('Command.callPrivate', [
+                            'mention' => $this->updateMessage->from->getMention(),
+                        ]))
+                        ->publish();
+                }
+                catch (Exception $e) {
+                }
             });
         }
 
@@ -194,6 +198,7 @@ class BotMessageService
     /**
      * Publish the message.
      * @return Message|null
+     * @throws Exception
      */
     public function publish(): ?Message
     {

@@ -47,6 +47,7 @@ class EdgeCommandStrategy implements UserStrategyContract
     /**
      * Process the Gamertag command.
      * @param Update $update Update instance.
+     * @throws \Exception
      */
     private static function commandGamertag(Update $update): void
     {

@@ -22,6 +22,7 @@ class CheckStatsExecutor extends Executor
     /**
      * Request an updated stats from a specific user.
      * @param User $user
+     * @throws \Exception
      */
     public static function requestStats($user): Collection
     {
@@ -66,6 +67,7 @@ class CheckStatsExecutor extends Executor
     /**
      * Register a stat.
      * @param Collection|Setting[] $settings
+     * @throws \Exception
      */
     private static function registerStat(Collection $settings, string $statName, $statValue, User $referenceUser): void
     {

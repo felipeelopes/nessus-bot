@@ -77,6 +77,7 @@ class TimingMoment extends SessionMoment
      * @param Update      $update  Update instance.
      * @param Process     $process Process instance.
      * @return bool
+     * @throws \Exception
      */
     public static function processTiming(?string $input, Update $update, Process $process): bool
     {
