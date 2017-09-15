@@ -9,6 +9,7 @@ use Application\Adapters\Telegram\Update;
 class CommandService
 {
     public const COMMAND_ADMINS          = 'admins';
+    public const COMMAND_BAN = 'ban';
     public const COMMAND_CANCEL          = 'cancel';
     public const COMMAND_COMMANDS        = 'commands';
     public const COMMAND_CONFIRM         = 'confirm';
@@ -78,6 +79,7 @@ class CommandService
         if ($user->isAdminstrator() && $update->message->isPrivate()) {
             $commands = [];
 
+            $commands[] = static::COMMAND_BAN;
             $commands[] = static::COMMAND_REFRESH;
 
             $result .= $this->buildCommandsList(trans('Command.adminCommands'), $commands);

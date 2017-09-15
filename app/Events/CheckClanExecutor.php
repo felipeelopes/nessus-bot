@@ -30,7 +30,7 @@ class CheckClanExecutor extends Executor
         $userQuery->inRandomOrder();
         $user = $userQuery->first();
 
-        if (!$user) {
+        if (!$user || !$user->gamertag->bungie_membership) {
             return true;
         }
 

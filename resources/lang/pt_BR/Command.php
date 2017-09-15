@@ -56,6 +56,9 @@ return [
         'selfStatsCommand'     => 'MinhasEstatisticas',
         'selfStatsDescription' => 'Exibe as suas estatísticas',
 
+        'banCommand'     => 'Banir',
+        'banDescription' => 'Bane a Gamertag do grupo e do banco',
+
         'gridShowShortCommand' => 'G',
 
         'subscribeTitularCommand'       => 'G:idT',

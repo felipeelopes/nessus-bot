@@ -231,16 +231,61 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
-        if ($update->message->isCommand(CommandService::COMMAND_REFRESH) &&
-            $update->message->from->isAdminstrator()) {
-            Artisan::call('cache:clear');
+        if ($update->message->from->isAdminstrator()) {
+            if ($update->message->isCommand(CommandService::COMMAND_BAN)) {
+                $messageEntityBotCommand = $update->message->getCommand();
 
-            $botService->createMessage($update->message)
-                ->setPrivate()
-                ->appendMessage(trans('EdgeCommand.systemRefreshed'))
-                ->publish();
+                if (!$messageEntityBotCommand || !$messageEntityBotCommand->getTextArgument()) {
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.banEmpty'))
+                        ->publish();
 
-            return true;
+                    return true;
+                }
+
+                /** @var UserGamertag $userGamertagQuery */
+                $userGamertagQuery = UserGamertag::query();
+                $userGamertagQuery->where('gamertag_value', $messageEntityBotCommand->getTextArgument());
+                $userGamertag = $userGamertagQuery->first();
+
+                if (!$userGamertag) {
+                    $botService->createMessage($update->message)
+                        ->appendMessage(trans('EdgeCommand.banNotFound'))
+                        ->publish();
+
+                    return true;
+                }
+
+                $userGamertag->user->delete();
+
+                $botService->createMessage($update->message)
+                    ->appendMessage(trans('EdgeCommand.banSuccess'))
+                    ->publish();
+
+                $botService->sendSticker(env('NBOT_GROUP_ID'), 'CAADAQADBwADwvySEXi2rT98M7GIAg');
+                $botService->createMessage($update->message)
+                    ->setReceiver(env('NBOT_GROUP_ID'))
+                    ->appendMessage(trans('UserSubscription.userLeftAdmin', [
+                        'admin'    => $update->message->from->getMention(),
+                        'fullname' => $userGamertag->user->getFullname(),
+                        'gamertag' => $userGamertag->gamertag_value,
+                    ]))
+                    ->setReplica(false)
+                    ->publish();
+
+                return true;
+            }
+
+            if ($update->message->isCommand(CommandService::COMMAND_REFRESH)) {
+                Artisan::call('cache:clear');
+
+                $botService->createMessage($update->message)
+                    ->setPrivate()
+                    ->appendMessage(trans('EdgeCommand.systemRefreshed'))
+                    ->publish();
+
+                return true;
+            }
         }
 
         if ($update->message->isCommand(CommandService::COMMAND_NEWS)) {

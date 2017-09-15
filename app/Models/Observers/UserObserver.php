@@ -7,6 +7,7 @@ namespace Application\Models\Observers;
 use Application\Models\Model;
 use Application\Models\User;
 use Application\Models\UserGamertag;
+use Application\Services\Telegram\BotService;
 
 class UserObserver extends Observer
 {
@@ -21,6 +22,8 @@ class UserObserver extends Observer
         }
 
         self::deleteSettings($model);
+
+        BotService::getInstance()->banUser($model);
     }
 
     /**

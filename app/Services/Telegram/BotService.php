@@ -11,6 +11,7 @@ use Application\Adapters\Telegram\Message;
 use Application\Adapters\Telegram\SendMessage;
 use Application\Adapters\Telegram\Update;
 use Application\Adapters\Telegram\User;
+use Application\Models\User as UserModel;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Telegram\RequesterService;
@@ -44,6 +45,17 @@ class BotService implements ServiceContract
     public static function getInstance(): BotService
     {
         return MockupService::getInstance()->instance(static::class);
+    }
+
+    /**
+     * Ban an User from group.
+     */
+    public function banUser(UserModel $user)
+    {
+        $this->requester->request(null, 'kickChatMember', [
+            'chat_id' => env('NBOT_GROUP_ID'),
+            'user_id' => $user->user_number,
+        ]);
     }
 
     /**

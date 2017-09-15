@@ -35,8 +35,15 @@ return [
     'goodMorning'   => '*Bom dia, guardiões!*',
 
     'clanList' => "*Nossos clãs:*\n\n" .
-                  "\xE2\x9E\x9C [Os Incursor3s](https://www.bungie.net/en/ClanV2/?groupid=1843400) (_vagas indisponíveis_)\n" .
-                  "\xE2\x9E\x9C [Os Incursor3s II](https://www.bungie.net/en/ClanV2/?groupid=1866448) (*vagas disponíveis*)\n\n" .
+                  "\xE2\x9E\x9C [Os Incursores](https://www.bungie.net/en/ClanV2/?groupid=1843400) (_vagas indisponíveis_)\n" .
+                  "\xE2\x9E\x9C [Os Incursores II](https://www.bungie.net/en/ClanV2/?groupid=1866448) (_vagas indisponíveis_)\n" .
+                  "\xE2\x9E\x9C [Os Incursores III](https://www.bungie.net/en/ClanV2/?groupid=1900391) (*vagas disponíveis*)\n\n" .
                   "*Convide um amigo:*\n\n" .
                   "\xE2\x9E\x9C [Convite do Telegram](https://t.me/joinchat/EZL8wkRSnDHaBcpv7KoQ4g)",
+
+    'banEmpty'    => "*Err...*\n" .
+                     'Após este comando, informe a *Gamertag completa* do usuário.',
+    'banNotFound' => "*Err...*\n" .
+                     'Não foi possível localizar esta Gamertag em nosso banco.',
+    'banSuccess'  => 'Membro removido do grupo e de nosso banco de dados com sucesso!',
 ];
