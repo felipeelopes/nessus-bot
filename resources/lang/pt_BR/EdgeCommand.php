@@ -36,5 +36,7 @@ return [
 
     'clanList' => "*Nossos clãs:*\n\n" .
                   "\xE2\x9E\x9C [Os Incursor3s](https://www.bungie.net/en/ClanV2/?groupid=1843400) (_vagas indisponíveis_)\n" .
-                  "\xE2\x9E\x9C [Os Incursor3s II](https://www.bungie.net/en/ClanV2/?groupid=1866448) (*vagas disponíveis*)",
+                  "\xE2\x9E\x9C [Os Incursor3s II](https://www.bungie.net/en/ClanV2/?groupid=1866448) (*vagas disponíveis*)\n\n" .
+                  "*Convide um amigo:*\n\n" .
+                  "\xE2\x9E\x9C [Convite do Telegram](https://t.me/joinchat/EZL8wkRSnDHaBcpv7KoQ4g)",
 ];

@@ -16,6 +16,7 @@ return [
         [ 'value' => 'Leviatã', 'description' => '*Incursão*: Leviatã' ],
         [ 'value' => 'Anoitecer', 'description' => '*Semanal*: Anoitecer' ],
         [ 'value' => 'Assalto', 'description' => '*Semanal*: Assalto' ],
+        [ 'value' => 'Desafio dos Nove', 'description' => '*Semanal*: Desafio dos Nove' ],
         [ 'value' => 'Modo Campanha', 'description' => 'Modo Campanha' ],
     ],
 
@@ -24,8 +25,6 @@ return [
     'creationWizardSubtitleOptions' => [
         [ 'description' => 'Nenhum' ],
         [ 'value' => 'Normal' ],
-        [ 'value' => 'Heróico' ],
-        [ 'value' => 'Heróico com Desafio' ],
         [ 'value' => 'Prestígio' ],
     ],
 

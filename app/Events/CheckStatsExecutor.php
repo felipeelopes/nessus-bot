@@ -42,7 +42,7 @@ class CheckStatsExecutor extends Executor
         $membership = $userGamertag->bungie_membership;
         $userStats  = $bungieService->userStatsSimplified($membership);
 
-        if ($userStats) {
+        if ($userStats && $userStats->get('highestCharacterLevel') >= 20) {
             foreach ($userStats as $statName => $statValue) {
                 self::registerStat($settings, $statName, $statValue, $user);
             }

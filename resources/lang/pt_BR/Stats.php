@@ -26,7 +26,7 @@ return [
     'groupAssists'     => 'Assistentes do Clã',
     'groupHawkEye'     => 'Olhos-de-águia do Clã',
     'groupTriggers'    => 'Gatilhos-rápidos do Clã',
-    'groupBaggers'     => 'Mochilas do Clã',
+    'groupBaggers'     => 'Defensores do Clã',
 
     'titleSecondsPlayed'                => 'Tempo total em atividades',
     'titleTotalActivityDurationSeconds' => 'Tempo de jogo',
