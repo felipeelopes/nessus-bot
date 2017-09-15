@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Console\Commands;
 
 use Application\Events\CheckAccountExecutor;
+use Application\Events\CheckClanExecutor;
 use Application\Events\CheckStatsExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
@@ -56,6 +57,7 @@ class EventsProcessor extends Command
         $this->runExecutor(new TipsExecutor);
         $this->runExecutor(new CheckAccountExecutor);
         $this->runExecutor(new CheckStatsExecutor);
+        $this->runExecutor(new CheckClanExecutor);
 
         $settingRunning->setting_value = false;
         $settingRunning->save();

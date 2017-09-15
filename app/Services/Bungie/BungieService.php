@@ -4,11 +4,13 @@ declare(strict_types = 1);
 
 namespace Application\Services\Bungie;
 
+use Application\Adapters\Bungie\GroupV2;
 use Application\Adapters\Bungie\Response;
 use Application\Adapters\Bungie\UserInfoCard;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Live\RequesterService;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class BungieService implements ServiceContract
@@ -19,6 +21,32 @@ class BungieService implements ServiceContract
     public static function getInstance(): BungieService
     {
         return MockupService::getInstance()->instance(__CLASS__);
+    }
+
+    /**
+     * Get Clan details from user Membership.
+     */
+    public function getClanFromMember(int $membershipId): ?GroupV2
+    {
+        $statsResponse = $this->request('GET', sprintf('GroupV2/User/1/%u/0/1/', $membershipId));
+
+        if (!$statsResponse) {
+            return null;
+        }
+
+        $groupDetails = array_get($statsResponse, 'results.0');
+
+        if (!$groupDetails) {
+            return null;
+        }
+
+        return new GroupV2(array_replace(
+            array_get($groupDetails, 'group'),
+            [
+                'joinDate'     => new Carbon(array_get($groupDetails, 'member.joinDate')),
+                'clanCallsign' => array_get($groupDetails, 'group.clanInfo.clanCallsign'),
+            ]
+        ));
     }
 
     /**
