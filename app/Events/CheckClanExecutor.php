@@ -26,6 +26,7 @@ class CheckClanExecutor extends Executor
         /** @var User $userQuery */
         $userQuery = User::query();
         $userQuery->has('gamertag');
+        $userQuery->where('created_at', '>=', Carbon::now()->addDays(3));
         $userQuery->filterLastTouchBefore(self::NEXT_CLAN_CHECKUP, $now);
         $userQuery->inRandomOrder();
         $user = $userQuery->first();
