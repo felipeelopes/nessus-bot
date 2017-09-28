@@ -89,8 +89,9 @@ class WelcomeMoment extends SessionMoment
         $botService->createMessage($update->message)
             ->setPrivate()
             ->appendMessage(trans('UserRegistration.checkingSuccess', [
-                'rules'  => trans('UserRules.followIt'),
-                'admins' => trans('UserRules.adminHeader', [
+                'important' => trans('UserRegistration.checkingImportant'),
+                'rules'     => trans('UserRules.followIt'),
+                'admins'    => trans('UserRules.adminHeader', [
                     'admins' => implode(EdgeCommandStrategy::getAdministratorsList($botService)),
                 ]),
             ]))

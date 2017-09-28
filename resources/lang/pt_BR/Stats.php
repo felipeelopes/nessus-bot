@@ -67,7 +67,7 @@ return [
     'titleWeaponKillsSubmachinegun'  => 'Baixas com submetralhadoras',
     'titleWeaponKillsSideArm'        => 'Baixas com pistolas',
     'titleWeaponKillsSword'          => 'Baixas com espadas',
-    'titleWeaponKillsRelic'          => 'Baixas com golden-gun',
+    'titleWeaponKillsRelic'          => 'Baixas com armas de ambiente',
     'titleLongestKillSpree'          => 'Baixas em sequência',
     'titleKillsDeathsRatio'          => 'Relação K/D PvE',
 
