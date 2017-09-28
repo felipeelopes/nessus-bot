@@ -63,6 +63,10 @@ class BungieService implements ServiceContract
             'query'   => $params,
         ], $cacheMinutes);
 
+        if ($response === null) {
+            return null;
+        }
+
         $requestResponse = new Response(json_decode($response, true));
 
         if ($requestResponse->Message !== 'Ok') {

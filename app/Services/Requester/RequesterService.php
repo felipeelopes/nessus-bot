@@ -11,6 +11,7 @@ use Cache;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 
 class RequesterService
 {
@@ -104,7 +105,13 @@ class RequesterService
             'timeout'  => 30.0,
         ]);
 
-        $response         = $client->request($method, $action, $params ?? []);
+        try {
+            $response = $client->request($method, $action, $params ?? []);
+        }
+        catch (GuzzleException $guzzleException) {
+            return null;
+        }
+
         $responseContents = $response->getBody()->getContents();
 
         if ($cacheMinutes !== null) {
