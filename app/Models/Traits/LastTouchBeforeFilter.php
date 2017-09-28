@@ -23,23 +23,22 @@ trait LastTouchBeforeFilter
 
         $builder->where(function (Builder $builder) use ($referenceColumn, $name, $reference, $shouldExists) {
             if ($shouldExists !== true) {
-                $builder->whereNotExists(function (QueryBuilder $builder) use ($referenceColumn) {
-                    $builder->select('id');
+                $builder->whereNotExists(function (QueryBuilder $builder) use ($name, $referenceColumn) {
+                    $builder->select('*');
                     $builder->from('settings');
                     $builder->where('reference_type', self::class);
                     $builder->where('reference_id', $referenceColumn);
-                    $builder->limit(1);
+                    $builder->where('setting_name', $name);
                 });
             }
 
             $builder->orWhereExists(function (QueryBuilder $builder) use ($referenceColumn, $name, $reference) {
-                $builder->select('id');
+                $builder->select('*');
                 $builder->from('settings');
                 $builder->where('reference_type', self::class);
                 $builder->where('reference_id', $referenceColumn);
                 $builder->where('setting_name', $name);
                 $builder->where('updated_at', '<=', $reference);
-                $builder->limit(1);
             });
         });
     }
