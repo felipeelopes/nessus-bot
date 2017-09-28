@@ -26,7 +26,7 @@ class CheckClanExecutor extends Executor
         /** @var User $userQuery */
         $userQuery = User::query();
         $userQuery->has('gamertag');
-        $userQuery->where('created_at', '>=', Carbon::now()->addDays(3));
+        $userQuery->where('created_at', '<=', Carbon::now()->subHours(12));
         $userQuery->filterLastTouchBefore(self::NEXT_CLAN_CHECKUP, $now);
         $userQuery->inRandomOrder();
         $user = $userQuery->first();
@@ -39,7 +39,7 @@ class CheckClanExecutor extends Executor
         $settings       = SettingService::fromReference($user, self::NEXT_CLAN_CHECKUP);
 
         if ($clanFromMember && in_array($clanFromMember->groupId, explode(',', env('NBOT_CLANS')), false)) {
-            $settings->updated_at = Carbon::now()->addDays(3);
+            $settings->updated_at = Carbon::now()->addDays(1);
             $settings->save();
 
             throw new KeepWorkingException;
