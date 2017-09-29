@@ -6,309 +6,50 @@ namespace Application\Strategies;
 
 use Application\Adapters\Telegram\Update;
 use Application\Events\CheckStatsExecutor;
-use Application\Models\Setting;
+use Application\Models\Stat;
 use Application\Models\User;
 use Application\Services\CommandService;
-use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
 use Application\Strategies\Contracts\UserStrategyContract;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class UserStatsStrategy implements UserStrategyContract
 {
-    public const  REQUESTED    = 'requested';
-    public const  TYPE_USER_ID = '@userId';
-    public const  TYPE_VALUE   = '@value';
-    public const  UPDATED_AT   = 'statsUpdatedAt';
-
     /**
-     * Format stat value.
+     * Returns the top Ranking.
+     * @param Collection|array $stats
+     * @param Collection|array $secondsPlayedStats
+     * @return Collection
      */
-    public static function formatValue(string $statsType, $statsValue)
+    public static function getTopRanking(?Collection &$stats = null, ?Collection &$secondsPlayedStats = null): Collection
     {
-        if ($statsType) {
-            switch ($statsType) {
-                case 'float':
-                    $statsValue = sprintf('%.1f', $statsValue);
-                    break;
-                case 'time':
-                    $statsValue = $statsValue >= 3600
-                        ? sprintf('%.1f ' . trans('Stats.typeHours'), $statsValue / 3600)
-                        : sprintf('%.1f ' . trans('Stats.typeMinutes'), $statsValue / 60);
-                    break;
-                case 'm':
-                    $statsValue = sprintf('%.1f %s', $statsValue, trans('Stats.typeMeters'));
-                    break;
-                case 'percentual':
-                    $statsValue = sprintf('%.2f%%', $statsValue);
-                    break;
-            }
-        }
+        $statsTypes           = Stat::getStatsTypes();
+        $statsTypesNames      = $statsTypes->keys();
+        $statsTypesOrderDesc  = $statsTypes->where('order', Stat::ORDER_DESC)->keys();
+        $statsTypesModesDaily = $statsTypes->where('mode', Stat::MODE_DAILY)->keys();
 
-        return $statsValue;
-    }
+        $statsQuery = Stat::query();
+        $statsQuery->with('user.gamertag');
+        $statsQuery->whereIn('stat_name', $statsTypesNames);
+        $statsQuery->where('updated_at', '>=', Carbon::now()->subDays(3));
+        $stats = $statsQuery->get();
 
-    /**
-     * Return the stats types.
-     */
-    public static function getStatsTypes(): array
-    {
-        $groupAdventures  = trans('Stats.groupAdventures');
-        $groupIluminateds = trans('Stats.groupIluminateds');
-        $groupAssists     = trans('Stats.groupAssists');
-        $groupHawkEye     = trans('Stats.groupHawkEye');
-        $groupTriggers    = trans('Stats.groupTriggers');
-        $groupBaggers     = trans('Stats.groupBaggers');
+        $secondsPlayedStats = $stats->where('stat_name', 'secondsPlayed')
+            ->pluck('stat_value', 'user_id');
 
-        return [
-            [
-                'group' => $groupAdventures,
-                'name'  => 'totalActivityDurationSeconds',
-                'title' => trans('Stats.titleTotalActivityDurationSeconds'),
-                'type'  => 'time',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'secondsPlayed',
-                'title' => trans('Stats.titleSecondsPlayed'),
-                'type'  => 'time',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'averageLifespan',
-                'title' => trans('Stats.titleAverageLifespan'),
-                'type'  => 'time',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'longestSingleLife',
-                'title' => trans('Stats.titleLongestSingleLife'),
-                'type'  => 'time',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'publicEventsCompleted',
-                'title' => trans('Stats.titlePublicEventsCompleted'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'activitiesEntered',
-                'title' => trans('Stats.titleActivitiesEntered'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'activitiesCleared',
-                'title' => trans('Stats.titleActivitiesCleared'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'activitiesReason',
-                'title' => trans('Stats.titleActivitiesReason'),
-                'type'  => 'percentual',
-            ],
-            [
-                'group' => $groupAdventures,
-                'name'  => 'bestSingleGameKills',
-                'title' => trans('Stats.titleBestSingleGameKills'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupIluminateds,
-                'name'  => 'weaponKillsSuper',
-                'title' => trans('Stats.titleWeaponKillsSuper'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupIluminateds,
-                'name'  => 'weaponKillsGrenade',
-                'title' => trans('Stats.titleWeaponKillsGrenade'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupIluminateds,
-                'name'  => 'weaponKillsMelee',
-                'title' => trans('Stats.titleWeaponKillsMelee'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupIluminateds,
-                'name'  => 'orbsDropped',
-                'title' => trans('Stats.titleOrbsDropped'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupIluminateds,
-                'name'  => 'orbsGathered',
-                'title' => trans('Stats.titleOrbsGathered'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupAssists,
-                'name'  => 'assists',
-                'title' => trans('Stats.titleAssists'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupAssists,
-                'name'  => 'resurrectionsPerformed',
-                'title' => trans('Stats.titleResurrectionsPerformed'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupAssists,
-                'name'  => 'killsDeathsAssists',
-                'title' => trans('Stats.titleKillsDeathsAssists'),
-                'type'  => 'float',
-            ],
-            [
-                'group' => $groupHawkEye,
-                'name'  => 'longestKillDistance',
-                'title' => trans('Stats.titleLongestKillDistance'),
-                'type'  => 'm',
-            ],
-            [
-                'group' => $groupHawkEye,
-                'name'  => 'averageKillDistance',
-                'title' => trans('Stats.titleAverageKillDistance'),
-                'type'  => 'm',
-            ],
-            [
-                'group' => $groupHawkEye,
-                'name'  => 'totalKillDistance',
-                'title' => trans('Stats.titleTotalKillDistance'),
-                'type'  => 'm',
-            ],
-            [
-                'group' => $groupHawkEye,
-                'name'  => 'precisionKills',
-                'title' => trans('Stats.titlePrecisionKills'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupHawkEye,
-                'name'  => 'mostPrecisionKills',
-                'title' => trans('Stats.titleMostPrecisionKills'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'kills',
-                'title' => trans('Stats.titleKills'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsAutoRifle',
-                'title' => trans('Stats.titleWeaponKillsAutoRifle'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsFusionRifle',
-                'title' => trans('Stats.titleWeaponKillsFusionRifle'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsHandCannon',
-                'title' => trans('Stats.titleWeaponKillsHandCannon'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsMachinegun',
-                'title' => trans('Stats.titleWeaponKillsMachinegun'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsPulseRifle',
-                'title' => trans('Stats.titleWeaponKillsPulseRifle'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsRocketLauncher',
-                'title' => trans('Stats.titleWeaponKillsRocketLauncher'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsScoutRifle',
-                'title' => trans('Stats.titleWeaponKillsScoutRifle'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsShotgun',
-                'title' => trans('Stats.titleWeaponKillsShotgun'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsSniper',
-                'title' => trans('Stats.titleWeaponKillsSniper'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsSubmachinegun',
-                'title' => trans('Stats.titleWeaponKillsSubmachinegun'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsSideArm',
-                'title' => trans('Stats.titleWeaponKillsSideArm'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsSword',
-                'title' => trans('Stats.titleWeaponKillsSword'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'weaponKillsRelic',
-                'title' => trans('Stats.titleWeaponKillsRelic'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'longestKillSpree',
-                'title' => trans('Stats.titleLongestKillSpree'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupTriggers,
-                'name'  => 'killsDeathsRatio',
-                'title' => trans('Stats.titleKillsDeathsRatio'),
-                'type'  => 'float',
-            ],
-            [
-                'group' => $groupBaggers,
-                'name'  => 'deaths',
-                'title' => trans('Stats.titleDeaths'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupBaggers,
-                'name'  => 'suicides',
-                'title' => trans('Stats.titleSuicides'),
-                'type'  => 'int',
-            ],
-            [
-                'group' => $groupBaggers,
-                'name'  => 'resurrectionsReceived',
-                'title' => trans('Stats.titleResurrectionsReceived'),
-                'type'  => 'int',
-            ],
-        ];
+        return $stats
+            ->each(function (Stat $stat) use ($secondsPlayedStats, $statsTypesModesDaily) {
+                if ($statsTypesModesDaily->contains($stat->stat_name)) {
+                    $stat->stat_value = $stat->stat_value * 14400 / $secondsPlayedStats->get($stat->user_id);
+                }
+            })
+            ->groupBy('stat_name')
+            ->map(function (Collection $topStats) use ($statsTypesOrderDesc) {
+                return $statsTypesOrderDesc->contains($topStats->first()->stat_name)
+                    ? $topStats->sortBy('stat_value')->first()
+                    : $topStats->sortBy('stat_value')->last();
+            });
     }
 
     /**
@@ -325,6 +66,16 @@ class UserStatsStrategy implements UserStrategyContract
                 ->createMessage($update->message)
                 ->appendMessage($this->generateStats())
                 ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_STATS)
+                ->publish();
+
+            return true;
+        }
+
+        if ($update->message->isCommand(CommandService::COMMAND_RANKING)) {
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 30 : 10))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
                 ->publish();
 
             return true;
@@ -351,11 +102,11 @@ class UserStatsStrategy implements UserStrategyContract
                 ->unduplicate($identifier)
                 ->publish();
 
-            $userStats = CheckStatsExecutor::requestStats($user);
+            CheckStatsExecutor::requestStats($user);
 
             $botMessageService = BotService::getInstance()
                 ->createMessage($update->message)
-                ->appendMessage($this->generateStats($update->message->from->getUserRegister(), $userStats))
+                ->appendMessage($this->generateStats($user))
                 ->unduplicate($identifier);
 
             $isPublic = $messageEntityBotCommand &&
@@ -374,72 +125,133 @@ class UserStatsStrategy implements UserStrategyContract
     }
 
     /**
+     * Generate and return the ranking message.
+     * @return string
+     */
+    private function generateRanking(User $you, ?int $limit = null): string
+    {
+        /** @var Collection|Stat[] $stats */
+        $topStats = static::getTopRanking($stats, $secondsPlayedStats);
+
+        $statsTypes          = Stat::getStatsTypes();
+        $statsTypesOrderDesc = $statsTypes->where('order', Stat::ORDER_DESC)->keys();
+
+        $users           = $stats->pluck('user', 'user.id');
+        $usersIds        = $users->keys();
+        $usersRanking    = array_fill_keys($usersIds->toArray(), 0);
+        $rankingContents = [];
+        $rankingIndex    = 0;
+        $rankingYou      = false;
+
+        foreach ($stats as $stat) {
+            /** @var Stat $topStat */
+            $topStat                      = $topStats->get($stat->stat_name);
+            $usersRanking[$stat->user_id] += $stat->getPercentFrom($topStat->stat_value, $statsTypesOrderDesc->contains($stat->stat_name)) * 100;
+        }
+
+        arsort($usersRanking);
+
+        $usersRankingLimited = $usersRanking;
+
+        if ($limit !== null) {
+            $usersRankingLimited = array_slice($usersRankingLimited, 0, $limit, true);
+        }
+
+        foreach ($usersRankingLimited as $userId => $userPoints) {
+            $rankingIndex++;
+            $rankingYou = $rankingYou || $userId === $you->id;
+
+            /** @var User $user */
+            $user              = $users->get($userId);
+            $rankingContents[] = trans('Stats.rankingPointer', [
+                'ranking'  => $rankingIndex,
+                'gamertag' => $user->gamertag->gamertag_value,
+                'points'   => sprintf('%6.1f', $userPoints),
+                'you'      => $userId === $you->id
+                    ? trans('Stats.rankingYou')
+                    : null,
+            ]);
+        }
+
+        if ($limit !== null && !$rankingYou && $users->get($you->id)) {
+            $rankingIndex = array_search($you->id, array_keys($usersRanking), false) + 1;
+
+            if ($rankingIndex !== 11) {
+                $rankingContents[] = trans('Stats.rankingSeparator');
+            }
+
+            $rankingContents[] = trans('Stats.rankingPointer', [
+                'ranking'  => $rankingIndex,
+                'gamertag' => $you->gamertag->gamertag_value,
+                'points'   => sprintf('%6.1f', $usersRanking[$you->id]),
+                'you'      => trans('Stats.rankingYou'),
+            ]);
+        }
+
+        return trans('Stats.rankingHeader', [
+            'pointers' => implode($rankingContents),
+        ]);
+    }
+
+    /**
      * Generate game stats.
      */
-    private function generateStats(?User $user = null, ?Collection $userStats = null)
+    private function generateStats(?User $user = null)
     {
+        /** @var Collection|Stat[] $stats */
+        $topStats = static::getTopRanking($stats, $secondsPlayedStats);
+
+        $newestStatQuery = Stat::query();
+        $newestStatQuery->orderBy('updated_at', 'desc');
+        $newestStat = $newestStatQuery->first();
+
+        assert($newestStat !== null);
+
+        $statsTypes          = Stat::getStatsTypes();
+        $statsTypesOrderDesc = $statsTypes->where('order', Stat::ORDER_DESC)->keys();
+
         $contents      = [];
         $previousGroup = null;
+        $totalPoints   = 0;
 
-        /** @var Setting $settingsQuery */
-        $settingsQuery = Setting::query();
-        $settingsQuery->filterMorphReference($this);
-        $settings = $settingsQuery->get();
+        $userStats = $user !== null
+            ? $stats
+                ->where('user_id', $user->id)
+                ->keyBy('stat_name')
+            : null;
 
-        $userIds = $settings->filter(function (Setting $setting) {
-            return ends_with($setting->setting_name, self::TYPE_USER_ID);
-        })->pluck('setting_value')->unique();
+        $statsTypes = Stat::getStatsTypes()
+            ->whereIn('name', $topStats->keys());
 
-        /** @var User|Builder $usersQuery */
-        $usersQuery = User::query();
-        $usersQuery->with('gamertag');
-        $usersQuery->whereIn('id', $userIds);
-        $users = $usersQuery->get()->pluck('gamertag.gamertag_value', 'id');
-
-        foreach (self::getStatsTypes() as $statsKey => $statsType) {
+        foreach ($statsTypes as $statsKey => $statsType) {
             if ($userStats !== null &&
                 !$userStats->has($statsType['name'])) {
                 continue;
             }
 
-            if ($userStats === null &&
-                $statsType['group'] !== $previousGroup) {
+            if ($statsType['group'] !== $previousGroup) {
                 $previousGroup = $statsType['group'];
-                $contents[]    = trans('Stats.statsGroup', [
-                    'title' => $statsType['group'],
-                ]);
+                $contents[]    = trans('Stats.statsGroup', [ 'title' => $statsType['group'] ]);
             }
 
-            /** @var Setting|null $settingValueReference */
-            $settingValueReference = $settings->first(function (Setting $setting) use ($statsType) {
-                return $setting->setting_name === $statsType['name'] . self::TYPE_VALUE;
-            });
+            /** @var Stat $topStat */
+            $topStat = $topStats->get($statsKey);
 
-            /** @var Setting|null $settingUserIdReference */
-            $settingUserIdReference = $settings->first(function (Setting $setting) use ($statsType) {
-                return $setting->setting_name === $statsType['name'] . self::TYPE_USER_ID;
-            });
+            if ($userStats !== null) {
+                /** @var Stat|null $userStat */
+                $userStat = $userStats->get($statsKey);
 
-            $statsValue    = $settingValueReference
-                ? $settingValueReference->setting_value
-                : null;
-            $statsGamertag = $settingUserIdReference
-                ? $users->get($settingUserIdReference->setting_value)
-                : null;
+                if ($userStat === null) {
+                    continue;
+                }
 
-            if ($user !== null) {
-                $userStatValue  = $userStats->get($statsType['name']);
-                $userStatTrophy = $userStatValue >= $statsValue
-                    ? trans('Stats.statsTrophy')
-                    : null;
+                $userPercent = $userStat->getPercentFrom($topStat->stat_value, $statsTypesOrderDesc->contains($statsKey));
+                $totalPoints += $userPercent;
 
-                $userStatPercent = sprintf('%.2f%%', 100 / $statsValue * $userStatValue);
-
-                $contents[$userStatPercent . $statsKey] = trans('Stats.statsItemSelf', [
+                $contents[] = trans('Stats.statsItemSelf', [
+                    'percent' => str_pad(sprintf('%.1f%%', $userPercent * 100), 6, ' ', STR_PAD_LEFT),
                     'title'   => $statsType['title'],
-                    'value'   => self::formatValue($statsType['type'], $userStatValue) ?: '-',
-                    'percent' => $userStatPercent,
-                    'trophy'  => $userStatTrophy,
+                    'value'   => $userStat->getFormattedValue() ?: '-',
                 ]);
 
                 continue;
@@ -447,29 +259,22 @@ class UserStatsStrategy implements UserStrategyContract
 
             $contents[] = trans('Stats.statsItem', [
                 'title'    => $statsType['title'],
-                'value'    => self::formatValue($statsType['type'], $statsValue) ?: '-',
-                'gamertag' => $statsGamertag ?: '-',
+                'value'    => $topStat->getFormattedValue() ?: '-',
+                'gamertag' => $topStat->user->gamertag->gamertag_value ?: '-',
             ]);
         }
 
-        /** @var Setting $updatedAt */
-        $updatedAt = SettingService::fromReference($this, self::UPDATED_AT);
-        $updatedAt = $updatedAt->exists
-            ? $updatedAt->updated_at->format('d/m/Y \à\s H:i:s')
-            : null;
-
         if ($user !== null) {
-            krsort($contents, SORT_NUMERIC);
-
             return trans('Stats.statsHeaderSelf', [
                 'gamertag' => $user->gamertag->gamertag_value,
                 'contents' => implode($contents),
+                'points'   => sprintf('%.1f', $totalPoints * 100),
             ]);
         }
 
         return trans('Stats.statsHeader', [
             'contents' => implode($contents),
-            'datetime' => $updatedAt ?: '-',
+            'datetime' => $newestStat->updated_at ?: '-',
         ]);
     }
 }

@@ -3,40 +3,38 @@
 declare(strict_types = 1);
 
 return [
-    'statsHeader' => "\xF0\x9F\x8F\x86 *Estatísticas do clã:*\n\n" .
-                     "*Atenção*: em testes - pode apresentar valores incorretos.\n" .
-                     "As informações incluem somente atividades em PvE.\n" .
+    'statsHeader' => "\xF0\x9F\x8F\x86 *Estatísticas do clã (PvE):*\n\n" .
                      ":contents\n\n" .
                      '*Última atualização:* :datetime',
     'statsGroup'  => "\n*:title*:\n",
     'statsItem'   => "\xE2\x9E\x9C *:title*: :value \xE2\x86\x92 _:gamertag_\n",
 
     'statsHeaderSelf' => "\xF0\x9F\x8F\x86 *Estatísticas de :gamertag:*\n\n" .
-                         ':contents',
-    'statsItemSelf'   => "\xE2\x9E\x9C :trophy *:title*: :value (_:percent_)\n",
+                         ":contents\n\n" .
+                         '*Total:* `:points` pontos (_soma de todos os percentuais_)',
+    'statsItemSelf'   => "`:percent` \xE2\x9E\x9C *:title*: :value\n",
 
-    'statsTrophy'    => "\xF0\x9F\x8F\x86",
-    'statsSurpassed' => "\xF0\x9F\x8F\x86 *Estatística superada!*\n\n" .
-                        "\xE2\x9E\x9C *Estatística:* :title\n" .
-                        "\xE2\x9E\x9C *Antes*: :valueBefore \xE2\x86\x92 _:gamertagBefore_\n" .
-                        "\xE2\x9E\x9C *Agora*: :valueNow \xE2\x86\x92 _:gamertagNow_ (_:diff_)",
+    'rankingHeader'    => "*Ranking (por pontuação):*\n" .
+                          ":pointers\n",
+    'rankingPointer'   => "*:rankingº* _:gamertag_ (`:points` pontos):you\n",
+    'rankingSeparator' => "---\n",
+    'rankingYou'       => " \xF0\x9F\x91\x88",
 
     'groupAdventures'  => 'Aventureiros do Clã',
     'groupIluminateds' => 'Iluminados do Clã',
     'groupAssists'     => 'Assistentes do Clã',
     'groupHawkEye'     => 'Olhos-de-águia do Clã',
     'groupTriggers'    => 'Gatilhos-rápidos do Clã',
-    'groupBaggers'     => 'Defensores do Clã',
+    'groupInvencibles' => 'Invencíveis do Clã',
 
-    'titleSecondsPlayed'                => 'Tempo total em atividades',
-    'titleTotalActivityDurationSeconds' => 'Tempo de jogo',
-    'titleAverageLifespan'              => 'Tempo médio de vida',
-    'titleLongestSingleLife'            => 'Tempo de vida',
-    'titlePublicEventsCompleted'        => 'Eventos públicos concluídos',
-    'titleActivitiesEntered'            => 'Atividades iniciadas',
-    'titleActivitiesCleared'            => 'Atividades finalizadas',
-    'titleActivitiesReason'             => 'Conclusão de atividades',
-    'titleBestSingleGameKills'          => 'Baixas em uma única atividade',
+    'titleSecondsPlayed'               => 'Tempo de jogo',
+    'titleAverageLifespan'             => 'Tempo médio de vida',
+    'titleLongestSingleLife'           => 'Tempo de vida',
+    'titlePublicEventsCompleted'       => 'Eventos públicos concluídos',
+    'titleHeroicPublicEventsCompleted' => 'Eventos públicos heróicos concluídos',
+    'titleAdventuresCompleted'         => 'Jornadas concluídas',
+    'titleActivitiesCleared'           => 'Atividades concluídas',
+    'titleBestSingleGameKills'         => 'Baixas em uma única atividade',
 
     'titleWeaponKillsSuper'   => 'Baixas com Super',
     'titleWeaponKillsGrenade' => 'Baixas com Granada',
@@ -50,7 +48,7 @@ return [
 
     'titleLongestKillDistance' => 'Baixa mais distante',
     'titleAverageKillDistance' => 'Distância média de baixas',
-    'titleTotalKillDistance'   => 'Acumulado da distância das baixas',
+    'titleTotalKillDistance'   => 'Distância acumulada das baixas',
     'titlePrecisionKills'      => 'Baixas precisas',
     'titleMostPrecisionKills'  => 'Baixas hit-kills',
 
@@ -78,6 +76,8 @@ return [
     'typeHours'   => 'horas',
     'typeMinutes' => 'minutos',
     'typeMeters'  => 'metros',
+
+    'modeDaily' => ':value por dia',
 
     'selfStatsRequest' => "*Estamos verificando suas estatísticas, guardião!*\n" .
                           'Aguarde alguns segundos...',

@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Models\Observers;
 
 use Application\Models\Model;
+use Application\Models\Stat;
 use Application\Models\User;
 use Application\Models\UserGamertag;
 use Application\Services\Telegram\BotService;
@@ -24,6 +25,15 @@ class UserObserver extends Observer
         self::deleteSettings($model);
 
         BotService::getInstance()->banUser($model);
+
+        /** @var Stat $stats */
+        $statsQuery = Stat::query();
+        $statsQuery->where('user_id', $model->id);
+        $stats = $statsQuery->get();
+
+        foreach ($stats as $stat) {
+            $stat->delete();
+        }
     }
 
     /**

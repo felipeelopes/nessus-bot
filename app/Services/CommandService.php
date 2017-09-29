@@ -9,7 +9,7 @@ use Application\Adapters\Telegram\Update;
 class CommandService
 {
     public const COMMAND_ADMINS          = 'admins';
-    public const COMMAND_BAN = 'ban';
+    public const COMMAND_BAN             = 'ban';
     public const COMMAND_CANCEL          = 'cancel';
     public const COMMAND_COMMANDS        = 'commands';
     public const COMMAND_CONFIRM         = 'confirm';
@@ -20,6 +20,7 @@ class CommandService
     public const COMMAND_MY_GRIDS        = 'myGrids';
     public const COMMAND_NEWS            = 'news';
     public const COMMAND_NEW_GRID        = 'newGrid';
+    public const COMMAND_RANKING         = 'ranking';
     public const COMMAND_RECALC_STATS    = 'recalcStats';
     public const COMMAND_REFRESH         = 'refresh';
     public const COMMAND_REGISTER        = 'register';
@@ -55,6 +56,7 @@ class CommandService
             $commands[] = static::COMMAND_NEW_GRID;
             $commands[] = static::COMMAND_LIST_GRIDS;
             $commands[] = static::COMMAND_MY_GRIDS;
+            $commands[] = static::COMMAND_RANKING;
             $commands[] = static::COMMAND_STATS;
             $commands[] = static::COMMAND_SELF_STATS;
             $commands[] = static::COMMAND_GT;

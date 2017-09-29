@@ -93,6 +93,15 @@ class Message extends BaseFluent
     }
 
     /**
+     * Identify if message is from administration group.
+     * @return bool
+     */
+    public function isAdministrative(): bool
+    {
+        return $this->chat->id === (int) env('NBOT_ADMIN_ID');
+    }
+
+    /**
      * Check if the called command.
      * @param string|null $command Command name.
      * @return bool
