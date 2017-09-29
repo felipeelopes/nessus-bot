@@ -264,7 +264,7 @@ class UserStatsStrategy implements UserStrategyContract
             ]);
         }
 
-        if ($user !== null) {
+        if ($user !== null && $user->gamertag) {
             return trans('Stats.statsHeaderSelf', [
                 'gamertag' => $user->gamertag->gamertag_value,
                 'contents' => implode($contents),

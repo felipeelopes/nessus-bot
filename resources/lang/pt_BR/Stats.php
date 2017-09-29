@@ -69,9 +69,9 @@ return [
     'titleLongestKillSpree'          => 'Baixas em sequência',
     'titleKillsDeathsRatio'          => 'Relação K/D PvE',
 
-    'titleDeaths'                => 'Mortes',
-    'titleSuicides'              => 'Suicídios',
-    'titleResurrectionsReceived' => 'Ressureições recebidas',
+    'titleDeaths'                => 'Menor número de mortes',
+    'titleSuicides'              => 'Menor número de suicídios',
+    'titleResurrectionsReceived' => 'Menor número de ressureições recebidas',
 
     'typeHours'   => 'horas',
     'typeMinutes' => 'minutos',

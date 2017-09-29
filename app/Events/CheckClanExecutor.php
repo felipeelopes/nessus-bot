@@ -11,6 +11,7 @@ use Application\Services\Bungie\BungieService;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
+use RuntimeException;
 
 class CheckClanExecutor extends Executor
 {
@@ -35,8 +36,14 @@ class CheckClanExecutor extends Executor
             return true;
         }
 
-        $clanFromMember = BungieService::getInstance()->getClanFromMember($user->gamertag->bungie_membership);
-        $settings       = SettingService::fromReference($user, self::NEXT_CLAN_CHECKUP);
+        try {
+            $clanFromMember = BungieService::getInstance()->getClanFromMember($user->gamertag->bungie_membership);
+        }
+        catch (RuntimeException $runtimeException) {
+            throw new KeepWorkingException;
+        }
+
+        $settings = SettingService::fromReference($user, self::NEXT_CLAN_CHECKUP);
 
         if ($clanFromMember && in_array($clanFromMember->groupId, explode(',', env('NBOT_CLANS')), false)) {
             $settings->updated_at = Carbon::now()->addDays(1);

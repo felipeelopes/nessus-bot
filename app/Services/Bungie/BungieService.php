@@ -12,6 +12,7 @@ use Application\Services\MockupService;
 use Application\Services\Requester\Live\RequesterService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class BungieService implements ServiceContract
 {
@@ -31,7 +32,7 @@ class BungieService implements ServiceContract
         $statsResponse = $this->request('GET', sprintf('GroupV2/User/1/%u/0/1/', $membershipId));
 
         if (!$statsResponse) {
-            return null;
+            throw new RuntimeException;
         }
 
         $groupDetails = array_get($statsResponse, 'results.0');

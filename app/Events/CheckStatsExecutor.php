@@ -32,7 +32,12 @@ class CheckStatsExecutor extends Executor
         }
 
         $membership = $userGamertag->bungie_membership;
-        $userStats  = $bungieService->userStatsSimplified($membership);
+
+        if (!$membership) {
+            return;
+        }
+
+        $userStats = $bungieService->userStatsSimplified($membership);
 
         $statsQuery = Stat::query();
         $statsQuery->where('user_id', $user->id);
