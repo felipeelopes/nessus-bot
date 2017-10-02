@@ -21,16 +21,40 @@ class PlayerLevel extends BaseFluent
      * Returns the icon title based on user experience.
      * @return string
      */
-    public function getIconTitle(): string
+    public function getIconTitle(?bool $full = null): string
     {
         $titleLevel = ' ';
 
         if ($this->titleLevel !== [ 1, 1 ]) {
-            $titleLevel = FormattingService::toSuperscript((string) $this->titleLevel[0]);
+            $titleLevel = $this->titleLevel[0];
         }
 
-        return sprintf('`%s%s`',
-            $this->icon,
-            $titleLevel);
+        if ($full === true) {
+            return sprintf('%s %s #%u', $this->icon, $this->title, $titleLevel);
+        }
+
+        return sprintf('%s%s', $this->icon, FormattingService::toSuperscript((string) $titleLevel));
+    }
+
+    /**
+     * Returns how much experiences is need to next level.
+     * @return int|null
+     */
+    public function getNextExperience(): ?int
+    {
+        if ($this->xpBase[1] === PHP_INT_MAX) {
+            return null;
+        }
+
+        return (int) ($this->xpBase[1] - $this->ranking->player_experience);
+    }
+
+    /**
+     * Get percent based on experience.
+     * @return float
+     */
+    public function getPercent(): float
+    {
+        return ($this->ranking->player_experience - $this->xpBase[0]) / ($this->xpBase[1] - $this->xpBase[0]);
     }
 }

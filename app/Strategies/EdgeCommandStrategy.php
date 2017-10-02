@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Application\Strategies;
 
+use Application\Adapters\Predefinition\OptionItem;
 use Application\Adapters\Ranking\PlayerRanking;
 use Application\Adapters\Telegram\Update;
 use Application\Events\CheckActivitiesExecutor;
@@ -195,7 +196,7 @@ class EdgeCommandStrategy implements UserStrategyContract
             BotService::getInstance()
                 ->createMessage($update->message)
                 ->appendMessage(trans('Stats.activitiesRequest'))
-                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@' . $user->id)
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
                 ->publish();
 
             CheckActivitiesExecutor::processActivities($user, true);
@@ -204,6 +205,32 @@ class EdgeCommandStrategy implements UserStrategyContract
                 ->createMessage($update->message)
                 ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 20 : 10))
                 ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
+                ->setOptions([
+                    OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
+                ])
+                ->publish();
+
+            return true;
+        }
+
+        if ($user !== null &&
+            $update->message->isCommand(CommandService::COMMAND_MY_RANKING)) {
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage(trans('Stats.activitiesRequest'))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
+                ->publish();
+
+            CheckActivitiesExecutor::processActivities($user, true);
+
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage($this->generateUserExperience($user))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
+                ->setOptions([
+                    OptionItem::fromCommand(CommandService::COMMAND_RANKING),
+                    OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
+                ])
                 ->publish();
 
             return true;
@@ -437,6 +464,46 @@ class EdgeCommandStrategy implements UserStrategyContract
 
         return trans('Stats.rankingHeader', [
             'pointers' => implode($rankingContents),
+        ]);
+    }
+
+    /**
+     * Generate the User experience ranking.
+     * @return string
+     */
+    private function generateUserExperience(User $user): string
+    {
+        $globalRanking = UserExperienceService::getInstance()->getGlobalRanking();
+
+        if (!$globalRanking->has($user->id)) {
+            return trans('Ranking.errorNotFound');
+        }
+
+        /** @var PlayerRanking $playerRanking */
+        $playerRanking = $globalRanking->get($user->id);
+        $playerLevel   = $playerRanking->getLevel();
+
+        $barPercent = $playerLevel->getPercent();
+        $barFilled  = str_repeat(trans('Ranking.barFilled'), (int) round($barPercent * 10)) .
+                      str_repeat(trans('Ranking.barEmpty'), (int) round((1 - $barPercent) * 10));
+
+        $nextExperience = $playerLevel->getNextExperience();
+
+        return trans('Ranking.rankingGrid', [
+            'gamertag'     => $user->gamertag->gamertag_value,
+            'title'        => $playerLevel->getIconTitle(true),
+            'bar'          => $barFilled,
+            'percent'      => sprintf('%.1f%%', $barPercent * 100),
+            'xp'           => number_format($playerRanking->player_experience, 0, '', '.'),
+            'nextLevel'    => $nextExperience === null
+                ? trans('Ranking.nextLevelLimited')
+                : trans('Ranking.nextLevelRequirement', [
+                    'xp' => number_format($nextExperience, 0, '', '.'),
+                ]),
+            'activities'   => number_format($playerRanking->player_activities, 0, '', '.'),
+            'hours'        => sprintf('%.1f', $playerRanking->player_timing),
+            'interactions' => number_format($playerRanking->player_interation, 0, '', '.'),
+            'days'         => number_format($playerRanking->player_register, 0, '', '.'),
         ]);
     }
 }

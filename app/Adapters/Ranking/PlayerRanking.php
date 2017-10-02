@@ -25,6 +25,7 @@ class PlayerRanking extends BaseFluent
      */
     public static function getLevels(): Collection
     {
+        $iconStarter   = trans('Ranking.iconStarter');
         $iconDecorated = trans('Ranking.iconDecorated');
         $iconBronze    = trans('Ranking.iconBronze');
         $iconSilver    = trans('Ranking.iconSilver');
@@ -43,21 +44,21 @@ class PlayerRanking extends BaseFluent
             [
                 'level'      => 1,
                 'xpBase'     => [ 0, 1000 ],
-                'icon'       => trans('Ranking.iconStarter1'),
+                'icon'       => $iconStarter,
                 'title'      => $titleStarter,
                 'titleLevel' => [ 1, 3 ],
             ],
             [
                 'level'      => 2,
                 'xpBase'     => [ 1000, 2000 ],
-                'icon'       => trans('Ranking.iconStarter2'),
+                'icon'       => $iconStarter,
                 'title'      => $titleStarter,
                 'titleLevel' => [ 2, 3 ],
             ],
             [
                 'level'      => 3,
                 'xpBase'     => [ 2000, 4000 ],
-                'icon'       => trans('Ranking.iconStarter3'),
+                'icon'       => $iconStarter,
                 'title'      => $titleStarter,
                 'titleLevel' => [ 3, 3 ],
             ],

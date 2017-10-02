@@ -57,7 +57,10 @@ return [
         'selfStatsDescription' => 'Exibe as suas estatísticas',
 
         'rankingCommand'     => 'Ranking',
-        'rankingDescription' => 'Exibe o Ranking de atividade',
+        'rankingDescription' => 'Exibe o Ranking geral nas atividades',
+
+        'myRankingCommand'     => 'MeuStatus',
+        'myRankingDescription' => 'Exibe o seu status nas atividades',
 
         'banCommand'     => 'Banir',
         'banDescription' => 'Bane a Gamertag do grupo e do banco',

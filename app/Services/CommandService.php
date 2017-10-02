@@ -18,6 +18,7 @@ class CommandService
     public const COMMAND_LINKS           = 'links';
     public const COMMAND_LIST_GRIDS      = 'listGrids';
     public const COMMAND_MY_GRIDS        = 'myGrids';
+    public const COMMAND_MY_RANKING      = 'myRanking';
     public const COMMAND_NEWS            = 'news';
     public const COMMAND_NEW_GRID        = 'newGrid';
     public const COMMAND_RANKING         = 'ranking';
@@ -57,6 +58,7 @@ class CommandService
             $commands[] = static::COMMAND_LIST_GRIDS;
             $commands[] = static::COMMAND_MY_GRIDS;
             $commands[] = static::COMMAND_RANKING;
+            $commands[] = static::COMMAND_MY_RANKING;
             $commands[] = static::COMMAND_STATS;
             $commands[] = static::COMMAND_SELF_STATS;
             $commands[] = static::COMMAND_GT;

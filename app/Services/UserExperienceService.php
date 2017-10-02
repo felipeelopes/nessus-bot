@@ -25,8 +25,7 @@ class UserExperienceService implements ServiceContract
      */
     public function forgetGlobalRanking()
     {
-        //@todo
-        //Cache::forget(__CLASS__ . '@globalRanking');
+        Cache::forget(__CLASS__ . '@globalRanking');
     }
 
     /**

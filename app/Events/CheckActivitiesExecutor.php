@@ -25,6 +25,10 @@ class CheckActivitiesExecutor extends Executor
      */
     public static function processActivities(User $user, ?bool $avoidCache = null)
     {
+        if (!$user->gamertag) {
+            return;
+        }
+
         /** @var Activity $lastActivity */
         $lastActivityQuery = Activity::query();
         $lastActivityQuery->where('user_id', $user->id);

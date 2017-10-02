@@ -19,11 +19,11 @@ return [
     'subscriberObservation' => ':gamertag (_:observation_)',
 
     'titularsHeader'   => "\n*Titulares:*\n",
-    'titularItem'      => ":playerIcon \xE2\x9E\x9C :gamertag :icon\n",
+    'titularItem'      => "`:playerIcon` \xE2\x9E\x9C :gamertag :icon\n",
     'titularItemEmpty' => "\xF0\x9F\x8E\xAE \n",
 
     'reservesHeader' => "\n*Reservas:*\n",
-    'reserveItem'    => ":playerIcon \xE2\x9E\x9C :gamertag :icon\n",
+    'reserveItem'    => "`:playerIcon` \xE2\x9E\x9C :gamertag :icon\n",
 
     'subscriberDefaultIcon' => "\xF0\x9F\x8E\xAE` `",
     'subscriberAdminIcon'   => "\xE2\x9A\x94",
