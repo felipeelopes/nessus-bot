@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace Application\Services\Bungie;
 
+use Application\Adapters\Bungie\Activity;
+use Application\Adapters\Bungie\CarnageReportEntry;
+use Application\Adapters\Bungie\Character;
 use Application\Adapters\Bungie\GroupV2;
 use Application\Adapters\Bungie\Response;
 use Application\Adapters\Bungie\UserInfoCard;
@@ -22,6 +25,52 @@ class BungieService implements ServiceContract
     public static function getInstance(): BungieService
     {
         return MockupService::getInstance()->instance(__CLASS__);
+    }
+
+    /**
+     * Get a character activities.
+     * @return Collection
+     */
+    public function getCharacterActivities(int $membershipId, int $characterId, ?int $page = null, ?int $count = null, ?int $mode = null, ?bool $avoidCache = null): Collection
+    {
+        $page  = $page ?? 0;
+        $count = $count ?? 10;
+        $mode  = $mode ?? 0;
+
+        $activitiesResponse = $this->request('GET',
+            sprintf('Destiny2/1/Account/%u/Character/%u/Stats/Activities/?page=%u&count=%u&mode=%u',
+                $membershipId,
+                $characterId,
+                $page,
+                $count,
+                $mode),
+            null,
+            $avoidCache !== true ? RequesterService::CACHE_HOUR : null);
+
+        if ($activitiesResponse === null) {
+            throw new RuntimeException;
+        }
+
+        return new Collection(array_map(function ($activity) {
+            return new Activity($activity);
+        }, (array) array_get($activitiesResponse, 'activities')));
+    }
+
+    /**
+     * Return the user characters.
+     * @return Collection|Character[]
+     */
+    public function getCharacters(int $membershipId): Collection
+    {
+        $charactersResponse = $this->request('GET', sprintf('Destiny2/1/Profile/%u/?components=200', $membershipId), null, RequesterService::CACHE_HOUR);
+
+        if ($charactersResponse === null) {
+            throw new RuntimeException;
+        }
+
+        return new Collection(array_map(function ($characterData) {
+            return new Character($characterData);
+        }, array_values(array_get($charactersResponse, 'characters.data'))));
     }
 
     /**
@@ -48,6 +97,35 @@ class BungieService implements ServiceContract
                 'clanCallsign' => array_get($groupDetails, 'group.clanInfo.clanCallsign'),
             ]
         ));
+    }
+
+    /**
+     * Returns the entries from a carnage report.
+     * @return CarnageReportEntry
+     */
+    public function getMemberCarnageReport(Activity $activityInstance, int $membershipIdFilter): CarnageReportEntry
+    {
+        $carnageResponse = $this->request('GET', sprintf('Destiny2/Stats/PostGameCarnageReport/%u/', $activityInstance->instanceId), null, RequesterService::CACHE_DAY);
+
+        if ($carnageResponse === null) {
+            throw new RuntimeException;
+        }
+
+        $entries = new Collection(array_map(function ($activity) use ($activityInstance) {
+            return new CarnageReportEntry($activity, $activityInstance);
+        }, (array) array_get($carnageResponse, 'entries')));
+
+        $entries = $entries->where('membershipId', $membershipIdFilter);
+
+        if ($entries->count() === 1) {
+            return $entries->first();
+        }
+
+        $firstEntry = $entries->shift();
+
+        return $entries->reduce(function (CarnageReportEntry $carry, CarnageReportEntry $nextEntry) {
+            return $carry->mergeWith($nextEntry);
+        }, $firstEntry);
     }
 
     /**

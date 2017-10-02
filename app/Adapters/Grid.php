@@ -4,11 +4,13 @@ declare(strict_types = 1);
 
 namespace Application\Adapters;
 
+use Application\Adapters\Ranking\PlayerRanking;
 use Application\Adapters\Telegram\User;
 use Application\Models\Grid as GridModel;
 use Application\Models\GridSubscription;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
+use Application\Services\UserExperienceService;
 use Application\Services\UserService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -173,15 +175,27 @@ class Grid extends BaseFluent
 
             $botService = BotService::getInstance();
 
+            $globalRanking = UserExperienceService::getInstance()->getGlobalRanking();
+
             /** @var GridSubscription $gridSubscriber */
             foreach ($grid->subscribers_sorted as $gridSubscriber) {
+                $playerIcon = trans('Grid.titularDefaultIcon');
+
+                if ($globalRanking->has($gridSubscriber->gamertag->user_id)) {
+                    /** @var PlayerRanking $playerRanking */
+                    $playerRanking = $globalRanking->get($gridSubscriber->gamertag->user_id);
+                    $playerIcon    = $playerRanking->getLevel()->getIconTitle();
+                }
+
                 $gridSubscriberMask = [
-                    'gamertag' => $botService->escape($gridSubscriber->gamertag->gamertag_value),
-                    'icon'     => implode(' ', $gridSubscriber->getIcons()),
+                    'playerIcon' => $playerIcon,
+                    'gamertag'   => $botService->escape($gridSubscriber->gamertag->gamertag_value),
+                    'icon'       => implode(' ', $gridSubscriber->getIcons()),
                 ];
 
                 if ($gridSubscriber->subscription_description) {
                     $gridSubscriberMask['gamertag'] = trans('Grid.subscriberObservation', [
+                        'playerIcon'  => $playerIcon,
                         'gamertag'    => $gridSubscriberMask['gamertag'],
                         'observation' => $botService->escape($gridSubscriber->subscription_description),
                     ]);

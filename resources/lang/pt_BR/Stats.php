@@ -14,9 +14,9 @@ return [
                          '*Total:* `:points` pontos (_soma de todos os percentuais_)',
     'statsItemSelf'   => "`:percent` \xE2\x9E\x9C *:title*: :value\n",
 
-    'rankingHeader'    => "*Ranking (por pontuação):*\n" .
+    'rankingHeader'    => "*Ranking por Atividade:*\n\n" .
                           ":pointers\n",
-    'rankingPointer'   => "*:rankingº* _:gamertag_ (`:points` pontos):you\n",
+    'rankingPointer'   => "*:rankingº* :icon _:gamertag_ (`:xp` xp):you\n",
     'rankingSeparator' => "---\n",
     'rankingYou'       => " \xF0\x9F\x91\x88",
 
@@ -79,8 +79,6 @@ return [
 
     'modeDaily' => ':value por dia',
 
-    'selfStatsRequest' => "*Estamos verificando suas estatísticas, guardião!*\n" .
-                          'Aguarde alguns segundos...',
-    'userStatsRequest' => "*Estamos verificando estas estatísticas, guardião!*\n" .
-                          'Aguarde alguns segundos...',
+    'activitiesRequest' => "*Estamos verificando suas últimas atividades, guardião!*\n" .
+                           'Aguarde alguns segundos...',
 ];

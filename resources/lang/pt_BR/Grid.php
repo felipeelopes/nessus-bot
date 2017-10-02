@@ -18,12 +18,13 @@ return [
 
     'subscriberObservation' => ':gamertag (_:observation_)',
 
-    'titularsHeader'   => "\n*Titulares:*\n",
-    'titularItem'      => "\xF0\x9F\x8E\xAE :gamertag :icon\n",
-    'titularItemEmpty' => "\xF0\x9F\x8E\xAE \n",
+    'titularsHeader'     => "\n*Titulares:*\n",
+    'titularItem'        => ":playerIcon \xE2\x9E\x9C :gamertag :icon\n",
+    'titularItemEmpty'   => "\xF0\x9F\x8E\xAE \n",
+    'titularDefaultIcon' => "\xF0\x9F\x8E\xAE` `",
 
     'reservesHeader' => "\n*Reservas:*\n",
-    'reserveItem'    => "\xF0\x9F\x95\xB9 :gamertag :icon\n",
+    'reserveItem'    => ":playerIcon \xE2\x9E\x9C :gamertag :icon\n",
 
     'typeOwner'   => "\xE2\x86\x92 _organizador_",
     'typeManager' => "\xE2\x86\x92 _moderador_",

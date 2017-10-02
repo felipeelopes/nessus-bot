@@ -4,13 +4,16 @@ declare(strict_types = 1);
 
 namespace Application\Strategies;
 
+use Application\Adapters\Ranking\PlayerRanking;
 use Application\Adapters\Telegram\Update;
+use Application\Events\CheckActivitiesExecutor;
 use Application\Models\User;
 use Application\Models\UserGamertag;
 use Application\Services\CommandService;
 use Application\Services\KeyboardService;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
+use Application\Services\UserExperienceService;
 use Application\Strategies\Contracts\UserStrategyContract;
 use Artisan;
 use Carbon\Carbon;
@@ -187,6 +190,25 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
+        if ($user !== null &&
+            $update->message->isCommand(CommandService::COMMAND_RANKING)) {
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage(trans('Stats.activitiesRequest'))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@' . $user->id)
+                ->publish();
+
+            CheckActivitiesExecutor::processActivities($user, true);
+
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 20 : 10))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
+                ->publish();
+
+            return true;
+        }
+
         if ($update->message->isCommand(CommandService::COMMAND_COMMANDS)) {
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
@@ -349,5 +371,72 @@ class EdgeCommandStrategy implements UserStrategyContract
         }
 
         return true;
+    }
+
+    /**
+     * Generate and return the ranking message.
+     * @return string
+     */
+    private function generateRanking(User $you, ?int $limit = null): string
+    {
+        $globalRanking = UserExperienceService::getInstance()->getGlobalRanking();
+        $usersIds      = $globalRanking->pluck('user_id');
+
+        $usersQuery = User::query();
+        $usersQuery->with('gamertag');
+        $usersQuery->whereIn('id', $usersIds);
+        $users        = $usersQuery->get()->keyBy('id');
+        $usersRanking = array_fill_keys($usersIds->toArray(), 0);
+
+        $usersRanked = $globalRanking;
+
+        if ($limit !== null) {
+            $usersRanked = $usersRanked->slice(0, $limit);
+        }
+
+        $rankingContents = [];
+        $rankingIndex    = 0;
+        $rankingYou      = false;
+
+        /** @var PlayerRanking $userRank */
+        foreach ($usersRanked as $userRank) {
+            $rankingIndex++;
+            $rankingYou = $rankingYou || $userRank->user_id === $you->id;
+
+            /** @var User $user */
+            $user              = $users->get($userRank->user_id);
+            $rankingContents[] = trans('Stats.rankingPointer', [
+                'ranking'  => $rankingIndex,
+                'gamertag' => $user->gamertag->gamertag_value,
+                'icon'     => $userRank->getLevel()->getIconTitle(),
+                'xp'       => number_format($userRank->player_experience, 0, '', '.'),
+                'you'      => $userRank->user_id === $you->id
+                    ? trans('Stats.rankingYou')
+                    : null,
+            ]);
+        }
+
+        if ($limit !== null && !$rankingYou && $users->get($you->id)) {
+            $rankingIndex = array_search($you->id, array_keys($usersRanking), false) + 1;
+
+            if ($rankingIndex !== $limit + 1) {
+                $rankingContents[] = trans('Stats.rankingSeparator');
+            }
+
+            /** @var PlayerRanking $youRank */
+            $youRank = $globalRanking->where('user_id', $you->id)->first();
+
+            $rankingContents[] = trans('Stats.rankingPointer', [
+                'ranking'  => $rankingIndex,
+                'gamertag' => $you->gamertag->gamertag_value,
+                'icon'     => $youRank->getLevel()->getIconTitle(),
+                'xp'       => number_format($youRank->player_experience, 0, '', '.'),
+                'you'      => trans('Stats.rankingYou'),
+            ]);
+        }
+
+        return trans('Stats.rankingHeader', [
+            'pointers' => implode($rankingContents),
+        ]);
     }
 }

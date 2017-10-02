@@ -71,16 +71,6 @@ class UserStatsStrategy implements UserStrategyContract
             return true;
         }
 
-        if ($update->message->isCommand(CommandService::COMMAND_RANKING)) {
-            BotService::getInstance()
-                ->createMessage($update->message)
-                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 30 : 10))
-                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
-                ->publish();
-
-            return true;
-        }
-
         if ($update->message->isCommand(CommandService::COMMAND_SELF_STATS)) {
             $messageEntityBotCommand = $update->message->getCommand();
             $whichRequestTrans       = trans('Stats.selfStatsRequest');
@@ -122,75 +112,6 @@ class UserStatsStrategy implements UserStrategyContract
         }
 
         return null;
-    }
-
-    /**
-     * Generate and return the ranking message.
-     * @return string
-     */
-    private function generateRanking(User $you, ?int $limit = null): string
-    {
-        /** @var Collection|Stat[] $stats */
-        $topStats = static::getTopRanking($stats, $secondsPlayedStats);
-
-        $statsTypes          = Stat::getStatsTypes();
-        $statsTypesOrderDesc = $statsTypes->where('order', Stat::ORDER_DESC)->keys();
-
-        $users           = $stats->pluck('user', 'user.id');
-        $usersIds        = $users->keys();
-        $usersRanking    = array_fill_keys($usersIds->toArray(), 0);
-        $rankingContents = [];
-        $rankingIndex    = 0;
-        $rankingYou      = false;
-
-        foreach ($stats as $stat) {
-            /** @var Stat $topStat */
-            $topStat                      = $topStats->get($stat->stat_name);
-            $usersRanking[$stat->user_id] += $stat->getPercentFrom($topStat->stat_value, $statsTypesOrderDesc->contains($stat->stat_name)) * 100;
-        }
-
-        arsort($usersRanking);
-
-        $usersRankingLimited = $usersRanking;
-
-        if ($limit !== null) {
-            $usersRankingLimited = array_slice($usersRankingLimited, 0, $limit, true);
-        }
-
-        foreach ($usersRankingLimited as $userId => $userPoints) {
-            $rankingIndex++;
-            $rankingYou = $rankingYou || $userId === $you->id;
-
-            /** @var User $user */
-            $user              = $users->get($userId);
-            $rankingContents[] = trans('Stats.rankingPointer', [
-                'ranking'  => $rankingIndex,
-                'gamertag' => $user->gamertag->gamertag_value,
-                'points'   => sprintf('%6.1f', $userPoints),
-                'you'      => $userId === $you->id
-                    ? trans('Stats.rankingYou')
-                    : null,
-            ]);
-        }
-
-        if ($limit !== null && !$rankingYou && $users->get($you->id)) {
-            $rankingIndex = array_search($you->id, array_keys($usersRanking), false) + 1;
-
-            if ($rankingIndex !== 11) {
-                $rankingContents[] = trans('Stats.rankingSeparator');
-            }
-
-            $rankingContents[] = trans('Stats.rankingPointer', [
-                'ranking'  => $rankingIndex,
-                'gamertag' => $you->gamertag->gamertag_value,
-                'points'   => sprintf('%6.1f', $usersRanking[$you->id]),
-                'you'      => trans('Stats.rankingYou'),
-            ]);
-        }
-
-        return trans('Stats.rankingHeader', [
-            'pointers' => implode($rankingContents),
-        ]);
     }
 
     /**
