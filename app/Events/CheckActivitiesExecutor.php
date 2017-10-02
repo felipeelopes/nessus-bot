@@ -102,14 +102,13 @@ class CheckActivitiesExecutor extends Executor
      */
     public function run(?Model $model = null): ?bool
     {
-        if (false && Carbon::now()->hour < 20) {
+        if (Carbon::now()->hour < 20) {
             return true;
         }
 
         $lastCheckup = SettingService::fromReference($this, static::LAST_CHECKUP);
 
-        if (false &&
-            $lastCheckup->exists &&
+        if ($lastCheckup->exists &&
             $lastCheckup->updated_at->diffInHours(Carbon::now()) < 23) {
             return true;
         }

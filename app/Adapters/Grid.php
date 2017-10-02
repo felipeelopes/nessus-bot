@@ -179,7 +179,7 @@ class Grid extends BaseFluent
 
             /** @var GridSubscription $gridSubscriber */
             foreach ($grid->subscribers_sorted as $gridSubscriber) {
-                $playerIcon = trans('Grid.titularDefaultIcon');
+                $playerIcon = trans('Grid.subscriberDefaultIcon');
 
                 if ($globalRanking->has($gridSubscriber->gamertag->user_id)) {
                     /** @var PlayerRanking $playerRanking */

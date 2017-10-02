@@ -66,4 +66,16 @@ class User extends Model
 
         return $botService->formatMention($this->getFullname(), $this->user_number);
     }
+
+    /**
+     * Check if this user is a group administrator.
+     * @return bool
+     */
+    public function isAdminstrator(): bool
+    {
+        $botService        = BotService::getInstance();
+        $administratorsIds = array_pluck($botService->getChatAdministrators(), 'user.id');
+
+        return in_array($this->user_number, $administratorsIds, true);
+    }
 }

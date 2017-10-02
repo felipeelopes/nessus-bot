@@ -78,6 +78,10 @@ class GridSubscription extends Model
     {
         $icons = [];
 
+        if ($this->gamertag->user->isAdminstrator()) {
+            $icons[] = trans('Grid.subscriberAdminIcon');
+        }
+
         if ($this->subscription_position === self::POSITION_TITULAR_RESERVE) {
             $icons[] = trans('Grid.typeTop');
         }
