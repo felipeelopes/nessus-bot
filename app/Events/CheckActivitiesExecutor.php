@@ -82,6 +82,14 @@ class CheckActivitiesExecutor extends Executor
         foreach ($characterRecentActivities as $characterRecentActivity) {
             $carnageReport = $bungieService->getMemberCarnageReport($characterRecentActivity, $user->gamertag->bungie_membership);
 
+            $checkActivity = Activity::query();
+            $checkActivity->where('user_id', $user->id);
+            $checkActivity->where('activity_instance', $carnageReport->activity->instanceId);
+
+            if ($checkActivity->exists()) {
+                continue;
+            }
+
             $activity                    = new Activity;
             $activity->user_id           = $user->id;
             $activity->activity_instance = $carnageReport->activity->instanceId;
