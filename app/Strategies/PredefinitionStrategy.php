@@ -37,7 +37,7 @@ class PredefinitionStrategy implements UserStrategyContract
             $command = substr($update->message->getCommand()->command, 1);
 
             foreach ($predefinitions as $predefinition) {
-                if ($predefinition->command === $command ||
+                if (($predefinition->command === $command && $predefinition->value !== null) ||
                     ($predefinition->value && strcasecmp((string) $predefinition->value, $command) === 0)) {
                     $update->message->text     = (string) $predefinition->value;
                     $update->message->entities = null;
