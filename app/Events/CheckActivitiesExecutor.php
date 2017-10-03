@@ -40,10 +40,6 @@ class CheckActivitiesExecutor extends Executor
 
         $collectLimit = Carbon::now()->subDays(45);
 
-        $oldActivitiesQuery = Activity::query();
-        $oldActivitiesQuery->where('user_id', $user->id);
-        $oldActivities = $lastActivityQuery->pluck('activity_instance');
-
         $characterRecentActivities = new Collection;
 
         foreach ($characters as $ck => $character) {
@@ -74,21 +70,18 @@ class CheckActivitiesExecutor extends Executor
             while (true);
         }
 
-        $characterRecentActivities = $characterRecentActivities
-            ->whereNotIn('instanceId', $oldActivities)
-            ->unique('instanceId')
-            ->reverse();
+        $characterRecentActivities = $characterRecentActivities->reverse();
 
         foreach ($characterRecentActivities as $characterRecentActivity) {
-            $carnageReport = $bungieService->getMemberCarnageReport($characterRecentActivity, $user->gamertag->bungie_membership);
-
             $checkActivity = Activity::query();
             $checkActivity->where('user_id', $user->id);
-            $checkActivity->where('activity_instance', $carnageReport->activity->instanceId);
+            $checkActivity->where('activity_instance', $characterRecentActivity->instanceId);
 
             if ($checkActivity->exists()) {
                 continue;
             }
+
+            $carnageReport = $bungieService->getMemberCarnageReport($characterRecentActivity, $user->gamertag->bungie_membership);
 
             $activity                    = new Activity;
             $activity->user_id           = $user->id;
