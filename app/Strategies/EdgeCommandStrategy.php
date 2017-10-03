@@ -191,51 +191,6 @@ class EdgeCommandStrategy implements UserStrategyContract
             return true;
         }
 
-        if ($user !== null &&
-            $update->message->isCommand(CommandService::COMMAND_RANKING)) {
-            BotService::getInstance()
-                ->createMessage($update->message)
-                ->appendMessage(trans('Stats.activitiesRequest'))
-                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
-                ->publish();
-
-            CheckActivitiesExecutor::processActivities($user, true);
-
-            BotService::getInstance()
-                ->createMessage($update->message)
-                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 20 : 10))
-                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
-                ->setOptions([
-                    OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
-                ])
-                ->publish();
-
-            return true;
-        }
-
-        if ($user !== null &&
-            $update->message->isCommand(CommandService::COMMAND_MY_RANKING)) {
-            BotService::getInstance()
-                ->createMessage($update->message)
-                ->appendMessage(trans('Stats.activitiesRequest'))
-                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
-                ->publish();
-
-            CheckActivitiesExecutor::processActivities($user, true);
-
-            BotService::getInstance()
-                ->createMessage($update->message)
-                ->appendMessage($this->generateUserExperience($user))
-                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
-                ->setOptions([
-                    OptionItem::fromCommand(CommandService::COMMAND_RANKING),
-                    OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
-                ])
-                ->publish();
-
-            return true;
-        }
-
         if ($update->message->isCommand(CommandService::COMMAND_COMMANDS)) {
             /** @var CommandService $commandService */
             $commandService = MockupService::getInstance()->instance(CommandService::class);
@@ -243,12 +198,6 @@ class EdgeCommandStrategy implements UserStrategyContract
                 ->appendMessage($commandService->buildList($update))
                 ->unduplicate(__CLASS__ . '@' . CommandService::COMMAND_COMMANDS)
                 ->publish();
-
-            return true;
-        }
-
-        if ($update->message->isCommand(CommandService::COMMAND_GT)) {
-            self::commandGamertag($update);
 
             return true;
         }
@@ -276,6 +225,59 @@ class EdgeCommandStrategy implements UserStrategyContract
                     'admins' => implode(self::getAdministratorsList($botService)),
                 ]))
                 ->publish();
+
+            return true;
+        }
+
+        if (!$user || !$user->exists || $user->deleted_at || !$user->gamertag) {
+            return false;
+        }
+
+        if ($update->message->isCommand(CommandService::COMMAND_RANKING)) {
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage(trans('Stats.activitiesRequest'))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
+                ->publish();
+
+            CheckActivitiesExecutor::processActivities($user, true);
+
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 20 : 10))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
+                ->setOptions([
+                    OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
+                ])
+                ->publish();
+
+            return true;
+        }
+
+        if ($update->message->isCommand(CommandService::COMMAND_MY_RANKING)) {
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage(trans('Stats.activitiesRequest'))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
+                ->publish();
+
+            CheckActivitiesExecutor::processActivities($user, true);
+
+            BotService::getInstance()
+                ->createMessage($update->message)
+                ->appendMessage($this->generateUserExperience($user))
+                ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
+                ->setOptions([
+                    OptionItem::fromCommand(CommandService::COMMAND_RANKING),
+                    OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
+                ])
+                ->publish();
+
+            return true;
+        }
+
+        if ($update->message->isCommand(CommandService::COMMAND_GT)) {
+            self::commandGamertag($update);
 
             return true;
         }

@@ -78,7 +78,9 @@ class GridSubscription extends Model
     {
         $icons = [];
 
-        if ($this->gamertag->user->isAdminstrator()) {
+        if ($this->gamertag &&
+            $this->gamertag->user &&
+            $this->gamertag->user->isAdminstrator()) {
             $icons[] = trans('Grid.subscriberAdminIcon');
         }
 

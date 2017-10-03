@@ -98,22 +98,24 @@ class BotController extends Controller implements RouterRegisterContract
 
         (new GoodMorningExecutor)->run();
 
-        /** @var PredefinitionStrategy $predefinition */
-        $predefinition = $mockupService->instance(PredefinitionStrategy::class);
-        if ($predefinition->process($user, $update)) {
-            return;
-        }
+        if ($user->exists && !$user->deleted_at && $user->gamertag) {
+            /** @var PredefinitionStrategy $predefinition */
+            $predefinition = $mockupService->instance(PredefinitionStrategy::class);
+            if ($predefinition->process($user, $update)) {
+                return;
+            }
 
-        /** @var CancelCommandStrategy $cancelCommand */
-        $cancelCommand = $mockupService->instance(CancelCommandStrategy::class);
-        if ($cancelCommand->process($user, $update)) {
-            return;
-        }
+            /** @var CancelCommandStrategy $cancelCommand */
+            $cancelCommand = $mockupService->instance(CancelCommandStrategy::class);
+            if ($cancelCommand->process($user, $update)) {
+                return;
+            }
 
-        /** @var UserSubscriptionStrategy $userRegistration */
-        $userSubscription = $mockupService->instance(UserSubscriptionStrategy::class);
-        if ($userSubscription->process($update)) {
-            return;
+            /** @var UserSubscriptionStrategy $userRegistration */
+            $userSubscription = $mockupService->instance(UserSubscriptionStrategy::class);
+            if ($userSubscription->process($update)) {
+                return;
+            }
         }
 
         if ($update->message->text === null) {
@@ -124,34 +126,36 @@ class BotController extends Controller implements RouterRegisterContract
             $update->message->text = null;
         }
 
-        /** @var UserRegistrationStrategy $userRegistration */
-        $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
-        if ($userRegistration->process($user, $update)) {
-            return;
-        }
+        if ($user->exists && !$user->deleted_at && $user->gamertag) {
+            /** @var UserRegistrationStrategy $userRegistration */
+            $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
+            if ($userRegistration->process($user, $update)) {
+                return;
+            }
 
-        /** @var GridListingStrategy $gridListing */
-        $gridListing = $mockupService->instance(GridListingStrategy::class);
-        if ($gridListing->process($user, $update)) {
-            return;
-        }
+            /** @var GridListingStrategy $gridListing */
+            $gridListing = $mockupService->instance(GridListingStrategy::class);
+            if ($gridListing->process($user, $update)) {
+                return;
+            }
 
-        /** @var GridModificationStrategy $gridModification */
-        $gridModification = $mockupService->instance(GridModificationStrategy::class);
-        if ($gridModification->process($user, $update)) {
-            return;
-        }
+            /** @var GridModificationStrategy $gridModification */
+            $gridModification = $mockupService->instance(GridModificationStrategy::class);
+            if ($gridModification->process($user, $update)) {
+                return;
+            }
 
-        /** @var GridCreationStrategy $gridCreation */
-        $gridCreation = $mockupService->instance(GridCreationStrategy::class);
-        if ($gridCreation->process($user, $update)) {
-            return;
-        }
+            /** @var GridCreationStrategy $gridCreation */
+            $gridCreation = $mockupService->instance(GridCreationStrategy::class);
+            if ($gridCreation->process($user, $update)) {
+                return;
+            }
 
-        /** @var UserStatsStrategy $userStats */
-        $userStats = $mockupService->instance(UserStatsStrategy::class);
-        if ($userStats->process($user, $update)) {
-            return;
+            /** @var UserStatsStrategy $userStats */
+            $userStats = $mockupService->instance(UserStatsStrategy::class);
+            if ($userStats->process($user, $update)) {
+                return;
+            }
         }
 
         /** @var EdgeCommandStrategy $userRegistration */
