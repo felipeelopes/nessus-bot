@@ -46,4 +46,7 @@ return [
     'banNotFound' => "*Err...*\n" .
                      'Não foi possível localizar esta Gamertag em nosso banco.',
     'banSuccess'  => 'Membro removido do grupo e de nosso banco de dados com sucesso!',
+
+    'exceptionServerMaintenance' => "*Err... desculpe, guardião!*\n" .
+                                    'Mas parece que está havendo uma manutenção nos servidores da Bungie no momento. Tente novamente mais tarde.',
 ];

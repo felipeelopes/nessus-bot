@@ -13,6 +13,7 @@ use Application\Adapters\Bungie\UserInfoCard;
 use Application\Services\Contracts\ServiceContract;
 use Application\Services\MockupService;
 use Application\Services\Requester\Live\RequesterService;
+use Application\Services\Telegram\BotService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -131,6 +132,7 @@ class BungieService implements ServiceContract
     /**
      * Request a Bungie API action.
      * @return mixed|null
+     * @throws \Exception
      */
     public function request(string $method, string $action, ?array $params = null, int $cacheMinutes = null)
     {
@@ -147,6 +149,15 @@ class BungieService implements ServiceContract
         }
 
         $requestResponse = new Response(json_decode($response, true));
+
+        if ($requestResponse->ErrorStatus === 'DestinyUnexpectedError') {
+            $botService = BotService::getInstance();
+            $botService->createMessage($botService->getUpdate()->message)
+                ->appendMessage(trans('EdgeCommand.exceptionServerMaintenance'))
+                ->publish();
+
+            exit;
+        }
 
         if ($requestResponse->Message !== 'Ok') {
             return null;
