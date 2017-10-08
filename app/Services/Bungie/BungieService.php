@@ -49,7 +49,7 @@ class BungieService implements ServiceContract
             $avoidCache !== true ? RequesterService::CACHE_HOUR : null);
 
         if ($activitiesResponse === null) {
-            throw new RuntimeException;
+            return new Collection;
         }
 
         return new Collection(array_map(function ($activity) {
@@ -66,7 +66,7 @@ class BungieService implements ServiceContract
         $charactersResponse = $this->request('GET', sprintf('Destiny2/1/Profile/%u/?components=200', $membershipId), null, RequesterService::CACHE_HOUR);
 
         if ($charactersResponse === null) {
-            throw new RuntimeException;
+            return new Collection;
         }
 
         return new Collection(array_map(function ($characterData) {
@@ -104,12 +104,12 @@ class BungieService implements ServiceContract
      * Returns the entries from a carnage report.
      * @return CarnageReportEntry
      */
-    public function getMemberCarnageReport(Activity $activityInstance, int $membershipIdFilter): CarnageReportEntry
+    public function getMemberCarnageReport(Activity $activityInstance, int $membershipIdFilter): ?CarnageReportEntry
     {
         $carnageResponse = $this->request('GET', sprintf('Destiny2/Stats/PostGameCarnageReport/%u/', $activityInstance->instanceId), null, RequesterService::CACHE_DAY);
 
         if ($carnageResponse === null) {
-            throw new RuntimeException;
+            return null;
         }
 
         $entries = new Collection(array_map(function ($activity) use ($activityInstance) {
