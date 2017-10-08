@@ -104,33 +104,31 @@ class BungieService implements ServiceContract
     }
 
     /**
-     * Returns the entries from a carnage report.
-     * @return CarnageReportEntry
+     * Returns the entries from a carnage report for each participating member.
+     * @return Collection|CarnageReportEntry[]
      * @throws \Exception
      */
-    public function getMemberCarnageReport(Activity $activityInstance, int $membershipIdFilter): ?CarnageReportEntry
+    public function getMemberCarnageReport(Activity $activityInstance): Collection
     {
         $carnageResponse = $this->request('GET', sprintf('Destiny2/Stats/PostGameCarnageReport/%u/', $activityInstance->instanceId), null, RequesterService::CACHE_DAY);
 
         if ($carnageResponse === null) {
-            return null;
+            return new Collection;
         }
 
         $entries = new Collection(array_map(function ($activity) use ($activityInstance) {
             return new CarnageReportEntry($activity, $activityInstance);
         }, (array) array_get($carnageResponse, 'entries')));
 
-        $entries = $entries->where('membershipId', $membershipIdFilter);
+        return $entries->groupBy(function (CarnageReportEntry $carnageReportEntry) {
+            return $carnageReportEntry->membershipId;
+        })->map(function (Collection $memberEntries) {
+            $firstEntry = $memberEntries->shift();
 
-        if ($entries->count() === 1) {
-            return $entries->first();
-        }
-
-        $firstEntry = $entries->shift();
-
-        return $entries->reduce(function (CarnageReportEntry $carry, CarnageReportEntry $nextEntry) {
-            return $carry->mergeWith($nextEntry);
-        }, $firstEntry);
+            return $memberEntries->reduce(function (CarnageReportEntry $carry, CarnageReportEntry $nextEntry) {
+                return $carry->mergeWith($nextEntry);
+            }, $firstEntry);
+        });
     }
 
     /**

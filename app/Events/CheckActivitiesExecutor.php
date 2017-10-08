@@ -10,6 +10,7 @@ use Application\Adapters\Ranking\PlayerRanking;
 use Application\Models\Activity;
 use Application\Models\Model;
 use Application\Models\User;
+use Application\Models\UserGamertag;
 use Application\Services\Bungie\BungieService;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
@@ -36,6 +37,7 @@ class CheckActivitiesExecutor extends Executor
         /** @var Activity $lastActivity */
         $lastActivityQuery = Activity::query();
         $lastActivityQuery->where('user_id', $user->id);
+        $lastActivityQuery->where('activity_validated', true);
         $lastActivityQuery->orderBy('created_at', 'desc');
         $lastActivity = $lastActivityQuery->first([ 'created_at' ]);
 
@@ -82,35 +84,55 @@ class CheckActivitiesExecutor extends Executor
 
         $characterRecentActivities = $characterRecentActivities->reverse();
 
+        $usersQuery = UserGamertag::query();
+        $users      = $usersQuery->pluck('user_id', 'bungie_membership');
+
         foreach ($characterRecentActivities as $characterRecentActivity) {
-            $checkActivity = Activity::query();
-            $checkActivity->where('user_id', $user->id);
-            $checkActivity->where('activity_instance', $characterRecentActivity->instanceId);
+            $carnageReports = $bungieService->getMemberCarnageReport($characterRecentActivity);
 
-            if ($checkActivity->exists()) {
-                continue;
+            /** @var Collection|Activity[] $checkActivities */
+            $checkActivitiesQuery = Activity::query();
+            $checkActivitiesQuery->where('activity_instance', $characterRecentActivity->instanceId);
+            $checkActivities = $checkActivitiesQuery->get();
+
+            foreach ($carnageReports as $carnageReport) {
+                $carnageUser = $users->get($carnageReport->membershipId);
+
+                if (!$carnageUser) {
+                    continue;
+                }
+
+                /** @var Activity|null $activity */
+                $activity = $checkActivities
+                                ->where('user_id', $carnageUser)
+                                ->first()
+                            ?? new Activity;
+
+                $userValidated = $user->gamertag->bungie_membership === $carnageReport->membershipId;
+
+                if ($userValidated && $activity->exists && !$activity->activity_validated) {
+                    $activity->timestamps         = false;
+                    $activity->activity_validated = true;
+                    $activity->save();
+
+                    continue;
+                }
+
+                $activity->user_id            = $carnageUser;
+                $activity->activity_instance  = $carnageReport->activity->instanceId;
+                $activity->activity_mode      = $carnageReport->activity->mode;
+                $activity->activity_validated = $userValidated;
+                $activity->player_light       = $carnageReport->playerLightLevel;
+                $activity->value_completed    = $carnageReport->completed;
+                $activity->value_kills        = $carnageReport->kills;
+                $activity->value_assists      = $carnageReport->assists;
+                $activity->value_deaths       = $carnageReport->deaths;
+                $activity->value_precision    = $carnageReport->precisionKills;
+                $activity->value_duration     = $carnageReport->timePlayed;
+                $activity->created_at         = $carnageReport->activity->period;
+                $activity->updated_at         = $carnageReport->activity->period;
+                $activity->save();
             }
-
-            $carnageReport = $bungieService->getMemberCarnageReport($characterRecentActivity, $user->gamertag->bungie_membership);
-
-            if ($carnageReport === null) {
-                continue;
-            }
-
-            $activity                    = new Activity;
-            $activity->user_id           = $user->id;
-            $activity->activity_instance = $carnageReport->activity->instanceId;
-            $activity->activity_mode     = $carnageReport->activity->mode;
-            $activity->player_light      = $carnageReport->playerLightLevel;
-            $activity->value_completed   = $carnageReport->completed;
-            $activity->value_kills       = $carnageReport->kills;
-            $activity->value_assists     = $carnageReport->assists;
-            $activity->value_deaths      = $carnageReport->deaths;
-            $activity->value_precision   = $carnageReport->precisionKills;
-            $activity->value_duration    = $carnageReport->timePlayed;
-            $activity->created_at        = $carnageReport->activity->period;
-            $activity->updated_at        = $carnageReport->activity->period;
-            $activity->save();
         }
     }
 
@@ -138,7 +160,6 @@ class CheckActivitiesExecutor extends Executor
         /** @var User|Builder $usersQuery */
         $usersQuery = User::query();
         $usersQuery->with('gamertag');
-        $usersQuery->where('id', 1);
         $usersQuery->whereHas('gamertag', function (Builder $builder) {
             $builder->whereNotNull('bungie_membership');
         });
@@ -148,7 +169,7 @@ class CheckActivitiesExecutor extends Executor
 
         foreach ($users as $user) {
             try {
-                printf("\nProcessing %s...", $user->gamertag->gamertag_value);
+                printf("\nProcessing %s... ", $user->gamertag->gamertag_value);
                 static::processActivities($user);
             }
             catch (RuntimeException $runtimeException) {
@@ -164,7 +185,8 @@ class CheckActivitiesExecutor extends Executor
         /** @var PlayerRanking $updatedPlayerRanking */
         foreach ($updatedPlayerRankings as $updatedPlayerRankingKey => $updatedPlayerRanking) {
             /** @var PlayerRanking $playerRanking */
-            $playerRanking = $playerRankings->get($updatedPlayerRankingKey);
+            $playerRanking = $playerRankings->get($updatedPlayerRankingKey)
+                             ?? new PlayerRanking;
 
             if ($updatedPlayerRankingKey !== 1) {
                 continue;
