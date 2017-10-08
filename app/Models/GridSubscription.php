@@ -66,8 +66,10 @@ class GridSubscription extends Model
      */
     public function gamertag(): HasOne
     {
-        return $this->hasOne(UserGamertag::class, 'id', 'gamertag_id')
-            ->withTrashed();
+        /** @var HasOne|Model $hasOne */
+        $hasOne = $this->hasOne(UserGamertag::class, 'id', 'gamertag_id');
+
+        return $hasOne->withTrashed();
     }
 
     /**

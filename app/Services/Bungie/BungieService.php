@@ -31,6 +31,7 @@ class BungieService implements ServiceContract
     /**
      * Get a character activities.
      * @return Collection
+     * @throws \Exception
      */
     public function getCharacterActivities(int $membershipId, int $characterId, ?int $page = null, ?int $count = null, ?int $mode = null, ?bool $avoidCache = null): Collection
     {
@@ -60,6 +61,7 @@ class BungieService implements ServiceContract
     /**
      * Return the user characters.
      * @return Collection|Character[]
+     * @throws \Exception
      */
     public function getCharacters(int $membershipId): Collection
     {
@@ -76,6 +78,7 @@ class BungieService implements ServiceContract
 
     /**
      * Get Clan details from user Membership.
+     * @throws \Exception
      */
     public function getClanFromMember(int $membershipId): ?GroupV2
     {
@@ -103,6 +106,7 @@ class BungieService implements ServiceContract
     /**
      * Returns the entries from a carnage report.
      * @return CarnageReportEntry
+     * @throws \Exception
      */
     public function getMemberCarnageReport(Activity $activityInstance, int $membershipIdFilter): ?CarnageReportEntry
     {
@@ -169,6 +173,7 @@ class BungieService implements ServiceContract
     /**
      * Get user info card from gamertag.
      * @param string $gamertag Gamertag name.
+     * @throws \Exception
      */
     public function searchUser(string $gamertag): ?UserInfoCard
     {
@@ -183,6 +188,7 @@ class BungieService implements ServiceContract
 
     /**
      * Returns the user stats (simplified version).
+     * @throws \Exception
      */
     public function userStatsSimplified(int $membership): ?Collection
     {

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
  * @property int    $id
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ *
+ * @method $this withTrashed()
  */
 class Model extends EloquentModel
 {
