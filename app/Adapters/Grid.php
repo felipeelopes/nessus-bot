@@ -8,6 +8,7 @@ use Application\Adapters\Ranking\PlayerRanking;
 use Application\Adapters\Telegram\User;
 use Application\Models\Grid as GridModel;
 use Application\Models\GridSubscription;
+use Application\Services\FormattingService;
 use Application\Services\MockupService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserExperienceService;
@@ -179,7 +180,9 @@ class Grid extends BaseFluent
 
             /** @var GridSubscription $gridSubscriber */
             foreach ($grid->subscribers_sorted as $gridSubscriber) {
-                $playerIcon = trans('Grid.subscriberDefaultIcon');
+                $playerIcon = sprintf('%s`%s`',
+                    trans('Ranking.iconStarter'),
+                    FormattingService::toSuperscript('0'));
 
                 if ($globalRanking->has($gridSubscriber->gamertag->user_id)) {
                     /** @var PlayerRanking $playerRanking */
