@@ -45,6 +45,11 @@ class FormattingService
         $result  = '';
 
         foreach ($numbers as $n) {
+        	if (!array_key_exists($n, self::SUPERSCRIPTED_NUMBERS)) {
+        		$result .= $n;
+        		continue;
+        	}
+
             $result .= self::SUPERSCRIPTED_NUMBERS[$n];
         }
 
