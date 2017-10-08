@@ -25,7 +25,7 @@ class CheckActivitiesExecutor extends Executor
      */
     public static function processActivities(User $user, ?bool $avoidCache = null)
     {
-        if (!$user->gamertag) {
+        if (!$user->gamertag || !$user->gamertag->bungie_membership) {
             return;
         }
 
@@ -82,6 +82,10 @@ class CheckActivitiesExecutor extends Executor
             }
 
             $carnageReport = $bungieService->getMemberCarnageReport($characterRecentActivity, $user->gamertag->bungie_membership);
+
+            if ($carnageReport === null) {
+                continue;
+            }
 
             $activity                    = new Activity;
             $activity->user_id           = $user->id;
