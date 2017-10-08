@@ -98,7 +98,7 @@ class BotController extends Controller implements RouterRegisterContract
 
         (new GoodMorningExecutor)->run();
 
-        if ($user->exists && !$user->deleted_at && $user->gamertag) {
+        if ($user && $user->exists && !$user->deleted_at && $user->gamertag) {
             /** @var PredefinitionStrategy $predefinition */
             $predefinition = $mockupService->instance(PredefinitionStrategy::class);
             if ($predefinition->process($user, $update)) {
@@ -110,12 +110,12 @@ class BotController extends Controller implements RouterRegisterContract
             if ($cancelCommand->process($user, $update)) {
                 return;
             }
+        }
 
-            /** @var UserSubscriptionStrategy $userRegistration */
-            $userSubscription = $mockupService->instance(UserSubscriptionStrategy::class);
-            if ($userSubscription->process($update)) {
-                return;
-            }
+        /** @var UserSubscriptionStrategy $userRegistration */
+        $userSubscription = $mockupService->instance(UserSubscriptionStrategy::class);
+        if ($userSubscription->process($update)) {
+            return;
         }
 
         if ($update->message->text === null) {
@@ -126,13 +126,13 @@ class BotController extends Controller implements RouterRegisterContract
             $update->message->text = null;
         }
 
-        if ($user->exists && !$user->deleted_at && $user->gamertag) {
-            /** @var UserRegistrationStrategy $userRegistration */
-            $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
-            if ($userRegistration->process($user, $update)) {
-                return;
-            }
+        /** @var UserRegistrationStrategy $userRegistration */
+        $userRegistration = $mockupService->instance(UserRegistrationStrategy::class);
+        if ($userRegistration->process($user, $update)) {
+            return;
+        }
 
+        if ($user && $user->exists && !$user->deleted_at && $user->gamertag) {
             /** @var GridListingStrategy $gridListing */
             $gridListing = $mockupService->instance(GridListingStrategy::class);
             if ($gridListing->process($user, $update)) {
