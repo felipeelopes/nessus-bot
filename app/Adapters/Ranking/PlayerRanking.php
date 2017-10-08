@@ -182,10 +182,38 @@ class PlayerRanking extends BaseFluent
             // Patron
             [
                 'level'      => 20,
-                'xpBase'     => [ 60000, PHP_INT_MAX ],
+                'xpBase'     => [ 60000, 70000 ],
                 'icon'       => trans('Ranking.iconPatron'),
                 'title'      => trans('Ranking.titlePatron'),
-                'titleLevel' => [ 1, 1 ],
+                'titleLevel' => [ 1, 5 ],
+            ],
+            [
+                'level'      => 21,
+                'xpBase'     => [ 70000, 80000 ],
+                'icon'       => trans('Ranking.iconPatron'),
+                'title'      => trans('Ranking.titlePatron'),
+                'titleLevel' => [ 2, 5 ],
+            ],
+            [
+                'level'      => 22,
+                'xpBase'     => [ 80000, 90000 ],
+                'icon'       => trans('Ranking.iconPatron'),
+                'title'      => trans('Ranking.titlePatron'),
+                'titleLevel' => [ 3, 5 ],
+            ],
+            [
+                'level'      => 23,
+                'xpBase'     => [ 90000, 100000 ],
+                'icon'       => trans('Ranking.iconPatron'),
+                'title'      => trans('Ranking.titlePatron'),
+                'titleLevel' => [ 4, 5 ],
+            ],
+            [
+                'level'      => 24,
+                'xpBase'     => [ 100000, PHP_INT_MAX ],
+                'icon'       => trans('Ranking.iconPatron'),
+                'title'      => trans('Ranking.titlePatron'),
+                'titleLevel' => [ 5, 5 ],
             ],
         ]);
     }
