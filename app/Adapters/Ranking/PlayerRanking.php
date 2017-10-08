@@ -20,6 +20,17 @@ use Illuminate\Support\Collection;
 class PlayerRanking extends BaseFluent
 {
     /**
+     * Returns a Collection from Player Ranking from query results.
+     * @return Collection|self[]
+     */
+    public static function fromQuery(array $results): Collection
+    {
+        return (new Collection(array_map(function ($playerRanking) {
+            return new self($playerRanking);
+        }, $results)))->keyBy('user_id');
+    }
+
+    /**
      * Get all available levels.
      * @return Collection
      */

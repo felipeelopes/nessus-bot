@@ -173,6 +173,42 @@ class EdgeCommandStrategy implements UserStrategyContract
     }
 
     /**
+     * Update User ranking.
+     * If need, send a personal new level notification.
+     * @throws \Exception
+     */
+    private static function updateUserRanking(User $user): void
+    {
+        /** @var PlayerRanking|null $userRanking */
+        $userExperience = UserExperienceService::getInstance();
+        $globalRanking  = $userExperience->getGlobalRanking();
+        $userRanking    = $globalRanking->get($user->id);
+
+        CheckActivitiesExecutor::processActivities($user, true);
+
+        $userExperience->forgetGlobalRanking();
+
+        if ($userRanking) {
+            $userLevel = $userRanking->getLevel();
+
+            /** @var PlayerRanking $updatedUserRanking */
+            $updatedGlobalRanking = $userExperience->getGlobalRanking();
+            $updatedUserRanking   = $updatedGlobalRanking->get($user->id);
+            $updatedUserLevel     = $updatedUserRanking->getLevel();
+
+            if ($updatedUserLevel->level > $userLevel->level) {
+                BotService::getInstance()->createMessage()
+                    ->appendMessage(trans('Ranking.levelAdvanced', [
+                        'gamertag' => $user->gamertag->gamertag_value,
+                        'level'    => $updatedUserLevel->getIconTitle(true),
+                    ]))
+                    ->forcePublic()
+                    ->publish();
+            }
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public function process(?User $user, Update $update): ?bool
@@ -240,7 +276,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                 ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
                 ->publish();
 
-            CheckActivitiesExecutor::processActivities($user, true);
+            static::updateUserRanking($user);
 
             BotService::getInstance()
                 ->createMessage($update->message)
@@ -261,7 +297,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                 ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_MY_RANKING . '@User:' . $user->id)
                 ->publish();
 
-            CheckActivitiesExecutor::processActivities($user, true);
+            static::updateUserRanking($user);
 
             BotService::getInstance()
                 ->createMessage($update->message)

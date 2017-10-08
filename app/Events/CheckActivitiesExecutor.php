@@ -6,11 +6,13 @@ namespace Application\Events;
 
 use Application\Adapters\Bungie\Activity as ActivityAdapter;
 use Application\Adapters\Bungie\Character;
+use Application\Adapters\Ranking\PlayerRanking;
 use Application\Models\Activity;
 use Application\Models\Model;
 use Application\Models\User;
 use Application\Services\Bungie\BungieService;
 use Application\Services\SettingService;
+use Application\Services\Telegram\BotService;
 use Application\Services\UserExperienceService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -46,7 +48,7 @@ class CheckActivitiesExecutor extends Executor
             });
         }
 
-        $collectLimit = Carbon::now()->subDays(45);
+        $collectLimit = (new Carbon)->startOfYear();
 
         $characterRecentActivities = new Collection;
 
@@ -110,8 +112,6 @@ class CheckActivitiesExecutor extends Executor
             $activity->updated_at        = $carnageReport->activity->period;
             $activity->save();
         }
-
-        UserExperienceService::getInstance()->forgetGlobalRanking();
     }
 
     /**
@@ -130,16 +130,21 @@ class CheckActivitiesExecutor extends Executor
             return true;
         }
 
+        $botService     = BotService::getInstance();
+        $playerRankings = PlayerRanking::fromQuery(UserExperienceService::queryGlobalRanking($lastCheckup->updated_at));
+
         $lastCheckup->touch();
 
         /** @var User|Builder $usersQuery */
         $usersQuery = User::query();
         $usersQuery->with('gamertag');
+        $usersQuery->where('id', 1);
         $usersQuery->whereHas('gamertag', function (Builder $builder) {
             $builder->whereNotNull('bungie_membership');
         });
 
-        $users = $usersQuery->get();
+        $users = $usersQuery->get()
+            ->keyBy('id');
 
         foreach ($users as $user) {
             try {
@@ -148,6 +153,56 @@ class CheckActivitiesExecutor extends Executor
             }
             catch (RuntimeException $runtimeException) {
                 continue;
+            }
+        }
+
+        $userExperienceService = UserExperienceService::getInstance();
+        $userExperienceService->forgetGlobalRanking();
+
+        $updatedPlayerRankings = $userExperienceService->getGlobalRanking();
+
+        /** @var PlayerRanking $updatedPlayerRanking */
+        foreach ($updatedPlayerRankings as $updatedPlayerRankingKey => $updatedPlayerRanking) {
+            /** @var PlayerRanking $playerRanking */
+            $playerRanking = $playerRankings->get($updatedPlayerRankingKey);
+
+            if ($updatedPlayerRankingKey !== 1) {
+                continue;
+            }
+
+            if (!$playerRanking ||
+                $updatedPlayerRanking->player_experience - $playerRanking->player_experience >= 1) {
+                /** @var User|null $player */
+                $player = $users->get($updatedPlayerRankingKey);
+
+                if (!$player) {
+                    continue;
+                }
+
+                $message = trans('Ranking.dailyReport', [
+                    'xpAdded' => number_format($updatedPlayerRanking->player_experience - $playerRanking->player_experience, 0, '', '.'),
+                    'xpTotal' => number_format($updatedPlayerRanking->player_experience, 0, '', '.'),
+                ]);
+
+                $playerLevel = $playerRanking->getLevel();
+
+                if ($playerLevel->getNextExperience() !== null) {
+                    $updatedPlayerLevel = $updatedPlayerRanking->getLevel();
+
+                    $message .= $updatedPlayerLevel->level > $playerLevel->level
+                        ? trans('Ranking.dailyLevelAdvanced', [
+                            'level' => $updatedPlayerLevel->getIconTitle(true),
+                        ])
+                        : trans('Ranking.dailyLevelSame', [
+                            'level'      => $updatedPlayerLevel->getIconTitle(true),
+                            'xpRequired' => number_format($updatedPlayerLevel->getNextExperience(), 0, '', '.'),
+                        ]);
+                }
+
+                $botService->createMessage()
+                    ->appendMessage($message)
+                    ->setReceiver($player->user_number)
+                    ->publish();
             }
         }
 
