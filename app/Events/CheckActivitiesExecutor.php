@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace Application\Events;
 
 use Application\Adapters\Bungie\Activity as ActivityAdapter;
+use Application\Adapters\Bungie\Character;
 use Application\Models\Activity;
 use Application\Models\Model;
 use Application\Models\User;
@@ -22,6 +23,7 @@ class CheckActivitiesExecutor extends Executor
 
     /**
      * Process user activites.
+     * @throws \Exception
      */
     public static function processActivities(User $user, ?bool $avoidCache = null)
     {
@@ -37,6 +39,12 @@ class CheckActivitiesExecutor extends Executor
 
         $bungieService = BungieService::getInstance();
         $characters    = $bungieService->getCharacters($user->gamertag->bungie_membership);
+
+        if ($lastActivity) {
+            $characters = $characters->filter(function (Character $character) use ($lastActivity) {
+                return $character->dateLastPlayed->gt($lastActivity->created_at);
+            });
+        }
 
         $collectLimit = Carbon::now()->subDays(45);
 
