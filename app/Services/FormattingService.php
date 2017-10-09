@@ -27,6 +27,10 @@ class FormattingService
      */
     public static function ellipsis($text, $limit): string
     {
+        if (!$text) {
+            return '';
+        }
+
         if (strlen($text) >= $limit) {
             return substr($text, 0, $limit - 1) . "\xE2\x80\xA6";
         }
@@ -45,10 +49,10 @@ class FormattingService
         $result  = '';
 
         foreach ($numbers as $n) {
-        	if (!array_key_exists($n, self::SUPERSCRIPTED_NUMBERS)) {
-        		$result .= $n;
-        		continue;
-        	}
+            if (!array_key_exists($n, self::SUPERSCRIPTED_NUMBERS)) {
+                $result .= $n;
+                continue;
+            }
 
             $result .= self::SUPERSCRIPTED_NUMBERS[$n];
         }
