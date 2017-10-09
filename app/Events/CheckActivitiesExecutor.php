@@ -110,6 +110,14 @@ class CheckActivitiesExecutor extends Executor
 
                 $userValidated = $user->gamertag->bungie_membership === $carnageReport->membershipId;
 
+                $activity->player_light    = $carnageReport->playerLightLevel;
+                $activity->value_completed = $carnageReport->completed;
+                $activity->value_kills     = $carnageReport->kills;
+                $activity->value_assists   = $carnageReport->assists;
+                $activity->value_deaths    = $carnageReport->deaths;
+                $activity->value_precision = $carnageReport->precisionKills;
+                $activity->value_duration  = $carnageReport->timePlayed;
+
                 if ($userValidated && $activity->exists && !$activity->activity_validated) {
                     $activity->timestamps         = false;
                     $activity->activity_validated = true;
@@ -122,13 +130,6 @@ class CheckActivitiesExecutor extends Executor
                 $activity->activity_instance  = $carnageReport->activity->instanceId;
                 $activity->activity_mode      = $carnageReport->activity->mode;
                 $activity->activity_validated = $userValidated;
-                $activity->player_light       = $carnageReport->playerLightLevel;
-                $activity->value_completed    = $carnageReport->completed;
-                $activity->value_kills        = $carnageReport->kills;
-                $activity->value_assists      = $carnageReport->assists;
-                $activity->value_deaths       = $carnageReport->deaths;
-                $activity->value_precision    = $carnageReport->precisionKills;
-                $activity->value_duration     = $carnageReport->timePlayed;
                 $activity->created_at         = $carnageReport->activity->period;
                 $activity->updated_at         = $carnageReport->activity->period;
                 $activity->save();
