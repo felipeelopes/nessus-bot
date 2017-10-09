@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace Application\Events;
 
 use Application\Adapters\Bungie\Activity as ActivityAdapter;
-use Application\Adapters\Bungie\Character;
 use Application\Adapters\Ranking\PlayerRanking;
 use Application\Models\Activity;
 use Application\Models\Model;
@@ -38,17 +37,12 @@ class CheckActivitiesExecutor extends Executor
         $lastActivityQuery = Activity::query();
         $lastActivityQuery->where('user_id', $user->id);
         $lastActivityQuery->where('activity_validated', true);
+        $lastActivityQuery->where('created_at', '>=', Carbon::now()->subDay());
         $lastActivityQuery->orderBy('created_at', 'desc');
         $lastActivity = $lastActivityQuery->first([ 'created_at' ]);
 
         $bungieService = BungieService::getInstance();
         $characters    = $bungieService->getCharacters($user->gamertag->bungie_membership);
-
-        if ($lastActivity) {
-            $characters = $characters->filter(function (Character $character) use ($lastActivity) {
-                return $character->dateLastPlayed->gt($lastActivity->created_at);
-            });
-        }
 
         $collectLimit = (new Carbon)->startOfYear();
 
