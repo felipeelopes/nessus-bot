@@ -278,9 +278,12 @@ class EdgeCommandStrategy implements UserStrategyContract
 
             static::updateUserRanking($user);
 
+            $messageCommand = $update->message->getCommand();
+            assert($messageCommand !== null);
+
             BotService::getInstance()
                 ->createMessage($update->message)
-                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 20 : 10))
+                ->appendMessage($this->generateRanking($user, $update->message->isAdministrative() ? 20 : 10, $messageCommand->getTextArgument()))
                 ->unduplicate(self::class . '@Command:' . CommandService::COMMAND_RANKING . '@User:' . $user->id)
                 ->setOptions([
                     OptionItem::fromCommand(CommandService::COMMAND_MY_RANKING),
@@ -442,7 +445,7 @@ class EdgeCommandStrategy implements UserStrategyContract
      * Generate and return the ranking message.
      * @return string
      */
-    private function generateRanking(User $you, ?int $limit = null): string
+    private function generateRanking(User $you, ?int $limit = null, ?string $variant = null): string
     {
         $globalRanking = UserExperienceService::getInstance()->getGlobalRanking();
         $usersIds      = $globalRanking->pluck('user_id');
@@ -455,16 +458,35 @@ class EdgeCommandStrategy implements UserStrategyContract
 
         $usersRanked = $globalRanking;
 
+        $variantExceptAdmins = $variant === 'except-admins';
+
+        if ($variantExceptAdmins) {
+            $limit = null;
+        }
+
         if ($limit !== null) {
             $usersRanked = $usersRanked->slice(0, $limit);
         }
 
         $rankingContents = [];
         $rankingIndex    = 0;
+        $rankingCount    = 0;
         $rankingYou      = false;
 
         /** @var PlayerRanking $userRank */
         foreach ($usersRanked as $userRank) {
+            if ($variantExceptAdmins) {
+                if ($userRank->user()->isAdminstrator()) {
+                    continue;
+                }
+
+                $rankingCount++;
+
+                if ($rankingCount > 25) {
+                    break;
+                }
+            }
+
             $rankingIndex++;
             $rankingYou = $rankingYou || $userRank->user_id === $you->id;
 
@@ -481,7 +503,9 @@ class EdgeCommandStrategy implements UserStrategyContract
             ]);
         }
 
-        if ($limit !== null && !$rankingYou && $users->get($you->id)) {
+        if (!$variantExceptAdmins &&
+            $limit !== null &&
+            !$rankingYou && $users->get($you->id)) {
             $rankingIndex = array_search($you->id, array_keys($usersRanking), false) + 1;
 
             if ($rankingIndex !== $limit + 1) {

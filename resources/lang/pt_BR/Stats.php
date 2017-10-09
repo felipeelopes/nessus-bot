@@ -16,7 +16,7 @@ return [
 
     'rankingHeader'    => "*Ranking por Atividade:*\n\n" .
                           ":pointers\n",
-    'rankingPointer'   => "*:rankingº* `:icon` _:gamertag_ (`:xp` xp):you\n",
+    'rankingPointer'   => ":rankingº `:icon` _:gamertag_ (`:xp` xp):you\n",
     'rankingSeparator' => "---\n",
     'rankingYou'       => " \xF0\x9F\x91\x88",
 
