@@ -11,9 +11,11 @@ use Application\Models\Model;
 use Application\Models\User;
 use Application\Models\UserGamertag;
 use Application\Services\Bungie\BungieService;
+use Application\Services\Requester\RequesterService;
 use Application\Services\SettingService;
 use Application\Services\Telegram\BotService;
 use Application\Services\UserExperienceService;
+use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -37,7 +39,7 @@ class CheckActivitiesExecutor extends Executor
         $lastActivityQuery = Activity::query();
         $lastActivityQuery->where('user_id', $user->id);
         $lastActivityQuery->where('activity_validated', true);
-        $lastActivityQuery->where('created_at', '>=', Carbon::now()->subDay());
+        $lastActivityQuery->where('created_at', '<=', Carbon::now()->subDay());
         $lastActivityQuery->orderBy('created_at', 'desc');
         $lastActivity = $lastActivityQuery->first([ 'created_at' ]);
 
@@ -47,12 +49,27 @@ class CheckActivitiesExecutor extends Executor
         $collectLimit = (new Carbon)->startOfYear();
 
         $characterRecentActivities = new Collection;
+        $charactersCount           = 0;
 
-        foreach ($characters as $ck => $character) {
+        foreach ($characters as $characterKey => $character) {
             /** @var Collection|ActivityAdapter[] $characterRecentActivities */
             $characterRecentActivitiesPage = 0;
 
+            printf("\n\tCharacter #%u:", $characterKey);
+
+            $characterCacheKey   = __CLASS__ . '@' . __FUNCTION__ . '@characterId' . $character->characterId . ':lastPlayed';
+            $characterLastPlayed = Cache::get($characterCacheKey);
+
+            if ($character->dateLastPlayedString === $characterLastPlayed) {
+                continue;
+            }
+
+            Cache::put($characterCacheKey, $character->dateLastPlayedString, RequesterService::CACHE_MONTH);
+            $charactersCount++;
+
             do {
+                printf(' #%u', $characterRecentActivitiesPage);
+
                 /** @var Collection $characterActivities */
                 $characterActivities = $bungieService->getCharacterActivities($user->gamertag->bungie_membership, $character->characterId,
                     $characterRecentActivitiesPage, null, 7, $avoidCache);
@@ -76,12 +93,22 @@ class CheckActivitiesExecutor extends Executor
             while (true);
         }
 
-        $characterRecentActivities = $characterRecentActivities->reverse();
+        $characterRecentActivities = $characterRecentActivities->reverse()->values();
 
+        printf("\n\tCharacters...: %u\n\tActivities...: %u",
+            $charactersCount,
+            $characterRecentActivities->count());
+
+        /** @var UserGamertag|mixed $usersQuery */
         $usersQuery = UserGamertag::query();
-        $users      = $usersQuery->pluck('user_id', 'bungie_membership');
+        $usersQuery->withTrashed();
+        $users = $usersQuery->get()->keyBy('bungie_membership');
 
-        foreach ($characterRecentActivities as $characterRecentActivity) {
+        if ($characterRecentActivities->count()) {
+            printf("\n\tCarnages.....:");
+        }
+
+        foreach ($characterRecentActivities as $characterRecentActivityKey => $characterRecentActivity) {
             $carnageReports = $bungieService->getMemberCarnageReport($characterRecentActivity);
 
             /** @var Collection|Activity[] $checkActivities */
@@ -89,16 +116,24 @@ class CheckActivitiesExecutor extends Executor
             $checkActivitiesQuery->where('activity_instance', $characterRecentActivity->instanceId);
             $checkActivities = $checkActivitiesQuery->get();
 
+            printf(' #%u', $characterRecentActivityKey);
+
             foreach ($carnageReports as $carnageReport) {
+                /** @var User $carnageUser */
                 $carnageUser = $users->get($carnageReport->membershipId);
 
                 if (!$carnageUser) {
                     continue;
                 }
 
+                if ($carnageUser->deleted_at &&
+                    $carnageReport->activity->period->gt(new Carbon($carnageUser->deleted_at))) {
+                    continue;
+                }
+
                 /** @var Activity|null $activity */
                 $activity = $checkActivities
-                                ->where('user_id', $carnageUser)
+                                ->where('user_id', $carnageUser->id)
                                 ->first()
                             ?? new Activity;
 
@@ -112,20 +147,20 @@ class CheckActivitiesExecutor extends Executor
                 $activity->value_precision = $carnageReport->precisionKills;
                 $activity->value_duration  = $carnageReport->timePlayed;
 
-                if ($userValidated && $activity->exists && !$activity->activity_validated) {
-                    $activity->timestamps         = false;
-                    $activity->activity_validated = true;
-                    $activity->save();
+                if ($userValidated) {
+                    if ($activity->exists && !$activity->activity_validated) {
+                        $activity->activity_validated = true;
+                        $activity->save();
+                    }
 
                     continue;
                 }
 
-                $activity->user_id            = $carnageUser;
-                $activity->activity_instance  = $carnageReport->activity->instanceId;
-                $activity->activity_mode      = $carnageReport->activity->mode;
-                $activity->activity_validated = $userValidated;
-                $activity->created_at         = $carnageReport->activity->period;
-                $activity->updated_at         = $carnageReport->activity->period;
+                $activity->user_id           = $carnageUser->id;
+                $activity->activity_instance = $carnageReport->activity->instanceId;
+                $activity->activity_mode     = $carnageReport->activity->mode;
+                $activity->created_at        = $carnageReport->activity->period;
+                $activity->updated_at        = $carnageReport->activity->period;
                 $activity->save();
             }
         }
@@ -147,10 +182,10 @@ class CheckActivitiesExecutor extends Executor
             }
         }
 
+        $lastCheckup->touch();
+
         $botService     = BotService::getInstance();
         $playerRankings = PlayerRanking::fromQuery(UserExperienceService::queryGlobalRanking($lastCheckup->updated_at));
-
-        $lastCheckup->touch();
 
         /** @var User|Builder $usersQuery */
         $usersQuery = User::query();
@@ -164,7 +199,7 @@ class CheckActivitiesExecutor extends Executor
 
         foreach ($users as $user) {
             try {
-                printf("\nProcessing %s... ", $user->gamertag->gamertag_value);
+                printf("\n\nProcessing %s... ", $user->gamertag->gamertag_value);
                 static::processActivities($user);
             }
             catch (RuntimeException $runtimeException) {
@@ -215,6 +250,8 @@ class CheckActivitiesExecutor extends Executor
                             'xpRequired' => number_format($updatedPlayerLevel->getNextExperience(), 0, '', '.'),
                         ]);
                 }
+
+                printf("Notifying %s...\n", $player->gamertag->gamertag_value);
 
                 $botService->createMessage()
                     ->appendMessage($message)

@@ -15,8 +15,9 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class RequesterService
 {
-    public const CACHE_DAY  = Carbon::MINUTES_PER_HOUR * Carbon::HOURS_PER_DAY;
-    public const CACHE_HOUR = Carbon::MINUTES_PER_HOUR;
+    public const CACHE_DAY   = Carbon::MINUTES_PER_HOUR * Carbon::HOURS_PER_DAY;
+    public const CACHE_HOUR  = Carbon::MINUTES_PER_HOUR;
+    public const CACHE_MONTH = Carbon::MINUTES_PER_HOUR * Carbon::HOURS_PER_DAY * Carbon::DAYS_PER_WEEK * 4;
 
     /**
      * Base URI.

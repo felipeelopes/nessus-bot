@@ -7,7 +7,6 @@ namespace Application\Console\Commands;
 use Application\Events\CheckAccountExecutor;
 use Application\Events\CheckActivitiesExecutor;
 use Application\Events\CheckClanExecutor;
-use Application\Events\CheckStatsExecutor;
 use Application\Events\Executor;
 use Application\Events\GridFinisherExecutor;
 use Application\Events\GridNotifierExecutor;
@@ -42,7 +41,7 @@ class EventsProcessor extends Command
     {
         $settingRunning = SettingService::fromReference($this, self::SETTING_RUNNING);
 
-        if ($settingRunning === true) {
+        if ($settingRunning->setting_value === true) {
             return;
         }
 
@@ -57,7 +56,7 @@ class EventsProcessor extends Command
         $this->runExecutor(new GridRespawnExecutor);
         $this->runExecutor(new TipsExecutor);
         $this->runExecutor(new CheckAccountExecutor);
-        $this->runExecutor(new CheckStatsExecutor);
+        // $this->runExecutor(new CheckStatsExecutor);
         $this->runExecutor(new CheckClanExecutor);
         $this->runExecutor(new CheckActivitiesExecutor);
 

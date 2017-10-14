@@ -8,8 +8,9 @@ use Application\Adapters\BaseFluent;
 use Carbon\Carbon;
 
 /**
- * @property Carbon $dateLastPlayed Last played.
- * @property int    $characterId    Character id.
+ * @property Carbon $dateLastPlayed       Last played.
+ * @property string $dateLastPlayedString Last played (original as string).
+ * @property int    $characterId          Character id.
  */
 class Character extends BaseFluent
 {
@@ -21,7 +22,8 @@ class Character extends BaseFluent
     {
         parent::__construct();
 
-        $this->dateLastPlayed = new Carbon(array_get($attributes, 'dateLastPlayed'));
-        $this->characterId    = (int) array_get($attributes, 'characterId');
+        $this->dateLastPlayedString = array_get($attributes, 'dateLastPlayed');
+        $this->dateLastPlayed       = new Carbon($this->dateLastPlayedString);
+        $this->characterId          = (int) array_get($attributes, 'characterId');
     }
 }
