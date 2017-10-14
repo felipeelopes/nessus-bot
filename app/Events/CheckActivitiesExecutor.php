@@ -182,10 +182,10 @@ class CheckActivitiesExecutor extends Executor
             }
         }
 
-        $lastCheckup->touch();
-
         $botService     = BotService::getInstance();
         $playerRankings = PlayerRanking::fromQuery(UserExperienceService::queryGlobalRanking($lastCheckup->updated_at));
+
+        $lastCheckup->touch();
 
         /** @var User|Builder $usersQuery */
         $usersQuery = User::query();
@@ -217,10 +217,6 @@ class CheckActivitiesExecutor extends Executor
             /** @var PlayerRanking $playerRanking */
             $playerRanking = $playerRankings->get($updatedPlayerRankingKey)
                              ?? new PlayerRanking;
-
-            if ($updatedPlayerRankingKey !== 1) {
-                continue;
-            }
 
             if (!$playerRanking ||
                 $updatedPlayerRanking->player_experience - $playerRanking->player_experience >= 1) {

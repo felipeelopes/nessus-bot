@@ -32,12 +32,18 @@ class CheckClanExecutor extends Executor
         $userQuery->inRandomOrder();
         $user = $userQuery->first();
 
-        if (!$user || !$user->gamertag->bungie_membership) {
+        if (!$user) {
+            return true;
+        }
+
+        $userGamertag = $user->gamertag;
+
+        if (!$userGamertag->bungie_membership) {
             return true;
         }
 
         try {
-            $clanFromMember = BungieService::getInstance()->getClanFromMember($user->gamertag->bungie_membership);
+            $clanFromMember = BungieService::getInstance()->getClanFromMember($userGamertag->bungie_membership);
         }
         catch (RuntimeException $runtimeException) {
             throw new KeepWorkingException;
@@ -45,11 +51,16 @@ class CheckClanExecutor extends Executor
 
         $settings = SettingService::fromReference($user, self::NEXT_CLAN_CHECKUP);
 
-        if ($clanFromMember && in_array($clanFromMember->groupId, explode(',', env('NBOT_CLANS')), false)) {
-            $settings->updated_at = Carbon::now()->addDays(1);
-            $settings->save();
+        if ($clanFromMember) {
+            $userGamertag->bungie_clan = $clanFromMember->groupId;
+            $userGamertag->save();
 
-            throw new KeepWorkingException;
+            if (in_array($clanFromMember->groupId, explode(',', env('NBOT_CLANS')), false)) {
+                $settings->updated_at = Carbon::now()->addDays(1);
+                $settings->save();
+
+                throw new KeepWorkingException;
+            }
         }
 
         $clanMessage = null;
@@ -68,7 +79,7 @@ class CheckClanExecutor extends Executor
         BotService::getInstance()->createMessage()
             ->appendMessage(trans('CheckClan.clanUnassigned', [
                 'fullname' => $user->getFullname(),
-                'gamertag' => $user->gamertag->gamertag_value,
+                'gamertag' => $userGamertag->gamertag_value,
                 'message'  => $clanMessage,
                 'days'     => $user->created_at->diffInDays($now),
             ]))

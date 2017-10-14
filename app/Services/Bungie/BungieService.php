@@ -77,6 +77,27 @@ class BungieService implements ServiceContract
     }
 
     /**
+     * Get clan details from ID.
+     * @return GroupV2|null
+     * @throws \Exception
+     */
+    public function getClan(int $clanId): ?GroupV2
+    {
+        $statsResponse = $this->request('GET', sprintf('GroupV2/%u/', $clanId), null, RequesterService::CACHE_MONTH);
+
+        if (!$statsResponse) {
+            return null;
+        }
+
+        return new GroupV2(array_replace(
+            array_get($statsResponse, 'detail'),
+            [
+                'clanCallsign' => array_get($statsResponse, 'detail.clanInfo.clanCallsign'),
+            ]
+        ));
+    }
+
+    /**
      * Get Clan details from user Membership.
      * @throws \Exception
      */

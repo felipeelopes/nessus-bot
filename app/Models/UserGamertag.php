@@ -7,6 +7,7 @@ namespace Application\Models;
 use Application\Models\Observers\UserGamertagObserver;
 use Application\Models\Traits\LastTouchBeforeFilter;
 use Application\Models\Traits\SoftDeletes;
+use Application\Services\Bungie\BungieService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
@@ -17,6 +18,7 @@ use Illuminate\Support\Str;
  * @property int|null  $gamertag_id       Gamergag id.
  * @property string    $gamertag_value    Gamertag value.
  * @property int|null  $bungie_membership Bungie membership.
+ * @property int|null  $bungie_clan       Bungie clan.
  *
  * @method $this filterBySimilarity(string $gamertag)
  * @method $this orderBySimilarity(string $gamertag)
@@ -34,6 +36,26 @@ class UserGamertag extends Model
         static::observe(UserGamertagObserver::class);
 
         parent::boot();
+    }
+
+    /**
+     * Returns the gamertag related clan.
+     * @return null|string
+     */
+    public function getClan(): ?string
+    {
+        if (!$this->bungie_clan) {
+            return null;
+        }
+
+        $bungieService = BungieService::getInstance();
+        $bungieClan    = $bungieService->getClan($this->bungie_clan);
+
+        if (!$bungieClan) {
+            return null;
+        }
+
+        return $bungieClan->clanCallsign;
     }
 
     /**
