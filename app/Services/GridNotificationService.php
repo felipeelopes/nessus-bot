@@ -135,7 +135,8 @@ class GridNotificationService
             ->setReplica(false)
             ->appendMessage($message)
             ->setOptions(PredefinitionService::getInstance()->optionsFrom($availableOptions), true)
-            ->unduplicate('ModificationMoment@' . __FUNCTION__ . '@grid:' . $grid->id . '@chat:' . $update->message->chat->id);
+            ->unduplicate('ModificationMoment@' . __FUNCTION__ . '@grid:' . $grid->id . '@chat:' . $update->message->chat->id)
+            ->disableNotification();
 
         if ($isPrivate) {
             $botMessage->setCancelable();

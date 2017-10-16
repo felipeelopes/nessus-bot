@@ -83,7 +83,7 @@ return [
         'subscribeUnsubscribeCommandLetter' => 'S',
         'subscribeUnsubscribeDescription'   => 'Sair',
 
-        'subscribeObservationCommand'       => 'G:idO',
+        'subscribeObservationCommand'       => 'G:ido',
         'subscribeObservationCommandLetter' => 'O',
         'subscribeObservationDescription'   => 'Acrescentar observação...',
 
