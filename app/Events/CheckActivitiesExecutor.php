@@ -215,8 +215,8 @@ class CheckActivitiesExecutor extends Executor
         /** @var PlayerRanking $updatedPlayerRanking */
         foreach ($updatedPlayerRankings as $updatedPlayerRankingKey => $updatedPlayerRanking) {
             /** @var PlayerRanking $playerRanking */
-            $playerRanking = $playerRankings->get($updatedPlayerRankingKey)
-                             ?? new PlayerRanking;
+            $playerRanking = $playerRankings->get($updatedPlayerRankingKey) ??
+                             new PlayerRanking;
 
             if (!$playerRanking ||
                 $updatedPlayerRanking->player_experience - $playerRanking->player_experience >= 1) {

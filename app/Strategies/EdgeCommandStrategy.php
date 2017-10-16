@@ -84,6 +84,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                         ->appendMessage(trans('EdgeCommand.searchGtSingle', [
                             'gamertag' => $gamertagSingle->gamertag_value,
                             'mention'  => $gamertagSingle->user->getMention(true),
+                            'clan'     => $gamertagSingle->getClan() ?? '-',
                         ]))
                         ->disableNotification()
                         ->publish();
@@ -103,6 +104,7 @@ class EdgeCommandStrategy implements UserStrategyContract
                         ->appendMessage(trans('EdgeCommand.searchGtSimilarity', [
                             'gamertag' => $gamertagSimilar->gamertag_value,
                             'mention'  => $gamertagSimilar->user->getMention(true),
+                            'clan'     => $gamertagSimilar->getClan() ?? '-',
                         ]))
                         ->disableNotification()
                         ->publish();

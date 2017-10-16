@@ -192,7 +192,7 @@ class Grid extends BaseFluent
 
                 $gridSubscriberMask = [
                     'playerIcon' => $playerIcon,
-                    'playerClan' => str_pad($gridSubscriber->gamertag->getClan() ?? '-', 4, ' '),
+                    'playerClan' => str_pad($gridSubscriber->gamertag->getClan(true) ?? '-', 4, ' '),
                     'gamertag'   => $botService->escape($gridSubscriber->gamertag->gamertag_value),
                     'icon'       => implode(' ', $gridSubscriber->getIcons()),
                 ];
@@ -200,7 +200,7 @@ class Grid extends BaseFluent
                 if ($gridSubscriber->subscription_description) {
                     $gridSubscriberMask['gamertag'] = trans('Grid.subscriberObservation', [
                         'playerIcon'  => $playerIcon,
-                        'playerClan'  => str_pad($gridSubscriber->gamertag->getClan() ?? '-', 4, ' '),
+                        'playerClan'  => str_pad($gridSubscriber->gamertag->getClan(true) ?? '-', 4, ' '),
                         'gamertag'    => $gridSubscriberMask['gamertag'],
                         'observation' => $botService->escape($gridSubscriber->subscription_description),
                     ]);

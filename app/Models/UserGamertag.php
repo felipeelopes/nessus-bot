@@ -42,9 +42,14 @@ class UserGamertag extends Model
      * Returns the gamertag related clan.
      * @return null|string
      */
-    public function getClan(): ?string
+    public function getClan(?bool $skipNonAllied = null): ?string
     {
         if (!$this->bungie_clan) {
+            return null;
+        }
+
+        if ($skipNonAllied === true &&
+            !in_array($this->bungie_clan, explode(',', env('NBOT_CLANS')))) {
             return null;
         }
 
